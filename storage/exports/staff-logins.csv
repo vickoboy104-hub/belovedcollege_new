@@ -1,0 +1,24 @@
+Name,Email,Password,Role,Department,Designation,"Employee No",Phone
+"Kemi Balogun",accountant@belovedschool.test,password,accountant,Accounts,"Bursar / School Accountant",BVS-ACC-001,+2348030001003
+"Platform Administrator",admin@belovedschool.test,Vic@1291152,admin,Operations,"Platform Administrator",BVS-ADM-001,+2348030001001
+"Omowunmi Sanya",registrar@belovedschool.test,password,admin,Registry,"Registrar & Admissions Officer",BVS-ADM-002,+2348030001004
+"Seun Alabi",ict@belovedschool.test,password,admin,ICT,"ICT / MIS Officer",BVS-ADM-003,+2348030001005
+"Ifeoma Okeke",principal@belovedschool.test,password,principal,Leadership,Principal,BVS-PRN-001,+2348030001002
+"Ayodele Akinwale",vp.academics@belovedschool.test,password,teacher,Academics,"Vice Principal Academics",BVS-TCH-001,+2348030001006
+"Sandra Umeh",exam.officer@belovedschool.test,password,teacher,Academics,"Examinations Officer",BVS-TCH-002,+2348030001007
+"Folake Ojo",counsellor@belovedschool.test,password,teacher,"Student Affairs","Guidance Counsellor",BVS-TCH-003,+2348030001008
+"Chinedu Okafor",librarian@belovedschool.test,password,teacher,"Library Services","School Librarian",BVS-TCH-004,+2348030001009
+"Daniel Adeyemi",mathematics@belovedschool.test,password,teacher,Mathematics,"Mathematics Teacher",BVS-TCH-101,+2348030001010
+"Bimpe Afolabi",english@belovedschool.test,password,teacher,Languages,"English Language Teacher",BVS-TCH-102,+2348030001011
+"Funke Adebayo",basicscience@belovedschool.test,password,teacher,"Junior Science","Basic Science Teacher",BVS-TCH-103,+2348030001012
+"Kolade Bakare",socialstudies@belovedschool.test,password,teacher,Humanities,"Social Studies Teacher",BVS-TCH-104,+2348030001013
+"Bose Ibrahim",civicedu@belovedschool.test,password,teacher,Humanities,"Civic Education Teacher",BVS-TCH-105,+2348030001014
+"Stephen Ojo",physics@belovedschool.test,password,teacher,Science,"Physics Teacher",BVS-TCH-106,+2348030001015
+"Modupe Ogunleye",chemistry@belovedschool.test,password,teacher,Science,"Chemistry Teacher",BVS-TCH-107,+2348030001016
+"Emmanuel Umeh",biology@belovedschool.test,password,teacher,Science,"Biology Teacher",BVS-TCH-108,+2348030001017
+"Tunde Ajayi",economics@belovedschool.test,password,teacher,Commercial,"Economics Teacher",BVS-TCH-109,+2348030001018
+"Adaeze Okonkwo",commerce@belovedschool.test,password,teacher,Commercial,"Commerce Teacher",BVS-TCH-110,+2348030001019
+"Nnamdi Eze",accounting@belovedschool.test,password,teacher,Commercial,"Financial Accounting Teacher",BVS-TCH-111,+2348030001020
+"Blessing Nwosu",literature@belovedschool.test,password,teacher,Arts,"Literature Teacher",BVS-TCH-112,+2348030001021
+"Victor Adewale",government@belovedschool.test,password,teacher,Arts,"Government Teacher",BVS-TCH-113,+2348030001022
+"Lydia Onyeka",crs@belovedschool.test,password,teacher,Arts,"CRS Teacher",BVS-TCH-114,+2348030001023
