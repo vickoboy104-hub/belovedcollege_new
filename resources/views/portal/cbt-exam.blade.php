@@ -24,7 +24,7 @@
                     tick();
                     setInterval(tick, 1000);
                 "
-                class="rounded-3xl brand-gradient px-6 py-5 text-white shadow-xl shadow-slate-900/10"
+                class="rounded-3xl brand-gradient px-5 py-4 text-white shadow-xl shadow-slate-900/10 sm:px-6 sm:py-5"
             >
                 <div class="text-xs uppercase tracking-[0.3em] text-white/70">Time remaining</div>
                 <div class="display-font mt-2 text-2xl font-bold" x-text="remaining"></div>
@@ -85,7 +85,7 @@
                 </article>
             @endforeach
 
-            <button type="submit" class="rounded-full bg-slate-900 px-6 py-3 text-sm font-semibold text-white">Submit CBT exam</button>
+            <button type="submit" class="theme-button">Submit CBT exam</button>
         </form>
     </section>
 </x-app-layout>

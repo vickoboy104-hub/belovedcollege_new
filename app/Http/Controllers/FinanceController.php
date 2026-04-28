@@ -43,7 +43,11 @@ class FinanceController extends Controller
             'printable-fee-list',
             'created-fee-items',
             'student-balances',
+            'class-bills',
+            'payment-summary',
             'recent-payments',
+            'overpayment-tracker',
+            'payment-progression',
         ]);
         $activeFinanceRecordsSection = $sections->contains($section) ? $section : 'printable-fee-list';
         $studentSearch = trim((string) $request->string('student_search'));
@@ -215,12 +219,6 @@ class FinanceController extends Controller
             ])->withInput();
         }
 
-        if ((float) $validated['amount'] > (float) $invoice->balance) {
-            return back()->withErrors([
-                'amount' => 'The recorded payment cannot exceed the outstanding invoice balance.',
-            ])->withInput();
-        }
-
         Payment::create([
             'fee_invoice_id' => $invoice->id,
             'student_id' => $invoice->student_id,
@@ -238,7 +236,12 @@ class FinanceController extends Controller
             'paid_at' => now(),
             'recorded_by' => $request->user()->id,
             'note' => $validated['note'] ?? 'Recorded manually at the finance desk.',
-            'payload' => ['source' => 'manual_finance_entry'],
+            'payload' => [
+                'source' => 'manual_finance_entry',
+                'recorded_amount' => (float) $validated['amount'],
+                'invoice_balance_before_payment' => (float) $invoice->balance,
+                'overpayment_amount' => max((float) $validated['amount'] - (float) $invoice->balance, 0),
+            ],
         ]);
 
         $invoice->refresh()->syncBalance();
@@ -277,11 +280,28 @@ class FinanceController extends Controller
             'sessions' => $sessions,
             'terms' => $terms,
             'classFeeCatalog' => $this->buildClassFeeCatalog($classes, $feeItems),
+            'classBillingRows' => $this->buildClassBillingRows($classes, $students, $invoices),
+            'paymentSummary' => $this->buildPaymentSummary($allPayments),
+            'topDebtors' => $this->buildStudentBalanceRows($invoices)->take(6)->values(),
+            'overpaymentRows' => $this->buildOverpaymentRows($invoices),
+            'paymentProgressionRows' => $this->buildPaymentProgressionRows($invoices),
             'financeOverview' => [
                 'outstandingInvoiceCount' => $invoices->where('balance', '>', 0)->count(),
                 'paymentCount' => $allPayments->count(),
                 'outstandingTotal' => (float) $invoices->sum('balance'),
                 'feeItemCount' => $feeItems->count(),
+                'totalBilled' => (float) $invoices->sum('amount_due'),
+                'totalCollected' => (float) $invoices->sum('amount_paid'),
+                'overpaymentTotal' => (float) $invoices->sum(fn (FeeInvoice $invoice) => max((float) $invoice->amount_paid - (float) $invoice->amount_due, 0)),
+                'overpaidStudentCount' => $invoices
+                    ->filter(fn (FeeInvoice $invoice) => (float) $invoice->amount_paid > (float) $invoice->amount_due)
+                    ->pluck('student_id')
+                    ->unique()
+                    ->count(),
+                'studentDebtorCount' => $invoices->where('balance', '>', 0)->pluck('student_id')->unique()->count(),
+                'collectionRate' => (float) ((float) $invoices->sum('amount_due') > 0
+                    ? round(((float) $invoices->sum('amount_paid') / (float) $invoices->sum('amount_due')) * 100, 1)
+                    : 0),
             ],
         ];
     }
@@ -361,5 +381,122 @@ class FinanceController extends Controller
         }
 
         return $rows->sortByDesc('outstanding_total')->values();
+    }
+
+    protected function buildClassBillingRows(Collection $classes, Collection $students, Collection $invoices): Collection
+    {
+        return $classes->map(function (SchoolClass $class) use ($students, $invoices) {
+            $classStudents = $students->where('school_class_id', $class->id);
+            $classStudentIds = $classStudents->pluck('id');
+            $classInvoices = $invoices->whereIn('student_id', $classStudentIds);
+            $expectedTotal = (float) $classInvoices->sum('amount_due');
+            $collectedTotal = (float) $classInvoices->sum('amount_paid');
+            $outstandingTotal = (float) $classInvoices->sum('balance');
+
+            return [
+                'class' => $class,
+                'student_count' => $classStudents->count(),
+                'invoice_count' => $classInvoices->count(),
+                'students_with_debt' => $classInvoices->where('balance', '>', 0)->pluck('student_id')->unique()->count(),
+                'expected_total' => $expectedTotal,
+                'collected_total' => $collectedTotal,
+                'outstanding_total' => $outstandingTotal,
+                'collection_rate' => $expectedTotal > 0 ? round(($collectedTotal / $expectedTotal) * 100, 1) : 0,
+            ];
+        })->sortByDesc('outstanding_total')->values();
+    }
+
+    protected function buildPaymentSummary(Collection $payments): array
+    {
+        $paidPayments = $payments->filter(fn (Payment $payment) => $payment->status === PaymentStatus::Paid)->values();
+        $providerLabels = [
+            'manual' => 'Manual Office',
+            'paystack' => 'Paystack',
+            'palmpay' => 'PalmPay',
+        ];
+
+        $providerBreakdown = collect($providerLabels)
+            ->map(function (string $label, string $provider) use ($paidPayments) {
+                $providerPayments = $paidPayments->filter(fn (Payment $payment) => $payment->provider->value === $provider);
+
+                return [
+                    'label' => $label,
+                    'count' => $providerPayments->count(),
+                    'total' => (float) $providerPayments->sum('amount'),
+                ];
+            })
+            ->values();
+
+        $channelBreakdown = $paidPayments
+            ->groupBy(fn (Payment $payment) => Str::headline((string) ($payment->channel ?: 'Unspecified')))
+            ->map(fn (Collection $group, string $channel) => [
+                'channel' => $channel,
+                'count' => $group->count(),
+                'total' => (float) $group->sum('amount'),
+            ])
+            ->sortByDesc('total')
+            ->values();
+
+        $dailyCollection = $paidPayments
+            ->groupBy(fn (Payment $payment) => optional($payment->paid_at)->format('Y-m-d') ?: 'Unknown')
+            ->map(fn (Collection $group, string $day) => [
+                'day' => $day,
+                'count' => $group->count(),
+                'total' => (float) $group->sum('amount'),
+            ])
+            ->sortByDesc('day')
+            ->take(7)
+            ->values();
+
+        return [
+            'providerBreakdown' => $providerBreakdown,
+            'channelBreakdown' => $channelBreakdown,
+            'dailyCollection' => $dailyCollection,
+        ];
+    }
+
+    protected function buildOverpaymentRows(Collection $invoices): Collection
+    {
+        return $invoices
+            ->filter(fn (FeeInvoice $invoice) => (float) $invoice->amount_paid > (float) $invoice->amount_due)
+            ->map(function (FeeInvoice $invoice) {
+                $overpayment = max((float) $invoice->amount_paid - (float) $invoice->amount_due, 0);
+
+                return [
+                    'invoice' => $invoice,
+                    'student' => $invoice->student,
+                    'overpayment' => $overpayment,
+                    'payment_count' => $invoice->payments->count(),
+                    'last_payment_at' => $invoice->payments->sortByDesc('paid_at')->first()?->paid_at,
+                ];
+            })
+            ->sortByDesc('overpayment')
+            ->values();
+    }
+
+    protected function buildPaymentProgressionRows(Collection $invoices): Collection
+    {
+        return $invoices
+            ->filter(fn (FeeInvoice $invoice) => (float) $invoice->amount_paid > 0 || (float) $invoice->balance > 0)
+            ->map(function (FeeInvoice $invoice) {
+                $amountDue = (float) $invoice->amount_due;
+                $amountPaid = (float) $invoice->amount_paid;
+                $overpayment = max($amountPaid - $amountDue, 0);
+                $progress = $amountDue > 0 ? min(round(($amountPaid / $amountDue) * 100, 1), 100) : 0;
+
+                return [
+                    'invoice' => $invoice,
+                    'student' => $invoice->student,
+                    'progress' => $progress,
+                    'overpayment' => $overpayment,
+                    'last_payment_at' => $invoice->payments->sortByDesc('paid_at')->first()?->paid_at,
+                    'recent_payments' => $invoice->payments
+                        ->sortByDesc('paid_at')
+                        ->take(3)
+                        ->values(),
+                ];
+            })
+            ->sortByDesc(fn (array $row) => (float) $row['invoice']->balance)
+            ->values();
     }
 }

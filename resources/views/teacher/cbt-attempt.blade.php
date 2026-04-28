@@ -10,7 +10,7 @@
         </div>
     </x-slot>
 
-    <div class="grid gap-6 lg:grid-cols-4">
+    <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <div class="stat-tile">
             <div class="text-sm uppercase tracking-[0.24em] text-slate-500">Status</div>
             <div class="display-font mt-3 text-3xl font-bold text-slate-950">{{ ucfirst($attempt->status) }}</div>

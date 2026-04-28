@@ -1,4 +1,15 @@
 <x-app-layout>
+    @php
+        $bankAccounts = collect(range(1, 3))
+            ->map(fn (int $index) => [
+                'bank' => $schoolSettings["bank_name_{$index}"] ?? null,
+                'account_name' => $schoolSettings["account_name_{$index}"] ?? null,
+                'account_number' => $schoolSettings["account_number_{$index}"] ?? null,
+            ])
+            ->filter(fn (array $account) => filled($account['bank']) || filled($account['account_name']) || filled($account['account_number']))
+            ->values();
+    @endphp
+
     <x-slot name="header">
         <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
@@ -18,7 +29,7 @@
         </div>
     </x-slot>
 
-    <div class="grid gap-6 lg:grid-cols-4">
+    <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
         <div class="stat-tile">
             <div class="text-sm uppercase tracking-[0.24em] text-slate-500">Lessons</div>
             <div class="display-font mt-3 text-4xl font-bold text-slate-950">{{ $lessons->count() }}</div>
@@ -292,6 +303,24 @@
             </div>
 
             <div class="space-y-4">
+                @if ($bankAccounts->isNotEmpty() || filled($schoolSettings['payment_instruction'] ?? null))
+                    <div class="rounded-[1.75rem] border border-slate-200 bg-slate-50 px-5 py-5">
+                        <div class="text-xs uppercase tracking-[0.24em] text-slate-500">School transfer details</div>
+                        <div class="mt-4 space-y-3">
+                            @foreach ($bankAccounts as $account)
+                                <div class="rounded-2xl border border-slate-200 bg-white/90 px-4 py-4">
+                                    <div class="font-semibold text-slate-900">{{ $account['bank'] ?: 'School bank account' }}</div>
+                                    <div class="mt-1 text-sm text-slate-600">{{ $account['account_name'] ?: 'Account name pending' }}</div>
+                                    <div class="mt-1 text-sm font-bold text-slate-900">{{ $account['account_number'] ?: 'Account number pending' }}</div>
+                                </div>
+                            @endforeach
+                        </div>
+                        @if (filled($schoolSettings['payment_instruction'] ?? null))
+                            <p class="mt-4 text-sm leading-7 text-slate-600">{{ $schoolSettings['payment_instruction'] }}</p>
+                        @endif
+                    </div>
+                @endif
+
                 @foreach ($payments as $payment)
                     <div class="rounded-2xl border border-slate-200 px-4 py-4">
                         <div class="font-semibold text-slate-900">{{ $payment->provider->label() }}</div>

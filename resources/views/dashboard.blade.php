@@ -8,7 +8,7 @@
                     {{ $schoolSettings['portal_notice'] ?? 'Manage people, academics, fees, assessments, and communication from one school-wide dashboard.' }}
                 </p>
             </div>
-            <div class="rounded-3xl brand-gradient px-6 py-5 text-white shadow-xl shadow-slate-900/10">
+            <div class="rounded-3xl brand-gradient px-5 py-4 text-white shadow-xl shadow-slate-900/10 sm:px-6 sm:py-5">
                 <div class="text-xs uppercase tracking-[0.3em] text-white/70">{{ $user->roleLabel() }}</div>
                 <div class="display-font mt-2 text-2xl font-bold">{{ now()->format('F j, Y') }}</div>
                 <div class="mt-1 text-sm text-white/80">{{ $schoolSettings['school_name'] ?? 'SchoolSphere' }}</div>
@@ -16,7 +16,7 @@
         </div>
     </x-slot>
 
-    <div class="grid gap-6 lg:grid-cols-4">
+    <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
         @foreach ($stats as $stat)
             <div class="stat-tile {{ $stat['accent'] }}">
                 <div class="text-sm uppercase tracking-[0.24em] text-slate-500">{{ $stat['label'] }}</div>
@@ -33,42 +33,19 @@
             </div>
 
             <div class="mt-6 grid gap-4 md:grid-cols-2">
-                <a href="{{ route('dashboard') }}" class="rounded-3xl border border-slate-200 bg-slate-50 px-5 py-5">
-                    <div class="display-font text-lg font-bold text-slate-900">Overview</div>
-                    <p class="mt-2 text-sm text-slate-600">System-wide metrics, announcements, and current operational status.</p>
+                <a href="{{ route('dashboard') }}" class="management-module-card module-tone-school">
+                    <div class="management-module-badge">Dashboard</div>
+                    <h3 class="display-font mt-5 text-2xl font-bold">Overview</h3>
+                    <p class="mt-3 text-sm leading-7 text-slate-700">System-wide metrics, announcements, and current operational status.</p>
                 </a>
 
-                @if ($user->hasAnyRole(['admin', 'principal']))
-                    <a href="{{ route('admin.people') }}" class="rounded-3xl border border-slate-200 bg-slate-50 px-5 py-5">
-                        <div class="display-font text-lg font-bold text-slate-900">People hub</div>
-                        <p class="mt-2 text-sm text-slate-600">Open the student page or staff page and manage each record set separately.</p>
+                @foreach ($quickAccessCards as $card)
+                    <a href="{{ $card['route'] }}" class="management-module-card module-tone-{{ $card['tone'] }}">
+                        <div class="management-module-badge">{{ $card['title'] }}</div>
+                        <h3 class="display-font mt-5 text-2xl font-bold">{{ $card['title'] }}</h3>
+                        <p class="mt-3 text-sm leading-7 text-slate-700">{{ $card['description'] }}</p>
                     </a>
-                    <a href="{{ route('admin.academics') }}" class="rounded-3xl border border-slate-200 bg-slate-50 px-5 py-5">
-                        <div class="display-font text-lg font-bold text-slate-900">Academic structure</div>
-                        <p class="mt-2 text-sm text-slate-600">Sessions, terms, classes, subjects, and public announcements.</p>
-                    </a>
-                @endif
-
-                @if ($user->hasAnyRole(['admin', 'principal', 'accountant']))
-                    <a href="{{ route('admin.finance') }}" class="rounded-3xl border border-slate-200 bg-slate-50 px-5 py-5">
-                        <div class="display-font text-lg font-bold text-slate-900">Fees and payments</div>
-                        <p class="mt-2 text-sm text-slate-600">Create invoices, track school fees, and monitor gateway activity.</p>
-                    </a>
-                @endif
-
-                @if ($user->hasAnyRole(['admin', 'principal', 'teacher']))
-                    <a href="{{ route('teacher.learning') }}" class="rounded-3xl border border-slate-200 bg-slate-50 px-5 py-5">
-                        <div class="display-font text-lg font-bold text-slate-900">Teaching workspace</div>
-                        <p class="mt-2 text-sm text-slate-600">Publish lessons, set assignments, grade work, and submit results.</p>
-                    </a>
-                @endif
-
-                @if ($user->hasAnyRole(['student', 'parent']))
-                    <a href="{{ route('portal.index') }}" class="rounded-3xl border border-slate-200 bg-slate-50 px-5 py-5">
-                        <div class="display-font text-lg font-bold text-slate-900">Student portal</div>
-                        <p class="mt-2 text-sm text-slate-600">Access learning materials, results, attendance, and fees from one place.</p>
-                    </a>
-                @endif
+                @endforeach
             </div>
         </section>
 
@@ -87,4 +64,50 @@
             </div>
         </section>
     </div>
+
+    @if ($financeSnapshot)
+        <section class="section-card mt-8">
+            <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
+                <div>
+                    <div class="text-xs uppercase tracking-[0.24em] text-slate-500">School finance board</div>
+                    <h2 class="display-font mt-2 text-2xl font-bold text-slate-950">Operational payment picture</h2>
+                </div>
+                <a href="{{ route('admin.finance.records', ['section' => 'payment-summary']) }}" class="theme-button-secondary">Open finance records</a>
+            </div>
+
+            <div class="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                <div class="rounded-[1.75rem] border border-slate-200 bg-slate-50 px-5 py-5">
+                    <div class="text-xs uppercase tracking-[0.22em] text-slate-500">Students</div>
+                    <div class="display-font mt-3 text-3xl font-bold text-slate-950">{{ $financeSnapshot['students'] }}</div>
+                    <div class="mt-2 text-sm text-slate-500">{{ $financeSnapshot['classes'] }} class{{ $financeSnapshot['classes'] === 1 ? '' : 'es' }}</div>
+                </div>
+                <div class="rounded-[1.75rem] border border-slate-200 bg-slate-50 px-5 py-5">
+                    <div class="text-xs uppercase tracking-[0.22em] text-slate-500">Total billed</div>
+                    <div class="display-font mt-3 text-3xl font-bold text-slate-950">NGN {{ number_format((float) $financeSnapshot['totalBilled'], 2) }}</div>
+                </div>
+                <div class="rounded-[1.75rem] border border-slate-200 bg-slate-50 px-5 py-5">
+                    <div class="text-xs uppercase tracking-[0.22em] text-slate-500">Total collected</div>
+                    <div class="display-font mt-3 text-3xl font-bold text-slate-950">NGN {{ number_format((float) $financeSnapshot['totalCollected'], 2) }}</div>
+                </div>
+                <div class="rounded-[1.75rem] border border-slate-200 bg-slate-50 px-5 py-5">
+                    <div class="text-xs uppercase tracking-[0.22em] text-slate-500">Outstanding / debtors</div>
+                    <div class="display-font mt-3 text-3xl font-bold text-slate-950">NGN {{ number_format((float) $financeSnapshot['outstanding'], 2) }}</div>
+                    <div class="mt-2 text-sm text-slate-500">{{ $financeSnapshot['debtorStudents'] }} student{{ $financeSnapshot['debtorStudents'] === 1 ? '' : 's' }} owing</div>
+                </div>
+            </div>
+
+            <div class="mt-5 rounded-[1.75rem] border border-slate-200 bg-white/80 px-5 py-5">
+                <div class="flex items-end justify-between gap-4">
+                    <div>
+                        <div class="text-xs uppercase tracking-[0.22em] text-slate-500">Collection rate</div>
+                        <div class="display-font mt-2 text-3xl font-bold text-slate-950">{{ number_format((float) $financeSnapshot['collectionRate'], 1) }}%</div>
+                    </div>
+                    <a href="{{ route('admin.finance.records', ['section' => 'class-bills']) }}" class="text-sm font-semibold text-[color:var(--theme-primary)]">View class billing</a>
+                </div>
+                <div class="mt-4 h-3 overflow-hidden rounded-full bg-slate-200">
+                    <div class="h-full rounded-full" style="width: {{ min(100, max(0, (float) $financeSnapshot['collectionRate'])) }}%; background: linear-gradient(135deg, var(--theme-primary), var(--theme-accent));"></div>
+                </div>
+            </div>
+        </section>
+    @endif
 </x-app-layout>

@@ -9,39 +9,41 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 <body class="antialiased">
-    <div class="site-page-shell min-h-screen">
+    <div class="site-page-shell app-shell min-h-screen">
         @include('partials.admin-background')
 
         @include('layouts.navigation')
 
-        @isset($header)
-            <header class="mx-auto mt-4 max-w-7xl px-4 sm:mt-6 sm:px-6 lg:px-8">
-                <div class="mesh-card app-header-card">
-                    {{ $header }}
-                </div>
-            </header>
-        @endisset
+        <div class="app-content-shell">
+            @isset($header)
+                <header class="app-content-inner mx-auto mt-3 w-full px-3 sm:mt-4 sm:px-4 lg:px-6">
+                    <div class="mesh-card app-header-card">
+                        {{ $header }}
+                    </div>
+                </header>
+            @endisset
 
-        <main class="mx-auto max-w-7xl px-4 py-5 sm:px-6 sm:py-8 lg:px-8">
-            @if (session('status'))
-                <div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
-                    {{ session('status') }}
-                </div>
-            @endif
+            <main class="app-content-inner app-main mx-auto w-full px-3 py-4 sm:px-4 sm:py-4 lg:px-6">
+                @if (session('status'))
+                    <div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
+                        {{ session('status') }}
+                    </div>
+                @endif
 
-            @if ($errors->any())
-                <div class="mb-6 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
-                    <div class="font-semibold">Please review the form.</div>
-                    <ul class="mt-2 list-disc ps-5">
-                        @foreach ($errors->all() as $error)
-                            <li>{{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            @endif
+                @if ($errors->any())
+                    <div class="mb-6 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
+                        <div class="font-semibold">Please review the form.</div>
+                        <ul class="mt-2 list-disc ps-5">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
 
-            {{ $slot }}
-        </main>
+                {{ $slot }}
+            </main>
+        </div>
     </div>
 </body>
 </html>

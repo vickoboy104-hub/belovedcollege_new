@@ -22,6 +22,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
@@ -69,8 +70,14 @@ class AdminController extends Controller
             'hero_slide_1_title' => ['nullable', 'string', 'max:255'], 'hero_slide_1_text' => ['nullable', 'string', 'max:1000'], 'hero_slide_2_title' => ['nullable', 'string', 'max:255'], 'hero_slide_2_text' => ['nullable', 'string', 'max:1000'], 'hero_slide_3_title' => ['nullable', 'string', 'max:255'], 'hero_slide_3_text' => ['nullable', 'string', 'max:1000'], 'hero_slide_4_title' => ['nullable', 'string', 'max:255'], 'hero_slide_4_text' => ['nullable', 'string', 'max:1000'],
             'paystack_public_key' => ['nullable', 'string', 'max:255'], 'paystack_secret_key' => ['nullable', 'string', 'max:255'], 'paystack_webhook_secret' => ['nullable', 'string', 'max:255'],
             'palmpay_merchant_id' => ['nullable', 'string', 'max:255'], 'palmpay_app_id' => ['nullable', 'string', 'max:255'], 'palmpay_public_key' => ['nullable', 'string', 'max:5000'], 'palmpay_private_key' => ['nullable', 'string', 'max:5000'], 'palmpay_webhook_secret' => ['nullable', 'string', 'max:255'], 'palmpay_checkout_url' => ['nullable', 'url', 'max:500'],
+            'payment_instruction' => ['nullable', 'string', 'max:2000'],
             'hero_intro_background_opacity' => ['nullable', 'numeric', 'min:0', 'max:100'],
         ];
+        foreach (range(1, 3) as $i) {
+            $rules["bank_name_{$i}"] = ['nullable', 'string', 'max:255'];
+            $rules["account_name_{$i}"] = ['nullable', 'string', 'max:255'];
+            $rules["account_number_{$i}"] = ['nullable', 'string', 'max:50'];
+        }
         foreach ([
             'logo_file','favicon_file','hero_background_video_poster','hero_intro_background_image','welcome_popup_image','hero_slide_1_image','hero_slide_2_image','hero_slide_3_image','hero_slide_4_image','gallery_image_1','gallery_image_2','gallery_image_3','gallery_image_4','admin_background_image','site_background_1','site_background_2','site_background_3','section_background_1','section_background_2','section_background_3','quick_intro_background_image','academic_section_background_image','founders_background_image','gallery_section_background_image','news_section_background_image'
         ] as $imageKey) $rules[$imageKey] = ['nullable','image','max:51200'];
@@ -91,13 +98,97 @@ class AdminController extends Controller
 
     public function people(Request $request): View
     {
-        return view('admin.people');
+        $studentCount = Student::count();
+        $staffCount = StaffProfile::count();
+        $parentCount = Student::query()->whereNotNull('parent_user_id')->distinct()->count('parent_user_id');
+        $classCount = SchoolClass::count();
+
+        return view('admin.people', compact('studentCount', 'staffCount', 'parentCount', 'classCount'));
+    }
+
+    public function parents(Request $request): View
+    {
+        $search = trim((string) $request->string('search'));
+        $students = Student::query()
+            ->with('user', 'parent', 'schoolClass')
+            ->whereNotNull('parent_user_id')
+            ->get();
+
+        $parentRows = $students
+            ->groupBy('parent_user_id')
+            ->map(function ($group) {
+                /** @var \App\Models\Student $primaryStudent */
+                $primaryStudent = $group->first();
+                $parent = $primaryStudent->parent;
+                $children = $group
+                    ->sortBy(fn (Student $student) => $student->user->fullName())
+                    ->values();
+
+                return [
+                    'parent' => $parent,
+                    'children' => $children,
+                    'child_count' => $children->count(),
+                    'class_names' => $children
+                        ->map(fn (Student $student) => $student->schoolClass->display_name ?? 'No class')
+                        ->unique()
+                        ->values(),
+                ];
+            })
+            ->filter(fn (array $row) => $row['parent'])
+            ->values();
+
+        if ($search !== '') {
+            $needle = Str::lower($search);
+
+            $parentRows = $parentRows->filter(function (array $row) use ($needle) {
+                $parent = $row['parent'];
+                $children = $row['children'];
+                $haystack = Str::lower(implode(' ', array_filter([
+                    $parent->fullName(),
+                    $parent->email,
+                    $parent->phone,
+                    $children->pluck('user.name')->implode(' '),
+                    $children->pluck('admission_no')->implode(' '),
+                    $row['class_names']->implode(' '),
+                ])));
+
+                return str_contains($haystack, $needle);
+            })->values();
+        }
+
+        $summary = [
+            'linkedParents' => $parentRows->count(),
+            'childrenCovered' => $parentRows->sum('child_count'),
+            'multiChildFamilies' => $parentRows->filter(fn (array $row) => $row['child_count'] > 1)->count(),
+            'studentsWithoutPortalParent' => Student::query()->whereNull('parent_user_id')->count(),
+        ];
+
+        return view('admin.parents', compact('parentRows', 'search', 'summary'));
     }
 
     public function students(Request $request, ?string $classSlug = null): View
     {
         $search = trim((string) $request->string('search'));
+        $studentViews = collect([
+            'directory',
+            'new-students',
+            'inactive',
+            'siblings',
+            'debtors',
+            'class-bills',
+        ]);
+        $activeStudentView = $studentViews->contains($request->string('view')->toString())
+            ? $request->string('view')->toString()
+            : 'directory';
         $classes = SchoolClass::orderBy('name')->orderBy('section')->get();
+        $allStudents = Student::with([
+            'user',
+            'schoolClass',
+            'parent',
+            'academicSession',
+            'feeInvoices.feeItem',
+            'feeInvoices.payments',
+        ])->get();
         $activeClass = null;
 
         if ($classSlug && $classSlug !== 'all' && $classSlug !== 'unassigned') {
@@ -105,22 +196,25 @@ class AdminController extends Controller
             abort_unless($activeClass, 404);
         }
 
-        $students = Student::with('user', 'schoolClass', 'parent')
-            ->when($activeClass, fn ($q) => $q->where('school_class_id', $activeClass->id))
-            ->when($classSlug === 'unassigned', fn ($q) => $q->whereNull('school_class_id'))
-            ->get();
+        $students = $allStudents
+            ->when($activeClass, fn (Collection $rows) => $rows->where('school_class_id', $activeClass->id))
+            ->when($classSlug === 'unassigned', fn (Collection $rows) => $rows->whereNull('school_class_id'))
+            ->values();
 
         if ($search !== '') {
-            $students = $students->filter(fn ($s) => str_contains(strtolower(($s->user->fullName().' '.$s->user->email.' '.$s->admission_no.' '.$s->student_id_no)), strtolower($search)));
+            $students = $students
+                ->filter(fn (Student $student) => $this->matchesStudentSearch($student, $search))
+                ->values();
         }
+
         $studentGroups = $students->groupBy(fn ($s) => $s->schoolClass->display_name ?? 'Unassigned');
         $classDirectory = $studentGroups->map(fn ($group, $name) => ['name' => $name, 'count' => $group->count()])->values();
         $classNavItems = collect([
-            ['key' => 'all', 'label' => 'All Students', 'href' => route('admin.students.index')],
+            ['key' => 'all', 'label' => 'All Students', 'href' => route('admin.students.index', ['view' => $activeStudentView])],
             ...$classes->map(fn (SchoolClass $class) => [
                 'key' => $class->slug,
                 'label' => $class->display_name,
-                'href' => route('admin.students.index', ['classSlug' => $class->slug]),
+                'href' => route('admin.students.index', ['classSlug' => $class->slug, 'view' => $activeStudentView]),
             ])->all(),
         ]);
 
@@ -128,28 +222,137 @@ class AdminController extends Controller
             $classNavItems->push([
                 'key' => 'unassigned',
                 'label' => 'Unassigned',
-                'href' => route('admin.students.index', ['classSlug' => 'unassigned']),
+                'href' => route('admin.students.index', ['classSlug' => 'unassigned', 'view' => $activeStudentView]),
             ]);
         }
 
-        $activeStudentClassPage = $activeClass?->slug ?? ($classSlug === 'unassigned' ? 'unassigned' : 'all');
-        $pageTitle = $activeClass?->display_name ?? ($classSlug === 'unassigned' ? 'Unassigned Students' : 'All Students');
+        $studentOfficeNavItems = [
+            ['key' => 'directory', 'label' => 'Directory', 'href' => route('admin.students.index', ['classSlug' => $classSlug, 'view' => 'directory'])],
+            ['key' => 'new-students', 'label' => 'New Students', 'href' => route('admin.students.index', ['classSlug' => $classSlug, 'view' => 'new-students'])],
+            ['key' => 'inactive', 'label' => 'Inactive', 'href' => route('admin.students.index', ['classSlug' => $classSlug, 'view' => 'inactive'])],
+            ['key' => 'siblings', 'label' => 'Siblings', 'href' => route('admin.students.index', ['classSlug' => $classSlug, 'view' => 'siblings'])],
+            ['key' => 'debtors', 'label' => 'Debtors', 'href' => route('admin.students.index', ['classSlug' => $classSlug, 'view' => 'debtors'])],
+            ['key' => 'class-bills', 'label' => 'Class Bills', 'href' => route('admin.students.index', ['classSlug' => $classSlug, 'view' => 'class-bills'])],
+        ];
 
-        return view('admin.students', compact('students', 'classes', 'search', 'studentGroups', 'classDirectory', 'classNavItems', 'activeStudentClassPage', 'pageTitle'));
+        $currentSessionId = AcademicSession::query()->where('is_current', true)->value('id');
+        $newStudents = $allStudents
+            ->filter(fn (Student $student) => $this->isNewStudent($student, $currentSessionId))
+            ->when($search !== '', fn (Collection $rows) => $rows->filter(fn (Student $student) => $this->matchesStudentSearch($student, $search)))
+            ->sortByDesc(fn (Student $student) => optional($student->enrolled_at)->timestamp ?? $student->created_at?->timestamp ?? 0)
+            ->values();
+        $inactiveStudents = $allStudents
+            ->filter(fn (Student $student) => ($student->status ?? $student->user->status) === 'inactive')
+            ->when($search !== '', fn (Collection $rows) => $rows->filter(fn (Student $student) => $this->matchesStudentSearch($student, $search)))
+            ->values();
+        $siblingRows = $this->buildSiblingRows($allStudents, $search);
+        $studentDebtorRows = $this->buildStudentDebtorRows($allStudents, $search);
+        $studentClassBillingRows = $this->buildStudentClassBillingRows($classes, $allStudents);
+        $studentWorkspaceStats = [
+            'total' => $allStudents->count(),
+            'active' => $allStudents->where('status', 'active')->count(),
+            'new' => $allStudents->filter(fn (Student $student) => $this->isNewStudent($student, $currentSessionId))->count(),
+            'inactive' => $allStudents->where('status', 'inactive')->count(),
+            'sibling_families' => $allStudents->whereNotNull('parent_user_id')->groupBy('parent_user_id')->filter(fn (Collection $group) => $group->count() > 1)->count(),
+            'debtors' => $this->buildStudentDebtorRows($allStudents)->count(),
+        ];
+
+        $activeStudentClassPage = $activeClass?->slug ?? ($classSlug === 'unassigned' ? 'unassigned' : 'all');
+        $pageTitle = match ($activeStudentView) {
+            'new-students' => 'Newly Registered Students',
+            'inactive' => 'Inactive Students',
+            'siblings' => 'Sibling Groups',
+            'debtors' => 'Student Debtors',
+            'class-bills' => 'Student Class Billing',
+            default => $activeClass?->display_name ?? ($classSlug === 'unassigned' ? 'Unassigned Students' : 'All Students'),
+        };
+
+        return view('admin.students', compact(
+            'students',
+            'classes',
+            'search',
+            'studentGroups',
+            'classDirectory',
+            'classNavItems',
+            'activeStudentClassPage',
+            'pageTitle',
+            'activeStudentView',
+            'studentOfficeNavItems',
+            'studentWorkspaceStats',
+            'newStudents',
+            'inactiveStudents',
+            'siblingRows',
+            'studentDebtorRows',
+            'studentClassBillingRows',
+        ));
     }
 
     public function staff(Request $request): View
     {
-        $search = trim((string) $request->string('search')); $departmentFilter = trim((string) $request->string('department'));
-        $staff = StaffProfile::with('user.managedClasses')->when($departmentFilter !== '', fn ($q) => $q->where('department', $departmentFilter))->get();
+        $search = trim((string) $request->string('search'));
+        $departmentFilter = trim((string) $request->string('department'));
+        $staffViews = collect(['directory', 'payroll', 'class-allocation']);
+        $activeStaffView = $staffViews->contains($request->string('view')->toString())
+            ? $request->string('view')->toString()
+            : 'directory';
+        $allStaff = StaffProfile::with('user.managedClasses')->get();
+        $staff = $allStaff->when($departmentFilter !== '', fn (Collection $rows) => $rows->where('department', $departmentFilter))->values();
         if ($search !== '') {
-            $staff = $staff->filter(fn ($p) => str_contains(strtolower(($p->user->fullName().' '.$p->user->email.' '.$p->employee_no.' '.$p->department)), strtolower($search)));
+            $staff = $staff->filter(fn (StaffProfile $profile) => $this->matchesStaffSearch($profile, $search))->values();
         }
         $staffGroups = $staff->groupBy(fn ($p) => $p->department ?: 'General');
         $departmentDirectory = $staffGroups->map(fn ($group, $name) => ['name' => $name, 'count' => $group->count()])->values();
         $departmentOptions = StaffProfile::query()->whereNotNull('department')->where('department','!=','')->distinct()->orderBy('department')->pluck('department');
+        $staffOfficeNavItems = [
+            ['key' => 'directory', 'label' => 'Directory', 'href' => route('admin.staff.index', ['department' => $departmentFilter ?: null, 'view' => 'directory'])],
+            ['key' => 'payroll', 'label' => 'Payroll', 'href' => route('admin.staff.index', ['department' => $departmentFilter ?: null, 'view' => 'payroll'])],
+            ['key' => 'class-allocation', 'label' => 'Class Allocation', 'href' => route('admin.staff.index', ['department' => $departmentFilter ?: null, 'view' => 'class-allocation'])],
+        ];
+        $payrollRows = $staff
+            ->groupBy(fn (StaffProfile $profile) => $profile->department ?: 'General')
+            ->map(fn (Collection $group, string $department) => [
+                'department' => $department,
+                'staff_count' => $group->count(),
+                'staff_with_salary' => $group->filter(fn (StaffProfile $profile) => (float) $profile->salary > 0)->count(),
+                'monthly_total' => (float) $group->sum(fn (StaffProfile $profile) => (float) $profile->salary),
+                'average_salary' => $group->filter(fn (StaffProfile $profile) => (float) $profile->salary > 0)->count() > 0
+                    ? round($group->filter(fn (StaffProfile $profile) => (float) $profile->salary > 0)->avg('salary'), 2)
+                    : 0,
+                'profiles' => $group->sortBy(fn (StaffProfile $profile) => $profile->user->fullName())->values(),
+            ])
+            ->sortByDesc('monthly_total')
+            ->values();
+        $classAllocationRows = SchoolClass::with('classTeacher.staffProfile')
+            ->orderBy('name')
+            ->orderBy('section')
+            ->get()
+            ->map(fn (SchoolClass $class) => [
+                'class' => $class,
+                'teacher' => $class->classTeacher,
+                'department' => $class->classTeacher?->staffProfile?->department,
+                'designation' => $class->classTeacher?->staffProfile?->designation,
+            ]);
+        $staffWorkspaceStats = [
+            'staff_count' => $allStaff->count(),
+            'active_count' => $allStaff->where('status', 'active')->count(),
+            'salary_count' => $allStaff->filter(fn (StaffProfile $profile) => (float) $profile->salary > 0)->count(),
+            'monthly_total' => (float) $allStaff->sum(fn (StaffProfile $profile) => (float) $profile->salary),
+            'class_teachers' => $classAllocationRows->filter(fn (array $row) => $row['teacher'] !== null)->count(),
+        ];
 
-        return view('admin.staff', compact('staff', 'search', 'staffGroups', 'departmentDirectory', 'departmentFilter', 'departmentOptions'));
+        return view('admin.staff', compact(
+            'staff',
+            'search',
+            'staffGroups',
+            'departmentDirectory',
+            'departmentFilter',
+            'departmentOptions',
+            'activeStaffView',
+            'staffOfficeNavItems',
+            'payrollRows',
+            'classAllocationRows',
+            'staffWorkspaceStats',
+        ));
     }
 
     public function showStudent(Request $request, Student $student): View { $student->loadMissing('user', 'parent', 'schoolClass', 'academicSession'); return view('admin.student-profile', ['student' => $student, 'classes' => SchoolClass::orderBy('name')->get(), 'terms' => Term::with('academicSession')->latest('start_date')->get(), 'filters' => $this->studentRedirectParameters($request->all())]); }
@@ -185,7 +388,7 @@ class AdminController extends Controller
             'first_name' => ['required', 'string', 'max:255'], 'middle_name' => ['nullable', 'string', 'max:255'], 'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', 'unique:users,email'], 'phone' => ['nullable', 'string', 'max:255'], 'password' => ['nullable', 'string', 'min:8'],
             'role' => ['required', Rule::in(['teacher','principal','accountant','admin'])], 'employee_no' => ['nullable', 'string', 'max:255', 'unique:staff_profiles,employee_no'],
-            'department' => ['nullable', 'string', 'max:255'], 'designation' => ['nullable', 'string', 'max:255'], 'qualification' => ['nullable', 'string', 'max:255'], 'hire_date' => ['nullable', 'date'], 'passport_photo' => ['nullable', 'image', 'max:51200'],
+            'department' => ['nullable', 'string', 'max:255'], 'designation' => ['nullable', 'string', 'max:255'], 'qualification' => ['nullable', 'string', 'max:255'], 'hire_date' => ['nullable', 'date'], 'salary' => ['nullable', 'numeric', 'min:0'], 'passport_photo' => ['nullable', 'image', 'max:51200'],
         ]);
 
         $name = $this->buildFullName($data['first_name'], $data['middle_name'] ?? null, $data['last_name']);
@@ -227,7 +430,7 @@ class AdminController extends Controller
             'first_name' => ['required', 'string', 'max:255'], 'middle_name' => ['nullable', 'string', 'max:255'], 'last_name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users','email')->ignore($staffProfile->user_id)], 'phone' => ['nullable', 'string', 'max:255'],
             'role' => ['required', Rule::in(['teacher','principal','accountant','admin'])], 'employee_no' => ['required', 'string', 'max:255', Rule::unique('staff_profiles','employee_no')->ignore($staffProfile->id)],
-            'department' => ['nullable', 'string', 'max:255'], 'designation' => ['nullable', 'string', 'max:255'], 'qualification' => ['nullable', 'string', 'max:255'], 'hire_date' => ['nullable', 'date'], 'passport_photo' => ['nullable', 'image', 'max:51200'], 'status' => ['nullable', 'string', 'max:255'],
+            'department' => ['nullable', 'string', 'max:255'], 'designation' => ['nullable', 'string', 'max:255'], 'qualification' => ['nullable', 'string', 'max:255'], 'hire_date' => ['nullable', 'date'], 'salary' => ['nullable', 'numeric', 'min:0'], 'passport_photo' => ['nullable', 'image', 'max:51200'], 'status' => ['nullable', 'string', 'max:255'],
         ]);
 
         $name = $this->buildFullName($data['first_name'], $data['middle_name'] ?? null, $data['last_name']);
@@ -529,6 +732,133 @@ class AdminController extends Controller
         return collect([$firstName, $middleName, $lastName])->filter()->implode(' ');
     }
 
+    protected function isNewStudent(Student $student, ?int $currentSessionId): bool
+    {
+        if ($currentSessionId !== null && (int) $student->academic_session_id === (int) $currentSessionId) {
+            return true;
+        }
+
+        $enrolledAt = $student->enrolled_at ?? $student->created_at;
+
+        return $enrolledAt !== null && $enrolledAt->gte(now()->subDays(90));
+    }
+
+    protected function matchesStudentSearch(Student $student, string $search): bool
+    {
+        $needle = Str::lower($search);
+        $haystack = Str::lower(implode(' ', array_filter([
+            $student->user->fullName(),
+            $student->user->email,
+            $student->admission_no,
+            $student->student_id_no,
+            $student->schoolClass->display_name ?? null,
+            $student->parent?->fullName() ?? $student->parent?->name ?? null,
+        ])));
+
+        return str_contains($haystack, $needle);
+    }
+
+    protected function matchesStaffSearch(StaffProfile $profile, string $search): bool
+    {
+        $needle = Str::lower($search);
+        $haystack = Str::lower(implode(' ', array_filter([
+            $profile->user->fullName(),
+            $profile->user->email,
+            $profile->employee_no,
+            $profile->department,
+            $profile->designation,
+            $profile->user->roleLabel(),
+        ])));
+
+        return str_contains($haystack, $needle);
+    }
+
+    protected function buildSiblingRows(Collection $students, string $search = ''): Collection
+    {
+        $rows = $students
+            ->whereNotNull('parent_user_id')
+            ->groupBy('parent_user_id')
+            ->filter(fn (Collection $group) => $group->count() > 1)
+            ->map(function (Collection $group) {
+                /** @var Student $primary */
+                $primary = $group->first();
+
+                return [
+                    'parent' => $primary->parent,
+                    'students' => $group->sortBy(fn (Student $student) => $student->user->fullName())->values(),
+                    'family_size' => $group->count(),
+                    'class_names' => $group->map(fn (Student $student) => $student->schoolClass->display_name ?? 'Unassigned')->unique()->values(),
+                ];
+            })
+            ->values();
+
+        if ($search !== '') {
+            $needle = Str::lower($search);
+            $rows = $rows->filter(function (array $row) use ($needle) {
+                $haystack = Str::lower(implode(' ', array_filter([
+                    $row['parent']?->fullName() ?? $row['parent']?->name,
+                    $row['parent']?->email,
+                    $row['students']->pluck('user.name')->implode(' '),
+                    $row['students']->pluck('admission_no')->implode(' '),
+                    $row['class_names']->implode(' '),
+                ])));
+
+                return str_contains($haystack, $needle);
+            })->values();
+        }
+
+        return $rows;
+    }
+
+    protected function buildStudentDebtorRows(Collection $students, string $search = ''): Collection
+    {
+        $rows = $students->map(function (Student $student) {
+            $outstandingTotal = (float) $student->feeInvoices->sum('balance');
+            $paidTotal = (float) $student->feeInvoices->sum('amount_paid');
+            $overpaymentTotal = (float) $student->feeInvoices->sum(fn (FeeInvoice $invoice) => max((float) $invoice->amount_paid - (float) $invoice->amount_due, 0));
+
+            return [
+                'student' => $student,
+                'invoice_count' => $student->feeInvoices->count(),
+                'outstanding_total' => $outstandingTotal,
+                'paid_total' => $paidTotal,
+                'overpayment_total' => $overpaymentTotal,
+                'items' => $student->feeInvoices
+                    ->filter(fn (FeeInvoice $invoice) => (float) $invoice->balance > 0)
+                    ->sortByDesc('balance')
+                    ->values(),
+            ];
+        })->filter(fn (array $row) => $row['outstanding_total'] > 0);
+
+        if ($search !== '') {
+            $rows = $rows->filter(fn (array $row) => $this->matchesStudentSearch($row['student'], $search));
+        }
+
+        return $rows->sortByDesc('outstanding_total')->values();
+    }
+
+    protected function buildStudentClassBillingRows(Collection $classes, Collection $students): Collection
+    {
+        return $classes->map(function (SchoolClass $class) use ($students) {
+            $classStudents = $students->where('school_class_id', $class->id);
+            $classInvoices = $classStudents->flatMap(fn (Student $student) => $student->feeInvoices);
+            $expectedTotal = (float) $classInvoices->sum('amount_due');
+            $collectedTotal = (float) $classInvoices->sum('amount_paid');
+            $outstandingTotal = (float) $classInvoices->sum('balance');
+
+            return [
+                'class' => $class,
+                'student_count' => $classStudents->count(),
+                'invoice_count' => $classInvoices->count(),
+                'students_with_debt' => $classInvoices->where('balance', '>', 0)->pluck('student_id')->unique()->count(),
+                'expected_total' => $expectedTotal,
+                'collected_total' => $collectedTotal,
+                'outstanding_total' => $outstandingTotal,
+                'collection_rate' => $expectedTotal > 0 ? round(($collectedTotal / $expectedTotal) * 100, 1) : 0,
+            ];
+        })->sortByDesc('outstanding_total')->values();
+    }
+
     protected function generateTemporaryPassword(): string
     {
         return Str::upper(Str::random(3)).'@'.Str::random(5);
@@ -567,8 +897,8 @@ class AdminController extends Controller
 
     protected function redirectBackToPeople(array $inputs, string $status): RedirectResponse { return redirect()->route('admin.people', $this->peopleRedirectParameters($inputs))->with('status', $status); }
     protected function peopleRedirectParameters(array $inputs): array { $parameters = []; foreach (['search','class_id','department'] as $key) { $value = trim((string) ($inputs[$key] ?? $inputs["redirect_{$key}"] ?? '')); if ($value !== '') $parameters[$key] = $value; } return $parameters; }
-    protected function studentRedirectParameters(array $inputs): array { $parameters = []; foreach (['search','classSlug'] as $key) { $value = trim((string) ($inputs[$key] ?? $inputs["redirect_{$key}"] ?? '')); if ($value !== '') $parameters[$key] = $value; } return $parameters; }
-    protected function staffRedirectParameters(array $inputs): array { $parameters = []; foreach (['search','department'] as $key) { $value = trim((string) ($inputs[$key] ?? $inputs["redirect_{$key}"] ?? '')); if ($value !== '') $parameters[$key] = $value; } return $parameters; }
+    protected function studentRedirectParameters(array $inputs): array { $parameters = []; foreach (['search','classSlug','view'] as $key) { $value = trim((string) ($inputs[$key] ?? $inputs["redirect_{$key}"] ?? '')); if ($value !== '') $parameters[$key] = $value; } return $parameters; }
+    protected function staffRedirectParameters(array $inputs): array { $parameters = []; foreach (['search','department','view'] as $key) { $value = trim((string) ($inputs[$key] ?? $inputs["redirect_{$key}"] ?? '')); if ($value !== '') $parameters[$key] = $value; } return $parameters; }
     protected function redirectBackToStudents(array $inputs, string $status): RedirectResponse { return redirect()->route('admin.students.index', $this->studentRedirectParameters($inputs))->with('status', $status); }
     protected function redirectBackToStaff(array $inputs, string $status): RedirectResponse { return redirect()->route('admin.staff.index', $this->staffRedirectParameters($inputs))->with('status', $status); }
     protected function saveUploadedAsset($file, string $prefix): string { $directory = public_path('uploads/settings'); if (!File::exists($directory)) File::makeDirectory($directory, 0755, true); $filename = Str::slug($prefix).'-'.time().'-'.Str::lower(Str::random(4)).'.'.$file->getClientOriginalExtension(); $file->move($directory, $filename); return 'uploads/settings/'.$filename; }

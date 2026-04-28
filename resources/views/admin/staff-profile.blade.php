@@ -35,6 +35,10 @@
                     <div class="mt-2 font-semibold text-slate-900">{{ $staffProfile->designation ?: 'Not assigned' }}</div>
                 </div>
                 <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
+                    <div class="text-xs uppercase tracking-[0.24em] text-slate-500">Monthly salary</div>
+                    <div class="mt-2 font-semibold text-slate-900">{{ $staffProfile->salary ? 'NGN '.number_format((float) $staffProfile->salary, 2) : 'Not set yet' }}</div>
+                </div>
+                <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4">
                     <div class="text-xs uppercase tracking-[0.24em] text-slate-500">Class teacher account</div>
                     <div class="mt-2 font-semibold text-slate-900">
                         {{ $staffProfile->user->managedClasses->isNotEmpty() ? $staffProfile->user->managedClasses->pluck('display_name')->join(', ') : 'Not assigned to any class yet' }}
@@ -119,6 +123,7 @@
                     <input name="designation" value="{{ old('designation', $staffProfile->designation) }}" placeholder="Designation" class="theme-input" />
                     <input name="qualification" value="{{ old('qualification', $staffProfile->qualification) }}" placeholder="Qualification" class="theme-input" />
                     <input name="hire_date" type="date" value="{{ old('hire_date', optional($staffProfile->hire_date)->format('Y-m-d')) }}" class="theme-input" />
+                    <input name="salary" type="number" step="0.01" min="0" value="{{ old('salary', $staffProfile->salary) }}" placeholder="Monthly salary" class="theme-input" />
                 </div>
 
                 <div x-show="tab === 'access'" x-transition.opacity class="grid gap-4 md:grid-cols-2" style="display: none;">

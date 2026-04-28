@@ -8,6 +8,7 @@ use App\Models\Assignment;
 use App\Models\FeeInvoice;
 use App\Models\Lesson;
 use App\Models\Payment;
+use App\Models\SchoolClass;
 use App\Models\StaffProfile;
 use App\Models\Student;
 use Illuminate\Http\Request;
@@ -69,6 +70,47 @@ class DashboardController extends Controller
             'children' => $children,
         ];
 
-        return view('dashboard', compact('user', 'student', 'stats', 'announcements', 'roleBlocks'));
+        $quickAccessCards = collect();
+        $financeSnapshot = null;
+
+        if ($user->hasAnyRole([UserRole::Admin, UserRole::Principal])) {
+            $quickAccessCards = collect([
+                ['title' => 'School Management', 'description' => 'Sessions, terms, classes, and subjects.', 'route' => route('admin.academics'), 'tone' => 'school'],
+                ['title' => 'Student Management', 'description' => 'Student records, classes, and profiles.', 'route' => route('admin.students.index'), 'tone' => 'student'],
+                ['title' => 'Parents Management', 'description' => 'Guardian contacts and linked children.', 'route' => route('admin.parents.index'), 'tone' => 'parent'],
+                ['title' => 'Bills & Payment', 'description' => 'Invoices, collections, and balances.', 'route' => route('admin.finance'), 'tone' => 'finance'],
+                ['title' => 'Reports', 'description' => 'Scores, publications, and print views.', 'route' => route('admin.reports.index'), 'tone' => 'report'],
+                ['title' => 'Staff Management', 'description' => 'Staff records and departments.', 'route' => route('admin.staff.index'), 'tone' => 'staff'],
+            ]);
+        } elseif ($user->hasAnyRole([UserRole::Accountant])) {
+            $quickAccessCards = collect([
+                ['title' => 'Bills & Payment', 'description' => 'Create invoices and record collections.', 'route' => route('admin.finance'), 'tone' => 'finance'],
+                ['title' => 'Finance Records', 'description' => 'Balances, printable fee lists, and receipts.', 'route' => route('admin.finance.records'), 'tone' => 'report'],
+            ]);
+        } elseif ($user->hasAnyRole([UserRole::Teacher])) {
+            $quickAccessCards = collect([
+                ['title' => 'Teaching Workspace', 'description' => 'Lessons, assignments, attendance, and CBT.', 'route' => route('teacher.learning'), 'tone' => 'school'],
+            ]);
+        } elseif ($user->hasAnyRole([UserRole::Student, UserRole::Parent])) {
+            $quickAccessCards = collect([
+                ['title' => 'Student Portal', 'description' => 'Results, lessons, attendance, and fees.', 'route' => route('portal.index'), 'tone' => 'student'],
+            ]);
+        }
+
+        if ($user->hasAnyRole([UserRole::Admin, UserRole::Principal, UserRole::Accountant])) {
+            $totalBilled = (float) FeeInvoice::sum('amount_due');
+            $totalCollected = (float) FeeInvoice::sum('amount_paid');
+            $financeSnapshot = [
+                'students' => Student::count(),
+                'classes' => SchoolClass::count(),
+                'outstanding' => (float) FeeInvoice::sum('balance'),
+                'debtorStudents' => FeeInvoice::query()->where('balance', '>', 0)->pluck('student_id')->unique()->count(),
+                'totalBilled' => $totalBilled,
+                'totalCollected' => $totalCollected,
+                'collectionRate' => $totalBilled > 0 ? round(($totalCollected / $totalBilled) * 100, 1) : 0,
+            ];
+        }
+
+        return view('dashboard', compact('user', 'student', 'stats', 'announcements', 'roleBlocks', 'quickAccessCards', 'financeSnapshot'));
     }
 }

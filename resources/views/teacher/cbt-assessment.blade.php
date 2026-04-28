@@ -18,7 +18,7 @@
 
     <div class="grid gap-8 xl:grid-cols-[1fr,1.1fr]">
         <section class="section-card">
-            <div class="grid gap-4 sm:grid-cols-2">
+            <div class="grid grid-cols-2 gap-4">
                 <div class="rounded-[1.75rem] border border-slate-200 bg-slate-50 px-5 py-5">
                     <div class="text-xs uppercase tracking-[0.24em] text-slate-500">Question count</div>
                     <div class="display-font mt-3 text-3xl font-bold text-slate-950">{{ $assessment->cbtQuestions->count() }}</div>

@@ -72,7 +72,7 @@
                     <h2 class="display-font mt-2 text-3xl font-bold text-slate-950">{{ $selectedStudent->user->fullName() }}</h2>
                     <p class="mt-2 text-sm text-slate-600">Work on one section at a time for this student. The navigation above switches pages without losing the selected term.</p>
                 </div>
-                <div class="grid gap-3 sm:grid-cols-2">
+                <div class="grid grid-cols-2 gap-3">
                     <div class="stat-tile">
                         <div class="text-sm uppercase tracking-[0.24em] text-slate-500">Subjects</div>
                         <div class="display-font mt-3 text-4xl font-bold text-slate-950">{{ $report->subject_count }}</div>

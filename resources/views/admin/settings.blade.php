@@ -679,6 +679,24 @@
                         </div>
                     </div>
 
+                    <div class="rounded-[2rem] border border-slate-200 p-5">
+                        <div class="font-semibold text-slate-900">School bank accounts</div>
+                        <p class="mt-2 text-sm text-slate-500">Add the school account details you want parents and staff to see for transfer-based payments.</p>
+                        <div class="mt-4 grid gap-4 xl:grid-cols-3">
+                            @foreach (range(1, 3) as $index)
+                                <div class="rounded-[1.5rem] border border-slate-200 bg-slate-50 p-4">
+                                    <div class="text-xs font-semibold uppercase tracking-[0.24em] text-slate-500">Account {{ $index }}</div>
+                                    <div class="mt-3 space-y-3">
+                                        <input name="bank_name_{{ $index }}" value="{{ old("bank_name_{$index}", $settings["bank_name_{$index}"] ?? '') }}" placeholder="Bank name" class="theme-input" />
+                                        <input name="account_name_{{ $index }}" value="{{ old("account_name_{$index}", $settings["account_name_{$index}"] ?? '') }}" placeholder="Account name" class="theme-input" />
+                                        <input name="account_number_{{ $index }}" value="{{ old("account_number_{$index}", $settings["account_number_{$index}"] ?? '') }}" placeholder="Account number" class="theme-input" />
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                        <textarea name="payment_instruction" rows="4" placeholder="Optional payment instruction shown in portal and finance pages" class="theme-input mt-4">{{ old('payment_instruction', $settings['payment_instruction'] ?? '') }}</textarea>
+                    </div>
+
                     <button type="submit" class="theme-button">Save payment settings</button>
                 </form>
             </section>
