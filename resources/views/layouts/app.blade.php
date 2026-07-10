@@ -9,6 +9,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/print.css'])
     @include('partials.theme-overrides')
     <link rel="stylesheet" href="{{ asset('portal-refresh.css') }}?v=20260706-overflow-fix">
+    <link rel="stylesheet" href="{{ asset('ui-stability.css') }}?v=20260710-ui-audit-1">
 </head>
 <body class="antialiased">
     <div class="site-page-shell app-shell min-h-screen">
