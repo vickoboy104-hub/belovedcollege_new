@@ -33,6 +33,8 @@ class AdminController extends Controller
     {
         $sections = collect([
             'website-foundation',
+            'theme-colors',
+            'landing-builder',
             'homepage-media',
             'workspace-backgrounds',
             'site-backgrounds',
@@ -50,6 +52,17 @@ class AdminController extends Controller
             'settings' => Setting::pluck('value', 'key'),
             'messages' => ContactMessage::latest()->take(10)->get(),
             'activeSettingsSection' => $activeSettingsSection,
+            'landingBuilderStats' => [
+                'students' => Student::count(),
+                'staff' => StaffProfile::count(),
+                'classes' => SchoolClass::count(),
+                'news' => Announcement::where('is_published', true)->count(),
+            ],
+            'latestLandingAnnouncements' => Announcement::query()
+                ->where('is_published', true)
+                ->latest('published_at')
+                ->take(4)
+                ->get(),
         ]);
     }
 
@@ -57,6 +70,7 @@ class AdminController extends Controller
     {
         $rules = [
             'group' => ['required', 'string', 'max:100'],
+            'settings_section' => ['nullable', 'string', 'max:100'],
             'school_name' => ['nullable', 'string', 'max:255'], 'motto' => ['nullable', 'string', 'max:255'], 'site_tagline' => ['nullable', 'string', 'max:255'], 'site_subtitle' => ['nullable', 'string', 'max:255'],
             'school_email' => ['nullable', 'email', 'max:255'], 'school_phone' => ['nullable', 'string', 'max:255'], 'school_address' => ['nullable', 'string', 'max:500'],
             'whatsapp_number' => ['nullable', 'string', 'max:255'], 'whatsapp_link' => ['nullable', 'string', 'max:500'], 'contact_email_recipient' => ['nullable', 'email', 'max:255'],
@@ -64,10 +78,49 @@ class AdminController extends Controller
             'mail_username' => ['nullable', 'string', 'max:255'], 'mail_password' => ['nullable', 'string', 'max:255'], 'mail_encryption' => ['nullable', 'string', 'max:50'],
             'mail_from_address' => ['nullable', 'email', 'max:255'], 'mail_from_name' => ['nullable', 'string', 'max:255'], 'principal_name' => ['nullable', 'string', 'max:255'],
             'hero_blurb' => ['nullable', 'string', 'max:1000'], 'portal_notice' => ['nullable', 'string', 'max:1000'],
-            'theme_preset' => ['nullable', 'string', 'max:100'], 'theme_primary' => ['nullable', 'string', 'max:20'], 'theme_secondary' => ['nullable', 'string', 'max:20'], 'theme_accent' => ['nullable', 'string', 'max:20'], 'theme_highlight' => ['nullable', 'string', 'max:20'], 'theme_text' => ['nullable', 'string', 'max:20'], 'top_bar_color' => ['nullable', 'string', 'max:20'],
+            'theme_preset' => ['nullable', Rule::in(['light-corporate', 'dark-corporate', 'colourful-professional', 'custom'])], 'theme_primary' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'], 'theme_secondary' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'], 'theme_accent' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'], 'theme_highlight' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'], 'theme_text' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'], 'theme_surface' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'], 'theme_soft' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'], 'top_bar_color' => ['nullable', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+            'theme_page_bg' => ['nullable', 'string', 'max:50'],
+            'theme_sidebar_bg' => ['nullable', 'string', 'max:50'],
+            'theme_topbar_bg' => ['nullable', 'string', 'max:50'],
+            'theme_sidebar_active' => ['nullable', 'string', 'max:50'],
+            'theme_card_students' => ['nullable', 'string', 'max:50'],
+            'theme_card_staff' => ['nullable', 'string', 'max:50'],
+            'theme_card_invoices' => ['nullable', 'string', 'max:50'],
+            'theme_card_payments' => ['nullable', 'string', 'max:50'],
+            'theme_panel_quick' => ['nullable', 'string', 'max:50'],
+            'theme_card_reg_student' => ['nullable', 'string', 'max:50'],
+            'theme_card_add_parent' => ['nullable', 'string', 'max:50'],
+            'theme_panel_announcements' => ['nullable', 'string', 'max:50'],
+            'theme_card_announcement' => ['nullable', 'string', 'max:50'],
+            'theme_panel_finance' => ['nullable', 'string', 'max:50'],
+            'theme_finance_students' => ['nullable', 'string', 'max:50'],
+            'theme_finance_billed' => ['nullable', 'string', 'max:50'],
+            'theme_finance_collected' => ['nullable', 'string', 'max:50'],
+            'theme_finance_outstanding' => ['nullable', 'string', 'max:50'],
+            'theme_button_bg' => ['nullable', 'string', 'max:50'],
+            'theme_button_text' => ['nullable', 'string', 'max:50'],
+            'theme_icon_bg' => ['nullable', 'string', 'max:50'],
+            'theme_icon_fg' => ['nullable', 'string', 'max:50'],
+            'theme_text_main' => ['nullable', 'string', 'max:50'],
+            'theme_text_heading' => ['nullable', 'string', 'max:50'],
+            'theme_text_muted' => ['nullable', 'string', 'max:50'],
+            'theme_text_dark_card' => ['nullable', 'string', 'max:50'],
+            'theme_text_light_bg' => ['nullable', 'string', 'max:50'],
+            'theme_sidebar_text' => ['nullable', 'string', 'max:50'],
+            'theme_sidebar_active_text' => ['nullable', 'string', 'max:50'],
+            'theme_card_title_text' => ['nullable', 'string', 'max:50'],
+            'theme_card_body_text' => ['nullable', 'string', 'max:50'],
+            'theme_table_text' => ['nullable', 'string', 'max:50'],
+            'theme_form_label' => ['nullable', 'string', 'max:50'],
+            'theme_form_placeholder' => ['nullable', 'string', 'max:50'],
+            'theme_badge_text' => ['nullable', 'string', 'max:50'],
+            'theme_link_text' => ['nullable', 'string', 'max:50'],
+            'theme_border' => ['nullable', 'string', 'max:50'],
+            'theme_shadow_strength' => ['nullable', 'string', 'max:50'],
+            'theme_progress_bar' => ['nullable', 'string', 'max:50'],
+            'theme_progress_track' => ['nullable', 'string', 'max:50'],
             'site_background_1_opacity' => ['nullable', 'numeric', 'min:0', 'max:100'], 'site_background_2_opacity' => ['nullable', 'numeric', 'min:0', 'max:100'], 'site_background_3_opacity' => ['nullable', 'numeric', 'min:0', 'max:100'],
-            'welcome_popup_enabled' => ['nullable', 'boolean'], 'welcome_popup_title' => ['nullable', 'string', 'max:255'], 'welcome_popup_text' => ['nullable', 'string', 'max:1000'], 'welcome_popup_button_text' => ['nullable', 'string', 'max:255'], 'welcome_popup_button_link' => ['nullable', 'string', 'max:500'],
-            'hero_slide_1_title' => ['nullable', 'string', 'max:255'], 'hero_slide_1_text' => ['nullable', 'string', 'max:1000'], 'hero_slide_2_title' => ['nullable', 'string', 'max:255'], 'hero_slide_2_text' => ['nullable', 'string', 'max:1000'], 'hero_slide_3_title' => ['nullable', 'string', 'max:255'], 'hero_slide_3_text' => ['nullable', 'string', 'max:1000'], 'hero_slide_4_title' => ['nullable', 'string', 'max:255'], 'hero_slide_4_text' => ['nullable', 'string', 'max:1000'],
+            'welcome_popup_enabled' => ['nullable', 'boolean'], 'landing_use_live_stats' => ['nullable', 'boolean'], 'landing_use_latest_announcements' => ['nullable', 'boolean'], 'landing_show_newsletter' => ['nullable', 'boolean'], 'welcome_popup_title' => ['nullable', 'string', 'max:255'], 'welcome_popup_text' => ['nullable', 'string', 'max:1000'], 'welcome_popup_button_text' => ['nullable', 'string', 'max:255'], 'welcome_popup_button_link' => ['nullable', 'string', 'max:500'],
             'paystack_public_key' => ['nullable', 'string', 'max:255'], 'paystack_secret_key' => ['nullable', 'string', 'max:255'], 'paystack_webhook_secret' => ['nullable', 'string', 'max:255'],
             'palmpay_merchant_id' => ['nullable', 'string', 'max:255'], 'palmpay_app_id' => ['nullable', 'string', 'max:255'], 'palmpay_public_key' => ['nullable', 'string', 'max:5000'], 'palmpay_private_key' => ['nullable', 'string', 'max:5000'], 'palmpay_webhook_secret' => ['nullable', 'string', 'max:255'], 'palmpay_checkout_url' => ['nullable', 'url', 'max:500'],
             'payment_instruction' => ['nullable', 'string', 'max:2000'],
@@ -79,17 +132,71 @@ class AdminController extends Controller
             $rules["account_number_{$i}"] = ['nullable', 'string', 'max:50'];
         }
         foreach ([
-            'logo_file','favicon_file','hero_background_video_poster','hero_intro_background_image','welcome_popup_image','hero_slide_1_image','hero_slide_2_image','hero_slide_3_image','hero_slide_4_image','gallery_image_1','gallery_image_2','gallery_image_3','gallery_image_4','admin_background_image','site_background_1','site_background_2','site_background_3','section_background_1','section_background_2','section_background_3','quick_intro_background_image','academic_section_background_image','founders_background_image','gallery_section_background_image','news_section_background_image'
+            'logo_file','favicon_file','hero_background_video_poster','hero_intro_background_image','welcome_popup_image','hero_slide_1_image','hero_slide_2_image','hero_slide_3_image','hero_slide_4_image','hero_slide_5_image','gallery_image_1','gallery_image_2','gallery_image_3','gallery_image_4','admin_background_image','site_background_1','site_background_2','site_background_3','section_background_1','section_background_2','section_background_3','quick_intro_background_image','academic_section_background_image','founders_background_image','gallery_section_background_image','news_section_background_image'
         ] as $imageKey) $rules[$imageKey] = ['nullable','image','max:51200'];
+        foreach (range(1, 5) as $i) {
+            $rules["hero_slide_{$i}_title"] = ['nullable', 'string', 'max:255'];
+            $rules["hero_slide_{$i}_text"] = ['nullable', 'string', 'max:1000'];
+            $rules["hero_slide_{$i}_video"] = ['nullable', 'file', 'mimes:mp4,webm,mov,m4v', 'max:51200'];
+        }
         $rules['hero_background_video'] = ['nullable','file','mimes:mp4,webm,mov,m4v','max:51200'];
         foreach (range(1,3) as $i) { $rules["hero_highlight_{$i}_text"]=['nullable','string','max:255']; $rules["hero_highlight_{$i}_background"]=['nullable','image','max:51200']; }
         foreach (range(1,4) as $i) { $rules["homepage_stat_{$i}_label"]=['nullable','string','max:255']; $rules["homepage_stat_{$i}_value"]=['nullable','string','max:255']; $rules["homepage_stat_{$i}_background"]=['nullable','image','max:51200']; $rules["home_feature_{$i}_title"]=['nullable','string','max:255']; $rules["home_feature_{$i}_text"]=['nullable','string','max:1000']; $rules["home_feature_{$i}_background"]=['nullable','image','max:51200']; }
         foreach (range(1,6) as $i) { $rules["academic_card_{$i}_title"]=['nullable','string','max:255']; $rules["academic_card_{$i}_text"]=['nullable','string','max:1000']; $rules["academic_card_{$i}_background"]=['nullable','image','max:51200']; }
         foreach (['quick_intro_kicker','quick_intro_title','quick_intro_text_1','quick_intro_text_2','why_choose_kicker','why_choose_title','why_choose_text','why_choose_button_text','why_choose_button_link','academic_section_kicker','academic_section_title','founders_kicker','founders_title','founders_text_1','founders_text_2','founders_values_text','gallery_section_kicker','gallery_section_title','gallery_section_text','news_section_kicker','news_section_title','news_section_empty_text','cta_kicker','cta_title','cta_text','cta_button_text','cta_button_link','cta_phone_label'] as $textKey) $rules[$textKey] = ['nullable','string','max:2000'];
+        foreach (range(1,5) as $i) {
+            foreach (['eyebrow','title','emphasis','text','primary','primary_link','secondary','secondary_link','label'] as $field) {
+                $rules["landing_slide_{$i}_{$field}"] = ['nullable', 'string', 'max:'.(str_contains($field, 'link') ? '500' : '1000')];
+            }
+        }
+        foreach (range(1,4) as $i) {
+            $rules["landing_stat_{$i}_label"] = ['nullable', 'string', 'max:255'];
+            $rules["landing_stat_{$i}_value"] = ['nullable', 'string', 'max:255'];
+            foreach (['month','day','title','text','tag_1','tag_2'] as $field) {
+                $rules["landing_event_{$i}_{$field}"] = ['nullable', 'string', 'max:'.($field === 'text' ? '1000' : '255')];
+            }
+        }
+        foreach (range(1,7) as $i) {
+            foreach (['badge','title','text','link'] as $field) {
+                $rules["landing_program_{$i}_{$field}"] = ['nullable', 'string', 'max:'.($field === 'text' ? '1000' : '500')];
+            }
+        }
+        foreach (range(1,6) as $i) {
+            $rules["landing_gallery_{$i}_label"] = ['nullable', 'string', 'max:255'];
+        }
+        foreach (range(1,3) as $i) {
+            foreach (['initials','name','role','text'] as $field) {
+                $rules["landing_testimonial_{$i}_{$field}"] = ['nullable', 'string', 'max:'.($field === 'text' ? '1000' : '255')];
+            }
+        }
+        foreach ([
+            'landing_admission_kicker','landing_admission_title','landing_admission_text','landing_admission_primary_text','landing_admission_support_text','landing_admission_whatsapp_text',
+            'landing_welcome_kicker','landing_welcome_title','landing_welcome_text_1','landing_welcome_text_2','landing_welcome_profile_button_text',
+            'landing_programs_kicker','landing_programs_title','landing_programs_emphasis','landing_programs_text','landing_programs_button_text',
+            'landing_events_kicker','landing_events_title','landing_events_emphasis','landing_events_sidebar_title','landing_events_sidebar_text','landing_events_sidebar_button_text',
+            'landing_gallery_kicker','landing_gallery_title','landing_gallery_emphasis','landing_gallery_button_text',
+            'landing_testimonials_kicker','landing_testimonials_title','landing_testimonials_emphasis',
+            'landing_newsletter_title','landing_newsletter_text','landing_newsletter_placeholder','landing_newsletter_button_text','landing_newsletter_subscribed_text',
+        ] as $textKey) $rules[$textKey] = ['nullable', 'string', 'max:2000'];
         $validated = $request->validate($rules);
-        $group = $validated['group']; unset($validated['group']); $validated['welcome_popup_enabled'] = $request->boolean('welcome_popup_enabled');
+        $group = $validated['group']; unset($validated['group']);
+        $settingsSection = $validated['settings_section'] ?? null; unset($validated['settings_section']);
+
+        $booleanSections = [
+            'welcome_popup_enabled' => 'welcome-popup',
+            'landing_use_live_stats' => 'landing-builder',
+            'landing_use_latest_announcements' => 'landing-builder',
+            'landing_show_newsletter' => 'landing-builder',
+        ];
+        foreach ($booleanSections as $key => $section) {
+            if ($settingsSection === $section || $request->has($key)) {
+                $validated[$key] = $request->boolean($key);
+            } else {
+                unset($validated[$key]);
+            }
+        }
         $uploadMap = ['logo_file' => 'logo_path', 'favicon_file' => 'favicon_path'];
-        foreach (array_keys($rules) as $key) if (str_contains($key, 'image') || str_contains($key, 'background') || $key === 'hero_background_video') $uploadMap[$key] ??= $key;
+        foreach (array_keys($rules) as $key) if (str_contains($key, 'image') || str_contains($key, 'background') || str_contains($key, 'video')) $uploadMap[$key] ??= $key;
         $uploadMap['hero_background_video_poster'] = 'hero_background_video_poster';
         foreach ($uploadMap as $input => $settingKey) { unset($validated[$input]); if ($request->hasFile($input)) $validated[$settingKey] = $this->saveUploadedAsset($request->file($input), $settingKey); }
         Setting::setMany(array_filter($validated, fn ($value) => $value !== null), $group);
@@ -152,7 +259,12 @@ class AdminController extends Controller
                     $row['class_names']->implode(' '),
                 ])));
 
-                return str_contains($haystack, $needle);
+                foreach (array_filter(explode(' ', $needle)) as $word) {
+                    if (! str_contains($haystack, $word)) {
+                        return false;
+                    }
+                }
+                return true;
             })->values();
         }
 
@@ -168,7 +280,11 @@ class AdminController extends Controller
 
     public function students(Request $request, ?string $classSlug = null): View
     {
+        $classSlug = $classSlug ?: trim((string) $request->string('classSlug'));
+        $classSlug = $classSlug !== '' ? $classSlug : null;
         $search = trim((string) $request->string('search'));
+        $statusFilter = trim((string) $request->string('status'));
+        $billingStatusFilter = trim((string) $request->string('billing_status'));
         $studentViews = collect([
             'directory',
             'new-students',
@@ -201,20 +317,74 @@ class AdminController extends Controller
             ->when($classSlug === 'unassigned', fn (Collection $rows) => $rows->whereNull('school_class_id'))
             ->values();
 
+        if ($statusFilter !== '') {
+            $students = $students
+                ->filter(fn (Student $student) => ($student->status ?? $student->user->status) === $statusFilter)
+                ->values();
+        }
+
+        if ($billingStatusFilter !== '') {
+            $students = $students
+                ->filter(function (Student $student) use ($billingStatusFilter) {
+                    $balance = (float) $student->feeInvoices->sum('balance');
+                    $overpayment = (float) $student->feeInvoices->sum(fn (FeeInvoice $invoice) => max((float) $invoice->amount_paid - (float) $invoice->amount_due, 0));
+
+                    return match ($billingStatusFilter) {
+                        'debtors' => $balance > 0,
+                        'clear' => $balance <= 0,
+                        'overpaid' => $overpayment > 0,
+                        default => true,
+                    };
+                })
+                ->values();
+        }
+
         if ($search !== '') {
             $students = $students
                 ->filter(fn (Student $student) => $this->matchesStudentSearch($student, $search))
                 ->values();
         }
 
+        $studentTotalCount = $students->count();
+        $studentPerPage = 10;
+        $studentPageCount = max(1, (int) ceil($studentTotalCount / $studentPerPage));
+        $studentPage = min(max(1, (int) $request->integer('page', 1)), $studentPageCount);
+        $students = $students->forPage($studentPage, $studentPerPage)->values();
+        $studentShowingFrom = $studentTotalCount > 0 ? (($studentPage - 1) * $studentPerPage) + 1 : 0;
+        $studentShowingTo = min($studentTotalCount, $studentPage * $studentPerPage);
+
         $studentGroups = $students->groupBy(fn ($s) => $s->schoolClass->display_name ?? 'Unassigned');
-        $classDirectory = $studentGroups->map(fn ($group, $name) => ['name' => $name, 'count' => $group->count()])->values();
+        $filterState = array_filter([
+            'view' => $activeStudentView,
+            'search' => $search,
+            'status' => $statusFilter,
+            'billing_status' => $billingStatusFilter,
+        ], fn ($value) => $value !== null && $value !== '');
+        $classDirectory = $classes
+            ->map(fn (SchoolClass $class) => [
+                'key' => $class->slug,
+                'name' => $class->display_name,
+                'count' => $allStudents->where('school_class_id', $class->id)->count(),
+                'href' => route('admin.students.index', ['classSlug' => $class->slug, 'view' => 'directory']),
+            ])
+            ->values();
+        $unassignedCount = $allStudents->whereNull('school_class_id')->count();
+
+        if ($unassignedCount > 0) {
+            $classDirectory->push([
+                'key' => 'unassigned',
+                'name' => 'Unassigned',
+                'count' => $unassignedCount,
+                'href' => route('admin.students.index', ['classSlug' => 'unassigned', 'view' => 'directory']),
+            ]);
+        }
+
         $classNavItems = collect([
-            ['key' => 'all', 'label' => 'All Students', 'href' => route('admin.students.index', ['view' => $activeStudentView])],
+            ['key' => 'all', 'label' => 'All Students', 'href' => route('admin.students.index', $filterState)],
             ...$classes->map(fn (SchoolClass $class) => [
                 'key' => $class->slug,
                 'label' => $class->display_name,
-                'href' => route('admin.students.index', ['classSlug' => $class->slug, 'view' => $activeStudentView]),
+                'href' => route('admin.students.index', ['classSlug' => $class->slug] + $filterState),
             ])->all(),
         ]);
 
@@ -222,17 +392,23 @@ class AdminController extends Controller
             $classNavItems->push([
                 'key' => 'unassigned',
                 'label' => 'Unassigned',
-                'href' => route('admin.students.index', ['classSlug' => 'unassigned', 'view' => $activeStudentView]),
+                'href' => route('admin.students.index', ['classSlug' => 'unassigned'] + $filterState),
             ]);
         }
 
+        $studentContext = array_filter([
+            'classSlug' => $classSlug,
+            'search' => $search,
+            'status' => $statusFilter,
+            'billing_status' => $billingStatusFilter,
+        ], fn ($value) => $value !== null && $value !== '');
         $studentOfficeNavItems = [
-            ['key' => 'directory', 'label' => 'Directory', 'href' => route('admin.students.index', ['classSlug' => $classSlug, 'view' => 'directory'])],
-            ['key' => 'new-students', 'label' => 'New Students', 'href' => route('admin.students.index', ['classSlug' => $classSlug, 'view' => 'new-students'])],
-            ['key' => 'inactive', 'label' => 'Inactive', 'href' => route('admin.students.index', ['classSlug' => $classSlug, 'view' => 'inactive'])],
-            ['key' => 'siblings', 'label' => 'Siblings', 'href' => route('admin.students.index', ['classSlug' => $classSlug, 'view' => 'siblings'])],
-            ['key' => 'debtors', 'label' => 'Debtors', 'href' => route('admin.students.index', ['classSlug' => $classSlug, 'view' => 'debtors'])],
-            ['key' => 'class-bills', 'label' => 'Class Bills', 'href' => route('admin.students.index', ['classSlug' => $classSlug, 'view' => 'class-bills'])],
+            ['key' => 'directory', 'label' => 'Directory', 'href' => route('admin.students.index', $studentContext + ['view' => 'directory'])],
+            ['key' => 'new-students', 'label' => 'New Students', 'href' => route('admin.students.index', $studentContext + ['view' => 'new-students'])],
+            ['key' => 'inactive', 'label' => 'Inactive', 'href' => route('admin.students.index', $studentContext + ['view' => 'inactive'])],
+            ['key' => 'siblings', 'label' => 'Siblings', 'href' => route('admin.students.index', $studentContext + ['view' => 'siblings'])],
+            ['key' => 'debtors', 'label' => 'Debtors', 'href' => route('admin.students.index', $studentContext + ['view' => 'debtors'])],
+            ['key' => 'class-bills', 'label' => 'Class Bills', 'href' => route('admin.students.index', $studentContext + ['view' => 'class-bills'])],
         ];
 
         $currentSessionId = AcademicSession::query()->where('is_current', true)->value('id');
@@ -271,6 +447,14 @@ class AdminController extends Controller
             'students',
             'classes',
             'search',
+            'statusFilter',
+            'billingStatusFilter',
+            'studentTotalCount',
+            'studentPerPage',
+            'studentPage',
+            'studentPageCount',
+            'studentShowingFrom',
+            'studentShowingTo',
             'studentGroups',
             'classDirectory',
             'classNavItems',
@@ -753,9 +937,18 @@ class AdminController extends Controller
             $student->student_id_no,
             $student->schoolClass->display_name ?? null,
             $student->parent?->fullName() ?? $student->parent?->name ?? null,
+            $student->guardian_name,
+            $student->guardian_phone,
+            $student->parent?->phone,
+            $student->user->phone,
         ])));
 
-        return str_contains($haystack, $needle);
+        foreach (array_filter(explode(' ', $needle)) as $word) {
+            if (! str_contains($haystack, $word)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     protected function matchesStaffSearch(StaffProfile $profile, string $search): bool
@@ -770,7 +963,12 @@ class AdminController extends Controller
             $profile->user->roleLabel(),
         ])));
 
-        return str_contains($haystack, $needle);
+        foreach (array_filter(explode(' ', $needle)) as $word) {
+            if (! str_contains($haystack, $word)) {
+                return false;
+            }
+        }
+        return true;
     }
 
     protected function buildSiblingRows(Collection $students, string $search = ''): Collection
@@ -803,7 +1001,12 @@ class AdminController extends Controller
                     $row['class_names']->implode(' '),
                 ])));
 
-                return str_contains($haystack, $needle);
+                foreach (array_filter(explode(' ', $needle)) as $word) {
+                    if (! str_contains($haystack, $word)) {
+                        return false;
+                    }
+                }
+                return true;
             })->values();
         }
 

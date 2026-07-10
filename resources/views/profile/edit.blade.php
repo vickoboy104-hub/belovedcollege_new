@@ -1,31 +1,25 @@
-<x-app-layout>
+<x-portal-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
-            {{ __('Profile') }}
-        </h2>
+        <x-page-header
+            title="My Profile & Settings"
+            eyebrow="Account Settings"
+            description="Manage your account profile information, update your secure password, and configure other personal account details."
+        />
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-profile-information-form')
-                </div>
-            </div>
+    <div class="py-6 max-w-5xl mx-auto space-y-8">
+        {{-- Section 1: Update Profile Details & Security settings side-by-side or stacked cleanly --}}
+        <div class="grid grid-cols-1 lg:grid-cols-1 gap-8">
+            <div class="space-y-8">
+                @include('profile.partials.update-profile-information-form')
 
-            <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                <div class="max-w-xl">
-                    @include('profile.partials.update-password-form')
-                </div>
-            </div>
+                @include('profile.partials.update-password-form')
 
-            @unless ($user->hasAnyRole(\App\Enums\UserRole::Student))
-                <div class="p-4 sm:p-8 bg-white dark:bg-gray-800 shadow sm:rounded-lg">
-                    <div class="max-w-xl">
-                        @include('profile.partials.delete-user-form')
-                    </div>
-                </div>
-            @endunless
+                @unless ($user->hasAnyRole(\App\Enums\UserRole::Student))
+                    @include('profile.partials.delete-user-form')
+                @endunless
+            </div>
         </div>
     </div>
-</x-app-layout>
+</x-portal-layout>
+

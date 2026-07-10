@@ -7,9 +7,27 @@
     <title>{{ $schoolSettings['school_name'] ?? config('app.name', 'BELOVED SCHOOLS') }} | {{ $schoolSettings['site_subtitle'] ?? 'Secondary School Website' }}</title>
     @include('partials.theme-head')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @include('partials.theme-overrides')
+    <link rel="stylesheet" href="{{ asset('portal-refresh.css') }}?v=20260706-overflow-fix">
 </head>
 <body class="antialiased">
-    <div class="site-page-shell">
+    @php
+        $publicNavItems = [
+            ['label' => 'Home', 'route' => 'home'],
+            ['label' => 'About', 'route' => 'about'],
+            ['label' => 'Admissions', 'route' => 'admissions'],
+            ['label' => 'Contact', 'route' => 'contact'],
+        ];
+        $publicAccessItems = auth()->check()
+            ? [
+                ['label' => 'Dashboard', 'route' => 'dashboard', 'strong' => true],
+            ]
+            : [
+                ['label' => 'Student Login', 'route' => 'student.login', 'strong' => false],
+                ['label' => 'Staff Login', 'route' => 'staff.login', 'strong' => true],
+            ];
+    @endphp
+    <div class="site-page-shell public-shell">
         @include('partials.site-background')
 
         <div
@@ -17,47 +35,77 @@
             x-effect="document.body.classList.toggle('overflow-hidden', open)"
             x-on:keydown.escape.window="open = false"
         >
-            <header
-                class="public-topbar fixed inset-x-0 top-0 z-50 border-b"
-                style="background-color: var(--theme-top-bar); border-color: rgba(255, 255, 255, 0.16);"
-            >
-                <div class="public-topbar-row mx-auto flex max-w-7xl items-center justify-start gap-3 px-4 sm:px-6 lg:px-8">
-                    <button
-                        @click="open = !open"
-                        :class="{ 'is-open': open }"
-                        :aria-expanded="open.toString()"
-                        class="hamburger-button rounded-2xl border border-white/25 text-white md:hidden"
-                        aria-label="Toggle public navigation menu"
-                    >
-                        <span class="hamburger-line"></span>
-                        <span class="hamburger-line"></span>
-                        <span class="hamburger-line"></span>
-                    </button>
-
-                    <a href="{{ route('home') }}" class="flex min-w-0 items-center gap-3">
-                        <x-application-logo class="h-10 w-10 shrink-0 sm:h-11 sm:w-11" />
-                        <div class="nav-brand-copy">
-                            <div class="nav-brand-title display-font text-sm font-bold" style="color: #ffffff;">{{ $schoolSettings['school_name'] ?? 'BELOVED SCHOOLS' }}</div>
-                            <div class="nav-brand-subtitle text-xs uppercase tracking-[0.32em]" style="color: rgba(255, 255, 255, 0.86);">{{ $schoolSettings['site_tagline'] ?? 'School Website + SMS + LMS' }}</div>
+            <header class="classic-public-header fixed inset-x-0 top-0 z-50">
+                <div class="classic-topbar">
+                    <div class="classic-topbar__inner mx-auto flex max-w-7xl items-center justify-between gap-4 px-4 sm:px-6 lg:px-8">
+                        <div class="classic-topbar__contacts">
+                            <a href="tel:{{ $schoolSettings['school_phone'] ?? '08067046701' }}">{{ $schoolSettings['school_phone'] ?? '08067046701' }}</a>
+                            <span>{{ $schoolSettings['school_address'] ?? 'Ayeteju Street, Ore, Ondo State' }}</span>
                         </div>
-                    </a>
-
-                    <nav class="public-desktop-nav hidden min-w-0 items-center gap-2 text-sm font-semibold md:flex" style="color: #ffffff;">
-                        <a href="{{ route('about') }}" class="public-nav-pill transition">About</a>
-                        <a href="{{ route('admissions') }}" class="public-nav-pill transition">Admissions</a>
-                        <a href="{{ route('contact') }}" class="public-nav-pill transition">Contact</a>
-                        @auth
-                            <a href="{{ route('dashboard') }}" class="public-nav-pill is-strong transition">Dashboard</a>
-                        @else
-                            <a href="{{ route('student.login') }}" class="public-nav-pill transition">Student Login</a>
-                            <a href="{{ route('staff.login') }}" class="public-nav-pill is-strong transition">Staff Login</a>
-                        @endauth
-                    </nav>
+                        <div class="classic-topbar__links">
+                            @foreach ($publicAccessItems as $item)
+                                <a href="{{ route($item['route']) }}" class="{{ $item['route'] === 'staff.login' ? 'public-staff-login-button' : '' }}">{{ $item['label'] }}</a>
+                            @endforeach
+                        </div>
+                    </div>
                 </div>
+
+                <div class="classic-announce">
+                    <div class="classic-announce__track">
+                        <span>Admissions in progress for the current academic session</span>
+                        <span>Knowledge, discipline, integrity, responsibility, and Godliness</span>
+                        <span>Student and staff portals are open</span>
+                        <span>Admissions in progress for the current academic session</span>
+                        <span>Knowledge, discipline, integrity, responsibility, and Godliness</span>
+                        <span>Student and staff portals are open</span>
+                    </div>
+                </div>
+
+                <nav class="public-topbar border-b">
+                    <div class="public-topbar-row mx-auto flex max-w-7xl items-center gap-3 px-4 sm:px-6 lg:px-8">
+                        <button
+                            @click="open = !open"
+                            :class="{ 'is-open': open }"
+                            :aria-expanded="open.toString()"
+                            class="hamburger-button rounded-xl border border-slate-200 text-slate-900 lg:hidden"
+                            aria-label="Toggle public navigation menu"
+                        >
+                            <span class="hamburger-line"></span>
+                            <span class="hamburger-line"></span>
+                            <span class="hamburger-line"></span>
+                        </button>
+
+                        <a href="{{ route('home') }}" class="flex min-w-0 items-center gap-3">
+                            <x-application-logo class="h-10 w-10 shrink-0 sm:h-11 sm:w-11" />
+                            <div class="nav-brand-copy">
+                                <div class="nav-brand-title display-font text-sm font-bold" style="color: var(--theme-text, #0f172a);">{{ $schoolSettings['school_name'] ?? 'BELOVED SCHOOLS' }}</div>
+                                <div class="nav-brand-subtitle text-xs uppercase tracking-[0.22em]" style="color: var(--theme-muted, #64748b);">{{ $schoolSettings['site_tagline'] ?? 'Building Minds, Shaping Character' }}</div>
+                            </div>
+                        </a>
+
+                        <nav class="public-desktop-nav hidden min-w-0 items-center gap-1 lg:flex">
+                            @foreach ($publicNavItems as $item)
+                                <a
+                                    href="{{ route($item['route']) }}"
+                                    class="public-nav-pill transition {{ request()->routeIs($item['route']) ? 'is-active' : '' }}"
+                                    {{ request()->routeIs($item['route']) ? 'aria-current="page"' : '' }}
+                                >
+                                    {{ $item['label'] }}
+                                </a>
+                            @endforeach
+                        </nav>
+
+                        <div class="public-access-group ms-auto hidden items-center gap-2 lg:flex">
+                            @foreach ($publicAccessItems as $item)
+                                <a href="{{ route($item['route']) }}" class="public-nav-pill transition {{ !empty($item['strong']) ? 'is-strong' : '' }} {{ $item['route'] === 'staff.login' ? 'public-staff-login-button' : '' }}">{{ $item['label'] }}</a>
+                            @endforeach
+                        </div>
+                    </div>
+                </nav>
             </header>
 
-            <div x-cloak x-show="open" x-transition.opacity class="fixed inset-0 z-[80] md:hidden" style="display: none;">
-                <button type="button" class="absolute inset-0 bg-slate-950/55" @click="open = false" aria-label="Close public navigation menu"></button>
+            <div x-cloak x-show="open" x-transition.opacity class="fixed inset-0 z-[80] lg:hidden" style="display: none;">
+                <button type="button" class="absolute inset-0" style="background: rgba(0,0,0,0.55);" @click="open = false" aria-label="Close public navigation menu"></button>
                 <div
                     x-show="open"
                     x-transition:enter="transition ease-out duration-300"
@@ -71,9 +119,9 @@
                     <div class="mb-4 flex items-center justify-between">
                         <div class="min-w-0">
                             <div class="display-font text-sm font-bold text-slate-950">{{ $schoolSettings['school_name'] ?? 'BELOVED SCHOOLS' }}</div>
-                            <div class="mt-1 text-xs uppercase tracking-[0.28em] text-slate-500">{{ $schoolSettings['site_tagline'] ?? 'School Website + SMS + LMS' }}</div>
+                            <div class="mt-1 text-xs uppercase tracking-[0.16em] text-slate-500">{{ $schoolSettings['site_tagline'] ?? 'Building Minds, Shaping Character' }}</div>
                         </div>
-                        <button @click="open = false" class="hamburger-button is-open rounded-2xl border border-slate-200 text-slate-900" aria-label="Close public navigation menu">
+                        <button @click="open = false" class="hamburger-button is-open rounded-xl border border-slate-200 text-slate-900" aria-label="Close public navigation menu">
                             <span class="hamburger-line"></span>
                             <span class="hamburger-line"></span>
                             <span class="hamburger-line"></span>
@@ -81,15 +129,12 @@
                     </div>
 
                     <div class="space-y-2">
-                        <a href="{{ route('about') }}" @click="open = false" class="public-drawer-link drawer-link block rounded-2xl px-4 py-3 text-sm font-semibold">About</a>
-                        <a href="{{ route('admissions') }}" @click="open = false" class="public-drawer-link drawer-link block rounded-2xl px-4 py-3 text-sm font-semibold">Admissions</a>
-                        <a href="{{ route('contact') }}" @click="open = false" class="public-drawer-link drawer-link block rounded-2xl px-4 py-3 text-sm font-semibold">Contact</a>
-                        @auth
-                            <a href="{{ route('dashboard') }}" @click="open = false" class="public-drawer-link is-primary drawer-link block rounded-2xl px-4 py-3 text-sm font-semibold">Dashboard</a>
-                        @else
-                            <a href="{{ route('student.login') }}" @click="open = false" class="public-drawer-link drawer-link block rounded-2xl px-4 py-3 text-sm font-semibold">Student Login</a>
-                            <a href="{{ route('staff.login') }}" @click="open = false" class="public-drawer-link is-primary drawer-link block rounded-2xl px-4 py-3 text-sm font-semibold">Staff Login</a>
-                        @endauth
+                        @foreach ($publicNavItems as $item)
+                            <a href="{{ route($item['route']) }}" @click="open = false" class="public-drawer-link {{ request()->routeIs($item['route']) ? 'is-primary' : '' }} drawer-link block rounded-2xl px-4 py-3 text-sm font-semibold">{{ $item['label'] }}</a>
+                        @endforeach
+                        @foreach ($publicAccessItems as $item)
+                            <a href="{{ route($item['route']) }}" @click="open = false" class="public-drawer-link {{ !empty($item['strong']) ? 'is-primary' : '' }} {{ $item['route'] === 'staff.login' ? 'public-staff-login-button' : '' }} drawer-link block rounded-2xl px-4 py-3 text-sm font-semibold">{{ $item['label'] }}</a>
+                        @endforeach
                     </div>
                 </div>
             </div>
@@ -98,7 +143,7 @@
         <main class="public-content-shell">
             @if (session('status'))
                 <div class="mx-auto max-w-7xl px-4 pt-6 sm:px-6 lg:px-8">
-                    <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
+                    <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
                         {{ session('status') }}
                     </div>
                 </div>
@@ -107,7 +152,7 @@
             @yield('content')
         </main>
 
-        <footer class="mt-20 border-t border-slate-200 bg-white/80">
+        <footer class="public-footer mt-20 border-t border-slate-200 bg-white/90">
             <div class="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-10 text-sm text-slate-500 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
                 <div class="space-y-1">
                     <p class="font-semibold text-slate-800">Location: {{ $schoolSettings['school_address'] ?? 'Ayeteju Street, Ore, Ondo State' }}</p>

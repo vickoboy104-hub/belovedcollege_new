@@ -1,84 +1,167 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-                <p class="text-sm font-semibold uppercase tracking-[0.28em] text-slate-500">Parents management</p>
-                <h1 class="display-font mt-2 text-3xl font-bold text-slate-950">Guardian and family records</h1>
-                <p class="mt-2 max-w-3xl text-sm text-slate-600">This page adds the parent-management layer from the digital school system without disturbing the custom parts of your website.</p>
-            </div>
-            <form method="GET" action="{{ route('admin.parents.index') }}" class="flex w-full max-w-xl flex-col gap-3 sm:flex-row">
-                <input name="search" value="{{ $search }}" placeholder="Search by parent, phone, child, admission number, or class" class="theme-input" />
-                <button type="submit" class="theme-button">Search</button>
-            </form>
-        </div>
+        <x-page-header title="Guardian and family records" eyebrow="Parents management" description="Manage parent contacts, linked children, billing follow-up, and family portal records." />
     </x-slot>
 
-    <div class="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div class="stat-tile">
-            <div class="text-sm uppercase tracking-[0.24em] text-slate-500">Linked parents</div>
-            <div class="display-font mt-3 text-4xl font-bold text-slate-950">{{ $summary['linkedParents'] }}</div>
-        </div>
-        <div class="stat-tile">
-            <div class="text-sm uppercase tracking-[0.24em] text-slate-500">Children covered</div>
-            <div class="display-font mt-3 text-4xl font-bold text-slate-950">{{ $summary['childrenCovered'] }}</div>
-        </div>
-        <div class="stat-tile">
-            <div class="text-sm uppercase tracking-[0.24em] text-slate-500">Multi-child families</div>
-            <div class="display-font mt-3 text-4xl font-bold text-slate-950">{{ $summary['multiChildFamilies'] }}</div>
-        </div>
-        <div class="stat-tile">
-            <div class="text-sm uppercase tracking-[0.24em] text-slate-500">Students without parent portal</div>
-            <div class="display-font mt-3 text-4xl font-bold text-slate-950">{{ $summary['studentsWithoutPortalParent'] }}</div>
-        </div>
+    <!-- Parents Workspace Stats Grid -->
+    <div class="metrics-grid metrics-grid-4 mb-8">
+        <x-stat-card label="Linked parents" :value="$summary['linkedParents']" accent="blue" icon="parents" />
+        <x-stat-card label="Children covered" :value="$summary['childrenCovered']" accent="green" icon="student" />
+        <x-stat-card label="Multi-child families" :value="$summary['multiChildFamilies']" accent="purple" icon="parents" />
+        <x-stat-card label="Students without parent" :value="$summary['studentsWithoutPortalParent']" accent="red" icon="student" />
     </div>
 
-    <section class="section-card mt-8">
-        <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <!-- Parent Directory List Section -->
+    <section class="admin-workspace-card p-6">
+        <div class="section-header border-b border-slate-100 pb-5 mb-4">
             <div>
-                <h2 class="display-font text-2xl font-bold text-slate-950">Parent directory</h2>
-                <p class="mt-2 text-sm text-slate-500">Each parent account shows contact details, linked children, and the class spread under that family.</p>
+                <h2 class="section-title">Parent directory</h2>
+                <p class="section-description">Each parent account shows contact details, linked children, and class spread across families.</p>
             </div>
-            <a href="{{ route('admin.students.index') }}" class="theme-button-secondary">Open student page</a>
         </div>
 
-        <div class="mt-6 space-y-4">
-            @forelse ($parentRows as $row)
-                <article class="rounded-[1.75rem] border border-slate-200 bg-white/70 px-5 py-5 shadow-sm">
-                    <div class="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-                        <div class="min-w-0">
-                            <div class="display-font text-xl font-bold text-slate-950">{{ $row['parent']->fullName() }}</div>
-                            <div class="mt-2 flex flex-wrap gap-x-4 gap-y-2 text-sm text-slate-600">
-                                <span>{{ $row['parent']->email ?: 'No email' }}</span>
-                                <span>{{ $row['parent']->phone ?: 'No phone' }}</span>
-                                <span>{{ $row['child_count'] }} child{{ $row['child_count'] === 1 ? '' : 'ren' }}</span>
+        <form method="GET" action="{{ route('admin.parents.index') }}" class="table-toolbar mb-4">
+            <input name="search" value="{{ $search }}" placeholder="Search parent, phone, email, or child name" class="theme-input" />
+            <x-action-button type="submit" variant="primary">Search</x-action-button>
+            <x-action-button variant="secondary" :href="route('admin.parents.index')">Reset</x-action-button>
+        </form>
+
+        <div class="desktop-only-table">
+            <x-data-table :headers="['Parent / Guardian', 'Children', 'Classes', 'Phone', 'Status', 'Actions']" minWidth="1180px">
+                @forelse ($parentRows as $row)
+                    @php
+                        $parent = $row['parent'];
+                        $firstChild = $row['children']->first();
+                        $childrenNames = $row['children']->map(fn ($child) => $child->user->fullName())->join(', ');
+                        $parentInitials = collect(explode(' ', $parent->fullName() ?: $parent->name ?: 'Parent'))
+                            ->filter()
+                            ->map(fn ($part) => substr($part, 0, 1))
+                            ->take(2)
+                            ->join('');
+                        $parentPreview = [
+                            'type' => 'parent',
+                            'title' => $parent->fullName(),
+                            'subtitle' => 'Active Parent - '.$row['child_count'].' child'.($row['child_count'] === 1 ? '' : 'ren'),
+                            'avatar' => $parentInitials ?: 'PA',
+                            'profileUrl' => $firstChild ? route('admin.students.show', $firstChild) : route('admin.students.index'),
+                            'ctaLabel' => 'View Full Profile',
+                            'fields' => [
+                                ['label' => 'Email', 'value' => $parent->email ?: 'No email address registered'],
+                                ['label' => 'Phone', 'value' => $parent->phone ?: 'No phone registered'],
+                                ['label' => 'Children Covered', 'value' => $row['child_count'].' child'.($row['child_count'] === 1 ? '' : 'ren')],
+                                ['label' => 'Classes', 'value' => $row['class_names']->implode(', ') ?: 'No class assigned'],
+                                ['label' => 'Linked Children', 'value' => $childrenNames ?: 'No children linked'],
+                            ],
+                        ];
+                        $contactUrl = $parent->phone ? 'tel:'.$parent->phone : ($parent->email ? 'mailto:'.$parent->email : '#');
+                    @endphp
+                    <tr>
+                        <td>
+                            <div class="table-person">
+                                <div class="table-avatar">{{ $parentPreview['avatar'] }}</div>
+                                <div class="table-person-text">
+                                    <strong>{{ $parent->fullName() }}</strong>
+                                    <span>{{ $parent->email ?: 'No email address registered' }}</span>
+                                </div>
                             </div>
-                            <div class="mt-3 text-xs uppercase tracking-[0.24em] text-slate-500">
-                                Classes: {{ $row['class_names']->implode(', ') }}
+                        </td>
+                        <td><span class="table-text-clip">{{ $childrenNames ?: 'No children linked' }}</span></td>
+                        <td><span class="table-text-clip">{{ $row['class_names']->implode(', ') ?: 'No class assigned' }}</span></td>
+                        <td>{{ $parent->phone ?: 'No phone registered' }}</td>
+                        <td><x-status-badge status="Active" /></td>
+                        <td>
+                            <div class="table-action-group">
+                                <button type="button" class="table-view-btn" data-preview='@json($parentPreview, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_TAG)'>View</button>
+                                <a class="table-mini-link" href="{{ route('admin.students.index', ['search' => $parent->email ?: $parent->fullName()]) }}">Link Child</a>
+                                <a class="table-mini-link" href="{{ route('admin.finance.records', ['section' => 'student-balances', 'search' => $parent->email ?: $parent->fullName()]) }}">Billing</a>
+                                <a class="table-mini-link" href="{{ $contactUrl }}">Contact</a>
+                            </div>
+                        </td>
+                    </tr>
+                @empty
+                    <tr>
+                        <td colspan="6">
+                            <x-empty-state title="No parent records found" description="Search returned no parent or guardian records matching those parameters." icon="parents" />
+                        </td>
+                    </tr>
+                @endforelse
+            </x-data-table>
+        </div>
+
+        <!-- Responsive Mobile View for Parents -->
+        <div class="mobile-record-list mt-6 space-y-4 md:hidden">
+            @forelse ($parentRows as $row)
+                @php
+                    $parent = $row['parent'];
+                    $firstChild = $row['children']->first();
+                    $childrenNames = $row['children']->map(fn ($child) => $child->user->fullName())->join(', ');
+                    $parentInitials = collect(explode(' ', $parent->fullName() ?: $parent->name ?: 'Parent'))
+                        ->filter()
+                        ->map(fn ($part) => substr($part, 0, 1))
+                        ->take(2)
+                        ->join('');
+                    $parentPreview = [
+                        'type' => 'parent',
+                        'title' => $parent->fullName(),
+                        'subtitle' => 'Active Parent - '.$row['child_count'].' child'.($row['child_count'] === 1 ? '' : 'ren'),
+                        'avatar' => $parentInitials ?: 'PA',
+                        'profileUrl' => $firstChild ? route('admin.students.show', $firstChild) : route('admin.students.index'),
+                        'ctaLabel' => 'View Full Profile',
+                        'fields' => [
+                            ['label' => 'Email', 'value' => $parent->email ?: 'No email address registered'],
+                            ['label' => 'Phone', 'value' => $parent->phone ?: 'No phone registered'],
+                            ['label' => 'Children Covered', 'value' => $row['child_count'].' child'.($row['child_count'] === 1 ? '' : 'ren')],
+                            ['label' => 'Classes', 'value' => $row['class_names']->implode(', ') ?: 'No class assigned'],
+                            ['label' => 'Linked Children', 'value' => $childrenNames ?: 'No children linked'],
+                        ],
+                    ];
+                    $contactUrl = $parent->phone ? 'tel:'.$parent->phone : ($parent->email ? 'mailto:'.$parent->email : '#');
+                @endphp
+                <article class="mobile-record-card">
+                    <div class="flex items-start justify-between border-b border-slate-100 pb-3 mb-4">
+                        <div class="flex items-center gap-3">
+                            <div class="table-avatar !h-9 !w-9 !text-xs">
+                                {{ $parentPreview['avatar'] }}
+                            </div>
+                            <div>
+                                <div class="mobile-record-title">{{ $parent->fullName() }}</div>
+                                <div class="text-[10px] text-slate-500 font-semibold mt-0.5">{{ $parent->email ?: 'No email address registered' }}</div>
                             </div>
                         </div>
-                        <div class="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-sm font-semibold text-slate-700">
-                            Parent portal active
+                        <x-status-badge status="Active" class="scale-90 origin-right" />
+                    </div>
+
+                    <div class="mobile-record-grid">
+                        <div class="mobile-record-item">
+                            <span class="mobile-record-label">Children</span>
+                            <span class="mobile-record-value text-slate-800">{{ $childrenNames ?: 'No children linked' }}</span>
+                        </div>
+                        <div class="mobile-record-item">
+                            <span class="mobile-record-label">Phone</span>
+                            <span class="mobile-record-value text-slate-800">{{ $parent->phone ?: 'No phone registered' }}</span>
                         </div>
                     </div>
 
-                    <div class="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-                        @foreach ($row['children'] as $child)
-                            <div class="rounded-[1.35rem] border border-slate-200 bg-slate-50/90 px-4 py-4">
-                                <div class="font-semibold text-slate-900">{{ $child->user->fullName() }}</div>
-                                <div class="mt-1 text-sm text-slate-500">{{ $child->admission_no ?: 'No admission number' }}</div>
-                                <div class="mt-2 text-sm text-slate-600">{{ $child->schoolClass->display_name ?? 'No class assigned' }}</div>
-                                <div class="mt-3">
-                                    <a href="{{ route('admin.students.show', $child) }}" class="text-sm font-semibold text-[color:var(--theme-primary)]">Open student profile</a>
-                                </div>
-                            </div>
-                        @endforeach
+                    <div class="mobile-action-row border-t border-slate-100 pt-3 mt-4 flex flex-col gap-2">
+                        <button
+                            type="button"
+                            class="table-view-btn w-full !text-center !py-2 !rounded-xl !bg-slate-100 hover:!bg-slate-200 text-slate-700 font-bold transition"
+                            data-preview='@json($parentPreview, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_TAG)'
+                        >
+                            Quick View
+                        </button>
+                        <div class="flex w-full gap-2 mt-1">
+                            <a href="{{ route('admin.students.index', ['search' => $parent->email ?: $parent->fullName()]) }}" class="theme-button-secondary w-full text-center py-2 px-3 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700">Link Child</a>
+                            <a href="{{ route('admin.finance.records', ['section' => 'student-balances', 'search' => $parent->email ?: $parent->fullName()]) }}" class="theme-button-secondary w-full text-center py-2 px-3 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700">Billing</a>
+                            <a href="{{ $contactUrl }}" class="theme-button-secondary w-full text-center py-2 px-3 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700">Contact</a>
+                        </div>
                     </div>
                 </article>
             @empty
-                <div class="rounded-[1.75rem] border border-dashed border-slate-300 px-6 py-8 text-sm text-slate-500">
-                    No linked parent records were found for this search yet.
-                </div>
+                <x-empty-state title="No parent records found" description="Search returned no parent or guardian records matching those parameters." icon="parents" />
             @endforelse
         </div>
     </section>
+
+    <x-entity-preview-modal />
 </x-app-layout>

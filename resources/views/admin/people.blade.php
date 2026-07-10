@@ -1,84 +1,103 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-                <p class="text-sm font-semibold uppercase tracking-[0.28em] text-slate-500">Administration</p>
-                <h1 class="display-font mt-2 text-3xl font-bold text-slate-950">People hub for the school system</h1>
-                <p class="mt-2 max-w-3xl text-sm text-slate-600">Manage students, parents, and staff from dedicated workspaces while keeping the rest of your custom website features untouched.</p>
+        <x-page-header title="People Hub" eyebrow="Administration" description="Manage students, parents, and staff from dedicated workspaces while keeping the rest of your custom website features untouched.">
+            <x-slot name="actions">
+                <x-action-button variant="secondary" :href="route('admin.parents.index')">Parents</x-action-button>
+                <x-action-button variant="secondary" :href="route('admin.staff.index')">Staff</x-action-button>
+                <x-action-button variant="primary" :href="route('admin.students.index')">Students</x-action-button>
+            </x-slot>
+        </x-page-header>
+    </x-slot>
+
+    <!-- People Hub Metrics Grid -->
+    <div class="metrics-grid metrics-grid-4 mb-8">
+        <x-stat-card label="Students" :value="$studentCount" accent="blue" icon="student" :link="route('admin.students.index')" linkText="Student directory" />
+        <x-stat-card label="Parents" :value="$parentCount" accent="green" icon="parents" :link="route('admin.parents.index')" linkText="Parent directory" />
+        <x-stat-card label="Staff" :value="$staffCount" accent="purple" icon="staff" :link="route('admin.staff.index')" linkText="Staff directory" />
+        <x-stat-card label="Classes" :value="$classCount" accent="gold" icon="classes" :link="route('admin.academics')" linkText="Manage classes" />
+    </div>
+
+    <!-- Management Modules and System Scope -->
+    <div class="grid gap-8 xl:grid-cols-[1.2fr,0.8fr]">
+        <!-- Left Side: Management Area modules -->
+        <div class="card bg-white border border-[#c8d6ea] rounded-[18px] p-6 shadow-[0_10px_25px_rgba(15,23,42,0.08)]">
+            <div class="border-b border-slate-100 pb-4 mb-6">
+                <span class="text-xs font-extrabold uppercase tracking-wider text-slate-400">School Office Areas</span>
+                <h2 class="display-font mt-1 text-2xl font-bold text-slate-900 leading-snug">Dedicated management portals</h2>
+                <p class="text-xs font-semibold text-slate-500 mt-1">Each workspace features customized search filters, class groupings, and dedicated profile actions.</p>
             </div>
-            <div class="grid grid-cols-2 gap-3 sm:grid-cols-4">
-                <div class="rounded-[1.5rem] border border-white/20 bg-white/70 px-4 py-4 text-center shadow-sm backdrop-blur">
-                    <div class="text-xs uppercase tracking-[0.22em] text-slate-500">Students</div>
-                    <div class="display-font mt-2 text-2xl font-bold text-slate-950">{{ $studentCount }}</div>
+
+            <div class="grid gap-6 md:grid-cols-3">
+                <!-- Students Card -->
+                <div class="card bg-blue-50/20 border border-blue-100/60 rounded-[18px] p-5 hover:border-[#fbbf24] hover:shadow-lg hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between">
+                    <div>
+                        <div class="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center shadow-sm">
+                            <x-app-icon name="student" class="w-5 h-5" />
+                        </div>
+                        <h3 class="display-font mt-4 text-xl font-bold text-slate-900">Student Profiles</h3>
+                        <p class="text-xs text-slate-600 mt-2 leading-relaxed">Register new intakes, update sibling lists, configure class billings, and search dynamic rosters.</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-150 flex items-center justify-between">
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-450">{{ $studentCount }} Records</span>
+                        <x-action-button variant="primary" :href="route('admin.students.index')" class="!px-3 !py-1.5 !rounded-lg text-[10px]">Open</x-action-button>
+                    </div>
                 </div>
-                <div class="rounded-[1.5rem] border border-white/20 bg-white/70 px-4 py-4 text-center shadow-sm backdrop-blur">
-                    <div class="text-xs uppercase tracking-[0.22em] text-slate-500">Parents</div>
-                    <div class="display-font mt-2 text-2xl font-bold text-slate-950">{{ $parentCount }}</div>
+
+                <!-- Parents Card -->
+                <div class="card bg-emerald-50/20 border border-emerald-100/60 rounded-[18px] p-5 hover:border-[#fbbf24] hover:shadow-lg hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between">
+                    <div>
+                        <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shadow-sm">
+                            <x-app-icon name="parents" class="w-5 h-5" />
+                        </div>
+                        <h3 class="display-font mt-4 text-xl font-bold text-slate-900">Guardians & Sibling</h3>
+                        <p class="text-xs text-slate-600 mt-2 leading-relaxed">Monitor parent portals, track contact details, check linked children lists, and verify active coverages.</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-150 flex items-center justify-between">
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-450">{{ $parentCount }} Linked</span>
+                        <x-action-button variant="primary" :href="route('admin.parents.index')" class="!px-3 !py-1.5 !rounded-lg text-[10px]">Open</x-action-button>
+                    </div>
                 </div>
-                <div class="rounded-[1.5rem] border border-white/20 bg-white/70 px-4 py-4 text-center shadow-sm backdrop-blur">
-                    <div class="text-xs uppercase tracking-[0.22em] text-slate-500">Staff</div>
-                    <div class="display-font mt-2 text-2xl font-bold text-slate-950">{{ $staffCount }}</div>
-                </div>
-                <div class="rounded-[1.5rem] border border-white/20 bg-white/70 px-4 py-4 text-center shadow-sm backdrop-blur">
-                    <div class="text-xs uppercase tracking-[0.22em] text-slate-500">Classes</div>
-                    <div class="display-font mt-2 text-2xl font-bold text-slate-950">{{ $classCount }}</div>
+
+                <!-- Staff Card -->
+                <div class="card bg-purple-50/20 border border-purple-100/60 rounded-[18px] p-5 hover:border-[#fbbf24] hover:shadow-lg hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between">
+                    <div>
+                        <div class="w-10 h-10 rounded-xl bg-purple-50 text-purple-600 border border-purple-100 flex items-center justify-center shadow-sm">
+                            <x-app-icon name="staff" class="w-5 h-5" />
+                        </div>
+                        <h3 class="display-font mt-4 text-xl font-bold text-slate-900">Staff Directories</h3>
+                        <p class="text-xs text-slate-600 mt-2 leading-relaxed">Organize educational staff, assign class teachers, setup monthly salaries, and edit profiles.</p>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-slate-150 flex items-center justify-between">
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-450">{{ $staffCount }} Profiles</span>
+                        <x-action-button variant="primary" :href="route('admin.staff.index')" class="!px-3 !py-1.5 !rounded-lg text-[10px]">Open</x-action-button>
+                    </div>
                 </div>
             </div>
         </div>
-    </x-slot>
 
-    <div class="grid gap-8 xl:grid-cols-[1.15fr,0.85fr]">
-        <section class="section-card">
-            <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                <div>
-                    <div class="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">Management areas</div>
-                    <h2 class="display-font mt-2 text-2xl font-bold text-slate-950">Dedicated record pages</h2>
+        <!-- Right Side: Hub scope explanation -->
+        <div class="card bg-white border border-[#c8d6ea] rounded-[18px] p-6 shadow-[0_10px_25px_rgba(15,23,42,0.08)] flex flex-col justify-between">
+            <div>
+                <div class="border-b border-slate-100 pb-4 mb-4">
+                    <span class="text-xs font-extrabold uppercase tracking-wider text-slate-450">System Coverage</span>
+                    <h2 class="display-font mt-1 text-xl font-bold text-slate-900 leading-snug">What this hub covers</h2>
                 </div>
-                <div class="text-sm text-slate-500">Each page keeps its own search, grouping, and profile tools.</div>
-            </div>
 
-            <div class="mt-6 grid gap-4 lg:grid-cols-3">
-                <a href="{{ route('admin.students.index') }}" class="management-module-card module-tone-student">
-                    <div class="management-module-badge">Student Management</div>
-                    <h3 class="display-font mt-5 text-2xl font-bold">Students</h3>
-                    <p class="mt-3 text-sm leading-7 text-slate-700">Register students, assign classes, update biodata, and open full student profiles.</p>
-                    <div class="management-module-meta mt-5">{{ $studentCount }} student record{{ $studentCount === 1 ? '' : 's' }}</div>
-                </a>
-
-                <a href="{{ route('admin.parents.index') }}" class="management-module-card module-tone-parent">
-                    <div class="management-module-badge">Parents Management</div>
-                    <h3 class="display-font mt-5 text-2xl font-bold">Parents</h3>
-                    <p class="mt-3 text-sm leading-7 text-slate-700">Review linked parent accounts, child assignments, contact details, and portal coverage.</p>
-                    <div class="management-module-meta mt-5">{{ $parentCount }} linked parent account{{ $parentCount === 1 ? '' : 's' }}</div>
-                </a>
-
-                <a href="{{ route('admin.staff.index') }}" class="management-module-card module-tone-staff">
-                    <div class="management-module-badge">Staff Management</div>
-                    <h3 class="display-font mt-5 text-2xl font-bold">Staff</h3>
-                    <p class="mt-3 text-sm leading-7 text-slate-700">Manage staff records, departments, and the teaching side of the school structure.</p>
-                    <div class="management-module-meta mt-5">{{ $staffCount }} staff profile{{ $staffCount === 1 ? '' : 's' }}</div>
-                </a>
-            </div>
-        </section>
-
-        <section class="section-card">
-            <div class="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">School structure</div>
-            <h2 class="display-font mt-2 text-2xl font-bold text-slate-950">What this hub now covers</h2>
-
-            <div class="mt-6 space-y-4">
-                <div class="rounded-[1.5rem] border border-slate-200 bg-white/70 px-5 py-5">
-                    <div class="font-semibold text-slate-900">Student records</div>
-                    <p class="mt-2 text-sm leading-7 text-slate-600">Admissions, parent linkage, class placement, and profile-level updates.</p>
-                </div>
-                <div class="rounded-[1.5rem] border border-slate-200 bg-white/70 px-5 py-5">
-                    <div class="font-semibold text-slate-900">Parent linkage</div>
-                    <p class="mt-2 text-sm leading-7 text-slate-600">A dedicated parent page now makes it easy to see which families are already connected to the portal.</p>
-                </div>
-                <div class="rounded-[1.5rem] border border-slate-200 bg-white/70 px-5 py-5">
-                    <div class="font-semibold text-slate-900">Staff organization</div>
-                    <p class="mt-2 text-sm leading-7 text-slate-600">Department-based staff records remain separate so the school workspace stays clean and easy to scan.</p>
+                <div class="space-y-4">
+                    <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:border-[#fbbf24] transition duration-200">
+                        <div class="font-bold text-slate-800 text-sm">Full student records tracking</div>
+                        <p class="text-xs text-slate-500 mt-1 leading-relaxed">Admissions registration, parent association links, class assignment updates, and medical data files.</p>
+                    </div>
+                    <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:border-[#fbbf24] transition duration-200">
+                        <div class="font-bold text-slate-800 text-sm">Automated guardian mappings</div>
+                        <p class="text-xs text-slate-500 mt-1 leading-relaxed">Family profile cards, linking multiple children to a single guardian account, and tracing billing balances.</p>
+                    </div>
+                    <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:border-[#fbbf24] transition duration-200">
+                        <div class="font-bold text-slate-800 text-sm">Staff & Academic structure depts</div>
+                        <p class="text-xs text-slate-500 mt-1 leading-relaxed">Dedicated teacher directories, employee record numbers, designation titles, and academic qualifications.</p>
+                    </div>
                 </div>
             </div>
-        </section>
+        </div>
     </div>
 </x-app-layout>

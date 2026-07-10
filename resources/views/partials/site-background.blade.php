@@ -7,8 +7,8 @@
 
     $fallbackBackgrounds = [
         "linear-gradient(135deg, rgba(242, 247, 255, 0.90), rgba(230, 239, 253, 0.82)), radial-gradient(circle at top left, rgba(11, 42, 102, 0.18), transparent 34%)",
-        "linear-gradient(135deg, rgba(248, 250, 255, 0.88), rgba(235, 244, 255, 0.82)), radial-gradient(circle at top right, rgba(15, 118, 110, 0.16), transparent 30%)",
-        "linear-gradient(135deg, rgba(247, 250, 255, 0.88), rgba(235, 242, 251, 0.82)), radial-gradient(circle at bottom left, rgba(245, 158, 11, 0.14), transparent 32%)",
+        "linear-gradient(135deg, rgba(248, 250, 255, 0.88), rgba(235, 244, 255, 0.82)), radial-gradient(circle at top right, rgba(2, 132, 199, 0.16), transparent 30%)",
+        "linear-gradient(135deg, rgba(247, 250, 255, 0.88), rgba(235, 242, 251, 0.82)), radial-gradient(circle at bottom left, rgba(59, 130, 246, 0.14), transparent 32%)",
     ];
 
     $resolvedBackgrounds = collect($backgroundImages)->map(function (?string $image, int $index) use ($fallbackBackgrounds, $schoolSettings) {

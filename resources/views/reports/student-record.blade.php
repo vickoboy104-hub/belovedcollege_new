@@ -6,6 +6,7 @@
     <title>Student Record - {{ $student->user->fullName() }}</title>
     @include('partials.theme-head')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @include('partials.theme-overrides')
 </head>
 <body class="antialiased">
     <main class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">

@@ -6,7 +6,9 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>{{ $schoolSettings['school_name'] ?? config('app.name', 'BELOVED SCHOOLS') }}</title>
     @include('partials.theme-head')
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/print.css'])
+    @include('partials.theme-overrides')
+    <link rel="stylesheet" href="{{ asset('portal-refresh.css') }}?v=20260706-overflow-fix">
 </head>
 <body class="antialiased">
     <div class="site-page-shell app-shell min-h-screen">
@@ -30,7 +32,7 @@
                     </div>
                 @endif
 
-                @if ($errors->any())
+                @if (isset($errors) && $errors->any())
                     <div class="mb-6 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm text-rose-900">
                         <div class="font-semibold">Please review the form.</div>
                         <ul class="mt-2 list-disc ps-5">
@@ -45,5 +47,6 @@
             </main>
         </div>
     </div>
+    @vite(['resources/js/print-settings.js'])
 </body>
 </html>

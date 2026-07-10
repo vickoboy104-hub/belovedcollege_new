@@ -1,0 +1,528 @@
+/* ============================================================
+   PRINT.CSS — Advanced Print Settings Stylesheet
+   Supports: A4 layouts, 1/2/4/6/8/9 items per page,
+   print preview, screen controls, and @media print rules.
+   ============================================================ */
+
+/* ── Screen-only: controls bar ───────────────────────────── */
+.ps-controls-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.5rem;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid #c8d6ea;
+    border-radius: 1.25rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px rgba(7,24,51,0.07);
+}
+
+/* ── Print Settings Modal Overlay ────────────────────────── */
+#ps-modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    background: rgba(7, 24, 51, 0.55);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+#ps-modal-overlay.ps-open {
+    display: flex;
+}
+
+#ps-modal {
+    background: #ffffff;
+    border-radius: 1.5rem;
+    box-shadow: 0 24px 60px rgba(7,24,51,0.22);
+    width: 100%;
+    max-width: 960px;
+    max-height: 92vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid #e2e8f0;
+}
+
+/* ── Modal Header ─────────────────────────────────────────── */
+#ps-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    background: linear-gradient(135deg, #071833 0%, #1d4ed8 100%);
+    flex-shrink: 0;
+}
+#ps-modal-header h2 {
+    color: #ffffff;
+    font-size: 1.05rem;
+    font-weight: 800;
+    letter-spacing: 0.01em;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+}
+#ps-modal-header .ps-close-btn {
+    width: 2rem;
+    height: 2rem;
+    border-radius: 50%;
+    background: rgba(255,255,255,0.15);
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #ffffff;
+    transition: background 0.15s;
+    flex-shrink: 0;
+}
+#ps-modal-header .ps-close-btn:hover {
+    background: rgba(255,255,255,0.28);
+}
+
+/* ── Modal Body ───────────────────────────────────────────── */
+#ps-modal-body {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    flex: 1;
+    overflow: hidden;
+    min-height: 0;
+}
+
+/* ── Settings Panel (left) ────────────────────────────────── */
+#ps-settings-panel {
+    padding: 1.5rem;
+    border-right: 1px solid #e2e8f0;
+    overflow-y: auto;
+    background: #f8fafc;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+}
+
+.ps-field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+.ps-label {
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #475569;
+}
+.ps-select,
+.ps-input {
+    width: 100%;
+    padding: 0.55rem 0.75rem;
+    border: 1.5px solid #c8d6ea;
+    border-radius: 0.65rem;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: #0f172a;
+    background: #ffffff;
+    outline: none;
+    transition: border-color 0.15s, box-shadow 0.15s;
+    appearance: none;
+    -webkit-appearance: none;
+}
+.ps-select:focus,
+.ps-input:focus {
+    border-color: #1d4ed8;
+    box-shadow: 0 0 0 3px rgba(29,78,216,0.12);
+}
+.ps-hint {
+    font-size: 0.7rem;
+    color: #94a3b8;
+    line-height: 1.4;
+}
+
+.ps-layout-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.5rem;
+}
+.ps-layout-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.6rem 0.25rem 0.5rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 0.75rem;
+    background: #ffffff;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 0.65rem;
+    font-weight: 700;
+    color: #64748b;
+}
+.ps-layout-btn:hover {
+    border-color: #93c5fd;
+    color: #1d4ed8;
+    background: #eff6ff;
+}
+.ps-layout-btn.ps-active {
+    border-color: #1d4ed8;
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+.ps-layout-icon {
+    width: 2.5rem;
+    height: 2rem;
+    display: grid;
+    gap: 2px;
+    padding: 3px;
+    background: #f1f5f9;
+    border-radius: 4px;
+}
+.ps-layout-icon .ps-cell {
+    background: #94a3b8;
+    border-radius: 2px;
+}
+.ps-layout-btn.ps-active .ps-layout-icon .ps-cell {
+    background: #1d4ed8;
+}
+
+.ps-divider {
+    border: none;
+    border-top: 1px solid #e2e8f0;
+    margin: 0;
+}
+
+/* Mode toggle pills */
+.ps-mode-toggle {
+    display: flex;
+    border: 1.5px solid #c8d6ea;
+    border-radius: 0.65rem;
+    overflow: hidden;
+    background: #f8fafc;
+}
+.ps-mode-btn {
+    flex: 1;
+    padding: 0.5rem 0.4rem;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-align: center;
+    cursor: pointer;
+    border: none;
+    background: transparent;
+    color: #64748b;
+    transition: all 0.15s;
+    line-height: 1.3;
+}
+.ps-mode-btn.ps-active {
+    background: #071833;
+    color: #ffffff;
+}
+
+/* ── Preview Panel (right) ────────────────────────────────── */
+#ps-preview-panel {
+    overflow: auto;
+    padding: 1.25rem;
+    background: #e8edf5;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+#ps-preview-label {
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #64748b;
+    text-align: center;
+    flex-shrink: 0;
+}
+#ps-a4-preview {
+    /* A4 at 96dpi screen: 210mm = ~794px, but we scale to container */
+    aspect-ratio: 210 / 297;
+    background: #ffffff;
+    box-shadow: 0 4px 16px rgba(7,24,51,0.14);
+    border-radius: 4px;
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+}
+
+/* ── Modal Footer ─────────────────────────────────────────── */
+#ps-modal-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e2e8f0;
+    background: #f8fafc;
+    flex-shrink: 0;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+.ps-footer-info {
+    font-size: 0.72rem;
+    color: #64748b;
+    font-weight: 600;
+}
+.ps-footer-actions {
+    display: flex;
+    gap: 0.65rem;
+    flex-wrap: wrap;
+}
+
+/* ── Button styles (screen) ───────────────────────────────── */
+.ps-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1.1rem;
+    border-radius: 0.7rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    border: 1.5px solid transparent;
+    transition: all 0.15s;
+    white-space: nowrap;
+}
+.ps-btn-primary {
+    background: #071833;
+    color: #ffffff;
+    border-color: #071833;
+}
+.ps-btn-primary:hover {
+    background: #0b2444;
+}
+.ps-btn-accent {
+    background: #fbbf24;
+    color: #071833;
+    border-color: #fbbf24;
+    font-weight: 900;
+}
+.ps-btn-accent:hover {
+    background: #f59e0b;
+}
+.ps-btn-secondary {
+    background: #ffffff;
+    color: #374151;
+    border-color: #c8d6ea;
+}
+.ps-btn-secondary:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+}
+.ps-btn svg {
+    flex-shrink: 0;
+}
+
+/* ── Trigger button (on print pages) ─────────────────────── */
+.ps-trigger-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.2rem;
+    background: linear-gradient(135deg, #071833 0%, #1d4ed8 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 0.9rem;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(29,78,216,0.25);
+    transition: all 0.18s;
+}
+.ps-trigger-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(29,78,216,0.3);
+}
+.ps-trigger-btn:active {
+    transform: translateY(0);
+}
+
+/* ── Custom items per page input ──────────────────────────── */
+#ps-custom-row {
+    display: none;
+}
+#ps-custom-row.ps-visible {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+/* ── Print preview cell miniatures ───────────────────────── */
+.ps-preview-grid {
+    display: grid;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+}
+.ps-preview-grid.ps-pp-1 { grid-template-columns: 1fr; grid-template-rows: 1fr; gap: 0; padding: 2%; }
+.ps-preview-grid.ps-pp-2 { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; gap: 1%; padding: 2%; }
+.ps-preview-grid.ps-pp-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 1%; padding: 2%; }
+.ps-preview-grid.ps-pp-6 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; gap: 0.8%; padding: 2%; }
+.ps-preview-grid.ps-pp-8 { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(4, 1fr); gap: 0.6%; padding: 1.5%; }
+.ps-preview-grid.ps-pp-9 { grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; gap: 0.6%; padding: 1.5%; }
+.ps-preview-grid.ps-pp-custom { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(auto-fill, minmax(0,1fr)); gap: 0.6%; padding: 1.5%; }
+
+.ps-preview-cell {
+    background: #f8fafc;
+    border: 1px solid #c8d6ea;
+    border-radius: 3px;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+}
+.ps-preview-cell-inner {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 900px !important;
+    height: auto !important;
+    transform-origin: top left !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+}
+.ps-preview-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+.ps-preview-placeholder-bar {
+    height: 4px;
+    border-radius: 2px;
+    background: #cbd5e1;
+}
+
+/* ── Print Layout CSS (Global, active for both print and screen measuring) ── */
+#ps-print-wrapper {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    z-index: 99999 !important;
+    background: #ffffff !important;
+}
+
+/* Each printable sheet */
+.ps-sheet {
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    position: relative !important;
+    background: #ffffff !important;
+    page-break-after: always !important;
+    break-after: page !important;
+}
+
+/* Grid inside a sheet */
+.ps-sheet-grid {
+    display: grid !important;
+    width: 100% !important;
+    height: 100% !important;
+    box-sizing: border-box !important;
+}
+
+/* Print grid presets */
+.ps-sheet-grid.ps-pp-1 { grid-template-columns: 1fr; grid-template-rows: 1fr; gap: 0; padding: 10mm; }
+.ps-sheet-grid.ps-pp-2 { grid-template-columns: 1fr; grid-template-rows: 1fr 1fr; gap: 6mm; padding: 8mm; }
+.ps-sheet-grid.ps-pp-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; gap: 5mm; padding: 7mm; }
+.ps-sheet-grid.ps-pp-6 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; gap: 4mm; padding: 6mm; }
+.ps-sheet-grid.ps-pp-8 { grid-template-columns: 1fr 1fr; grid-template-rows: repeat(4, 1fr); gap: 3mm; padding: 5mm; }
+.ps-sheet-grid.ps-pp-9 { grid-template-columns: 1fr 1fr 1fr; grid-template-rows: 1fr 1fr 1fr; gap: 3mm; padding: 5mm; }
+.ps-sheet-grid.ps-pp-custom { grid-template-columns: repeat(2, 1fr); gap: 3mm; padding: 5mm; }
+
+/* The container cell */
+.ps-item-cell {
+    position: relative !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+    box-sizing: border-box !important;
+    page-break-inside: avoid !important;
+    break-inside: avoid !important;
+}
+
+/* The unconstrained render wrapper inside the cell */
+.ps-item-cell-inner {
+    position: absolute !important;
+    left: 0 !important;
+    top: 0 !important;
+    width: 900px !important; /* Fixed unconstrained render width */
+    height: auto !important; /* Natural height */
+    transform-origin: top left !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+}
+
+/* Neutralize constraints inside items during print/preview */
+.ps-item-cell-inner .mx-auto,
+.ps-item-cell-inner .max-w-4xl,
+.ps-item-cell-inner .max-w-6xl,
+.ps-item-cell-inner .container { max-width: none !important; width: auto !important; margin: 0 !important; }
+.ps-item-cell-inner .min-h-screen { min-height: 0 !important; }
+.ps-item-cell-inner img { max-width: 100% !important; height: auto !important; }
+.ps-item-cell-inner .no-print { display: none !important; }
+.ps-item-cell-inner .ps-controls-bar { display: none !important; }
+
+/* ── @media print ─────────────────────────────────────────── */
+@media print {
+    /* Hide everything except our print wrapper */
+    body > :not(#ps-print-wrapper) {
+        display: none !important;
+    }
+
+    html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+    }
+
+    #ps-print-wrapper {
+        position: absolute !important;
+        left: 0 !important;
+        top: 0 !important;
+        width: 210mm !important;
+    }
+
+    .ps-sheet {
+        page-break-after: always !important;
+        break-after: page !important;
+    }
+    .ps-sheet:last-child {
+        page-break-after: auto !important;
+        break-after: auto !important;
+    }
+
+    @page { size: A4; margin: 0; }
+}
+
+/* ── Responsive modal ─────────────────────────────────────── */
+@media (max-width: 700px) {
+    #ps-modal-body {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto 1fr;
+    }
+    #ps-settings-panel {
+        border-right: none;
+        border-bottom: 1px solid #e2e8f0;
+        max-height: 260px;
+    }
+    #ps-a4-preview {
+        max-height: 220px;
+    }
+}

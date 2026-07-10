@@ -1,9 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <div>
-            <p class="text-sm font-semibold uppercase tracking-[0.28em] text-slate-500">Administration</p>
-            <h1 class="display-font mt-2 text-3xl font-bold text-slate-950">Academic structure and publishing</h1>
-        </div>
+        <x-page-header title="Academic structure and publishing" eyebrow="Administration" description="Manage sessions, terms, student rollovers, promotions, class allocations, subjects, and digital CBT settings." />
     </x-slot>
 
     @php
@@ -20,256 +17,210 @@
     @endphp
 
     <div class="grid gap-8">
-        <x-section-nav :items="$academicNavItems" :active="$activeAcademicSection" />
-
-        @if (in_array($activeAcademicSection, ['session-setup', 'term-setup'], true))
-        <div class="grid gap-8 xl:grid-cols-2">
-        @endif
-
+        <!-- 1. ACADEMIC SESSION SETUP -->
         @if ($activeAcademicSection === 'session-setup')
-        <section class="section-card">
-            <h2 class="display-font text-2xl font-bold text-slate-950">Academic session</h2>
-            <form method="POST" action="{{ route('admin.sessions.store') }}" class="mt-6 grid gap-4 md:grid-cols-2">
-                @csrf
-                <input name="name" placeholder="2026/2027" class="theme-input" required />
-                <input name="promotion_pass_mark" type="number" step="0.01" min="0" max="100" value="{{ old('promotion_pass_mark', 50) }}" placeholder="Promotion pass mark" class="theme-input" required />
-                <div class="flex min-h-[3.5rem] items-center gap-3 rounded-2xl border border-slate-300 px-4 py-3 text-sm">
-                    <input id="session-current" name="is_current" type="checkbox" value="1" class="rounded border-slate-300" />
-                    <label for="session-current">Set as current session</label>
-                </div>
-                <div class="rounded-2xl border border-slate-300 px-4 py-3 text-sm text-slate-500">
-                    Students are promoted when their overall subject percentage meets the pass mark for the closed session.
-                </div>
-                <input name="start_date" type="date" class="theme-input" required />
-                <input name="end_date" type="date" class="theme-input" required />
-                <button type="submit" class="theme-button md:col-span-2">Create session</button>
-            </form>
-        </section>
+            <div class="max-w-2xl mx-auto w-full">
+                <x-form-card :action="route('admin.sessions.store')" method="POST" title="Academic session" description="Create a new academic session, set active dates, and define promotion thresholds.">
+                    <div class="grid gap-4 md:grid-cols-2">
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-slate-700">Session Name <span class="text-rose-500">*</span></label>
+                            <input name="name" placeholder="e.g. 2026/2027" class="theme-input w-full" required />
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-slate-700">Promotion Pass Mark (%) <span class="text-rose-500">*</span></label>
+                            <input name="promotion_pass_mark" type="number" step="0.01" min="0" max="100" value="{{ old('promotion_pass_mark', 50) }}" placeholder="e.g. 50" class="theme-input w-full" required />
+                        </div>
+                        <div class="space-y-1 md:col-span-2">
+                            <label class="text-xs font-bold text-slate-700">Session Dates</label>
+                            <div class="grid gap-3 md:grid-cols-2">
+                                <input name="start_date" type="date" class="theme-input w-full" required />
+                                <input name="end_date" type="date" class="theme-input w-full" required />
+                            </div>
+                        </div>
+                        <div class="md:col-span-2 flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/50 px-4 py-3 text-xs font-semibold text-slate-650">
+                            <input id="session-current" name="is_current" type="checkbox" value="1" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
+                            <label for="session-current" class="cursor-pointer">Set as current active academic session</label>
+                        </div>
+                    </div>
+                    <x-slot name="actions">
+                        <x-action-button type="submit" variant="success">Create Session</x-action-button>
+                    </x-slot>
+                </x-form-card>
+            </div>
         @endif
 
+        <!-- 2. TERM SETUP -->
         @if ($activeAcademicSection === 'term-setup')
-        <section class="section-card">
-            <h2 class="display-font text-2xl font-bold text-slate-950">Term</h2>
-            <form method="POST" action="{{ route('admin.terms.store') }}" class="mt-6 grid gap-4 md:grid-cols-2">
-                @csrf
-                <select name="academic_session_id" class="theme-input" required>
-                    <option value="">Select session</option>
+            <div class="max-w-2xl mx-auto w-full">
+                <x-form-card :action="route('admin.terms.store')" method="POST" title="Create term" description="Establish a new educational term under an active academic session.">
+                    <div class="grid gap-4 md:grid-cols-2">
+                        <div class="space-y-1 md:col-span-2">
+                            <label class="text-xs font-bold text-slate-700">Academic Session <span class="text-rose-500">*</span></label>
+                            <select name="academic_session_id" class="theme-input w-full" required>
+                                <option value="">Select session</option>
+                                @foreach ($sessions as $session)
+                                    <option value="{{ $session->id }}">{{ $session->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="space-y-1 md:col-span-2">
+                            <label class="text-xs font-bold text-slate-700">Term Name <span class="text-rose-500">*</span></label>
+                            <input name="name" placeholder="e.g. First Term" class="theme-input w-full" required />
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-slate-700">Start Date <span class="text-rose-500">*</span></label>
+                            <input name="start_date" type="date" class="theme-input w-full" required />
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-slate-700">End Date <span class="text-rose-500">*</span></label>
+                            <input name="end_date" type="date" class="theme-input w-full" required />
+                        </div>
+                        <div class="md:col-span-2 flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/50 px-4 py-3 text-xs font-semibold text-slate-655">
+                            <input id="term-current" name="is_current" type="checkbox" value="1" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
+                            <label for="term-current" class="cursor-pointer">Set as current active term</label>
+                        </div>
+                    </div>
+                    <x-slot name="actions">
+                        <x-action-button type="submit" variant="success">Create Term</x-action-button>
+                    </x-slot>
+                </x-form-card>
+            </div>
+        @endif
+
+        <!-- 3. SESSION STATUS & ROLLOVER -->
+        @if ($activeAcademicSection === 'session-rollover')
+            <div class="card bg-white border border-[#c8d6ea] rounded-[18px] p-6 shadow-[0_10px_25px_rgba(15,23,42,0.08)]">
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between border-b border-slate-100 pb-5 mb-6">
+                    <div>
+                        <h2 class="display-font text-xl font-bold text-slate-900 leading-snug">Session status and rollover</h2>
+                        <p class="text-xs font-semibold text-slate-500 mt-1 max-w-2xl leading-relaxed">
+                            To roll over, first approve and close the finished session. Once the next session is set as current, process student promotions into their target classes.
+                        </p>
+                    </div>
+                    @if ($currentSession)
+                        <div class="bg-emerald-50 text-emerald-800 px-4 py-3 rounded-2xl border border-emerald-100 shrink-0 text-center">
+                            <div class="text-[9px] font-extrabold uppercase tracking-wider text-emerald-600">Current active session</div>
+                            <div class="display-font text-lg font-black mt-0.5">{{ $currentSession->name }}</div>
+                        </div>
+                    @endif
+                </div>
+
+                <div class="grid gap-6 md:grid-cols-2">
                     @foreach ($sessions as $session)
-                        <option value="{{ $session->id }}">{{ $session->name }}</option>
+                        <div class="card bg-white border border-slate-200/80 rounded-[18px] p-5 shadow-sm">
+                            <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
+                                <div class="space-y-1">
+                                    <div class="font-extrabold text-slate-900 text-lg leading-tight flex items-center gap-2">
+                                        {{ $session->name }}
+                                        @if ($session->is_current)
+                                            <x-status-badge status="Active" class="scale-75 origin-left" />
+                                        @endif
+                                    </div>
+                                    <div class="text-xs font-semibold text-slate-400">
+                                        {{ $session->start_date->format('M j, Y') }} &mdash; {{ $session->end_date->format('M j, Y') }}
+                                    </div>
+                                    <div class="text-[10px] font-extrabold uppercase tracking-wider text-slate-450 pt-2 block">
+                                        Pass mark {{ number_format((float) $session->promotion_pass_mark, 2) }}%
+                                        @if ($session->closed_at)
+                                            &bull; Closed {{ $session->closed_at->format('M j, Y g:i A') }}
+                                        @endif
+                                    </div>
+                                    @if ($session->closedByUser)
+                                        <div class="text-[10px] font-semibold text-slate-500 mt-2">Approved by: {{ $session->closedByUser->fullName() }}</div>
+                                    @endif
+                                </div>
+
+                                @if (! $session->closed_at)
+                                    <form method="POST" action="{{ route('admin.sessions.close', $session) }}" class="w-full max-w-xs space-y-3">
+                                        @csrf
+                                        @method('PATCH')
+                                        <div class="space-y-1">
+                                            <label class="text-[10px] font-bold text-slate-700">Promotion Threshold (%)</label>
+                                            <input name="promotion_pass_mark" type="number" step="0.01" min="0" max="100" value="{{ old('promotion_pass_mark', $session->promotion_pass_mark) }}" class="theme-input w-full text-xs !py-2" required />
+                                        </div>
+                                        <button type="submit" class="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-[12px] font-bold text-xs uppercase tracking-wider transition duration-200 border border-rose-205 bg-rose-50 text-rose-700 hover:bg-rose-100/70 focus:outline-none" onclick="return confirm('Close this academic session? Students will remain in this session until you process promotions into the new current session.');">
+                                            Approve & Close Session
+                                        </button>
+                                    </form>
+                                @else
+                                    <div class="rounded-full border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-bold text-slate-500 shrink-0 uppercase tracking-wider">Session closed</div>
+                                @endif
+                            </div>
+                        </div>
                     @endforeach
-                </select>
-                <input name="name" placeholder="First Term" class="theme-input" required />
-                <input name="start_date" type="date" class="theme-input" required />
-                <input name="end_date" type="date" class="theme-input" required />
-                <div class="flex min-h-[3.5rem] items-center gap-3 rounded-2xl border border-slate-300 px-4 py-3 text-sm md:col-span-2">
-                    <input id="term-current" name="is_current" type="checkbox" value="1" class="rounded border-slate-300" />
-                    <label for="term-current">Set as current term</label>
-                </div>
-                <button type="submit" class="theme-button md:col-span-2">Create term</button>
-            </form>
-        </section>
-        @endif
-
-        @if (in_array($activeAcademicSection, ['session-setup', 'term-setup'], true))
-        </div>
-        @endif
-
-    @if ($activeAcademicSection === 'session-rollover')
-    <section class="section-card">
-        <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-            <div>
-                <h2 class="display-font text-2xl font-bold text-slate-950">Session status and rollover</h2>
-                <p class="mt-2 text-sm text-slate-500">Close a finished session first. After you create and mark the next session as current, review each student and either promote them to the next class or keep them in the same class for the new session.</p>
-            </div>
-            @if ($currentSession)
-                <div class="rounded-3xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-sm text-emerald-900">
-                    <div class="text-xs uppercase tracking-[0.24em] text-emerald-700">Current session</div>
-                    <div class="mt-2 font-semibold">{{ $currentSession->name }}</div>
-                </div>
-            @endif
-        </div>
-
-        <div class="mt-6 grid gap-4 xl:grid-cols-2">
-            @foreach ($sessions as $session)
-                <article class="rounded-3xl border border-slate-200 px-5 py-5">
-                    <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                        <div>
-                            <div class="font-semibold text-slate-900">{{ $session->name }}</div>
-                            <div class="mt-2 text-sm text-slate-500">
-                                {{ $session->start_date->format('M j, Y') }} to {{ $session->end_date->format('M j, Y') }}
-                            </div>
-                            <div class="mt-2 text-xs uppercase tracking-[0.24em] text-slate-500">
-                                Pass mark {{ number_format((float) $session->promotion_pass_mark, 2) }}%
-                                @if ($session->is_current)
-                                    | Current
-                                @endif
-                                @if ($session->closed_at)
-                                    | Closed {{ $session->closed_at->format('M j, Y g:i A') }}
-                                @endif
-                            </div>
-                            @if ($session->closedByUser)
-                                <div class="mt-2 text-sm text-slate-500">Approved by {{ $session->closedByUser->fullName() }}</div>
-                            @endif
-                        </div>
-
-                        @if (! $session->closed_at)
-                            <form method="POST" action="{{ route('admin.sessions.close', $session) }}" class="w-full max-w-xs space-y-3">
-                                @csrf
-                                @method('PATCH')
-                                <input name="promotion_pass_mark" type="number" step="0.01" min="0" max="100" value="{{ old('promotion_pass_mark', $session->promotion_pass_mark) }}" class="theme-input w-full" required />
-                                <button type="submit" class="theme-button-secondary w-full border-amber-300 text-amber-800" onclick="return confirm('Close this academic session? Students will remain in this session until you process promotions into the new current session.');">
-                                    Approve and close session
-                                </button>
-                            </form>
-                        @else
-                            <div class="rounded-full border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700">Session closed</div>
-                        @endif
-                    </div>
-                </article>
-            @endforeach
-        </div>
-    </section>
-    @endif
-
-    @if ($activeAcademicSection === 'promotion-review' && $promotionSourceSession && $currentSession)
-        <section class="section-card">
-            <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-                <div>
-                    <h2 class="display-font text-2xl font-bold text-slate-950">Promotion review</h2>
-                    <p class="mt-2 text-sm text-slate-500">
-                        Source session: {{ $promotionSourceSession->name }}.
-                        Target session: {{ $currentSession->name }}.
-                        Overall percentage is the total of subject percentages divided by the number of subjects offered in the student's class for the closed session.
-                    </p>
-                </div>
-                <div class="grid gap-3 sm:grid-cols-3">
-                    <div class="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-4 text-sm">
-                        <div class="text-xs uppercase tracking-[0.24em] text-slate-500">Students</div>
-                        <div class="mt-2 text-xl font-bold text-slate-950">{{ $promotionSummary['students'] }}</div>
-                    </div>
-                    <div class="rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-4 text-sm">
-                        <div class="text-xs uppercase tracking-[0.24em] text-emerald-700">Recommended promote</div>
-                        <div class="mt-2 text-xl font-bold text-emerald-900">{{ $promotionSummary['recommended_promotions'] }}</div>
-                    </div>
-                    <div class="rounded-2xl border border-amber-200 bg-amber-50 px-4 py-4 text-sm">
-                        <div class="text-xs uppercase tracking-[0.24em] text-amber-700">Recommended repeat</div>
-                        <div class="mt-2 text-xl font-bold text-amber-900">{{ $promotionSummary['recommended_repeats'] }}</div>
-                    </div>
                 </div>
             </div>
+        @endif
 
-            <form method="POST" action="{{ route('admin.sessions.promotions.process') }}" class="mt-6 space-y-6">
-                @csrf
-                <input type="hidden" name="source_session_id" value="{{ $promotionSourceSession->id }}" />
-                <input type="hidden" name="target_session_id" value="{{ $currentSession->id }}" />
-
-                @foreach ($promotionPreviewByClass as $className => $rows)
-                    <div class="rounded-3xl border border-slate-200">
-                        <div class="border-b border-slate-200 px-5 py-4">
-                            <div class="font-semibold text-slate-900">{{ $className }}</div>
-                            <div class="mt-1 text-sm text-slate-500">{{ $rows->count() }} student(s)</div>
+        <!-- 4. STUDENT PROMOTIONS REVIEW -->
+        @if ($activeAcademicSection === 'promotion-review' && $promotionSourceSession && $currentSession)
+            <div class="card bg-white border border-[#c8d6ea] rounded-[18px] p-6 shadow-[0_10px_25px_rgba(15,23,42,0.08)]">
+                <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between border-b border-slate-100 pb-5 mb-6">
+                    <div>
+                        <h2 class="display-font text-xl font-bold text-slate-900 leading-snug">Student promotion review dashboard</h2>
+                        <p class="text-xs font-semibold text-slate-500 mt-1 max-w-3xl leading-relaxed">
+                            Source session: {{ $promotionSourceSession->name }} &bull; Target session: {{ $currentSession->name }}. Student recommendations are calculated using cumulative score percentages.
+                        </p>
+                    </div>
+                    <div class="grid gap-3 grid-cols-3 shrink-0">
+                        <div class="bg-blue-50 text-blue-700 px-4 py-3 rounded-2xl border border-blue-100 text-center">
+                            <div class="text-[9px] font-extrabold uppercase tracking-wider text-blue-500">Students</div>
+                            <div class="display-font text-xl font-black mt-0.5">{{ $promotionSummary['students'] }}</div>
                         </div>
-
-                        <div class="desktop-table table-wrap">
-                            <table class="min-w-full divide-y divide-slate-200 text-sm">
-                                <thead class="bg-slate-50">
-                                    <tr class="text-left text-slate-500">
-                                        <th class="px-5 py-4 font-semibold">Student</th>
-                                        <th class="px-5 py-4 font-semibold">Subjects</th>
-                                        <th class="px-5 py-4 font-semibold">Overall %</th>
-                                        <th class="px-5 py-4 font-semibold">Recommendation</th>
-                                        <th class="px-5 py-4 font-semibold">Admin decision</th>
-                                        <th class="px-5 py-4 font-semibold">Target class</th>
-                                        <th class="px-5 py-4 font-semibold">Note</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-slate-200">
-                                    @foreach ($rows as $row)
-                                        @php
-                                            $student = $row['student'];
-                                            $recommendedPromote = $row['recommended_status'] === 'promote';
-                                            $selectedClassId = old("target_class_ids.{$student->id}", $recommendedPromote ? $row['recommended_next_class']?->id : $row['current_class']?->id);
-                                        @endphp
-                                        <tr>
-                                            <td class="px-5 py-4 align-top">
-                                                <div class="font-semibold text-slate-900">{{ $student->user->fullName() }}</div>
-                                                <div class="mt-1 text-xs uppercase tracking-[0.2em] text-slate-500">{{ $student->admission_no }}</div>
-                                            </td>
-                                            <td class="px-5 py-4 align-top text-slate-600">{{ $row['subject_count'] }}</td>
-                                            <td class="px-5 py-4 align-top">
-                                                <div class="font-semibold text-slate-900">{{ number_format((float) $row['overall_percentage'], 2) }}%</div>
-                                                <div class="mt-1 text-xs text-slate-500">Pass mark {{ number_format((float) $row['promotion_threshold'], 2) }}%</div>
-                                            </td>
-                                            <td class="px-5 py-4 align-top">
-                                                <div class="rounded-full {{ $recommendedPromote ? 'border border-emerald-300 text-emerald-700' : 'border border-amber-300 text-amber-700' }} px-3 py-1 text-xs font-semibold uppercase tracking-[0.2em]">
-                                                    {{ $recommendedPromote ? 'Promote' : 'Repeat' }}
-                                                </div>
-                                            </td>
-                                            <td class="px-5 py-4 align-top">
-                                                <select name="decisions[{{ $student->id }}]" class="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm">
-                                                    <option value="promote" @selected(old("decisions.{$student->id}", $row['recommended_status']) === 'promote')>Promote</option>
-                                                    <option value="repeat" @selected(old("decisions.{$student->id}", $row['recommended_status']) === 'repeat')>Repeat class</option>
-                                                </select>
-                                            </td>
-                                            <td class="px-5 py-4 align-top">
-                                                <select name="target_class_ids[{{ $student->id }}]" class="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm">
-                                                    <option value="">Select class</option>
-                                                    @foreach ($classes as $class)
-                                                        <option value="{{ $class->id }}" @selected((string) $selectedClassId === (string) $class->id)>
-                                                            {{ $class->display_name }}
-                                                        </option>
-                                                    @endforeach
-                                                </select>
-                                                @if ($row['recommended_next_class'])
-                                                    <div class="mt-2 text-xs text-slate-500">Suggested next class: {{ $row['recommended_next_class']->display_name }}</div>
-                                                @endif
-                                            </td>
-                                            <td class="px-5 py-4 align-top">
-                                                <input
-                                                    name="notes[{{ $student->id }}]"
-                                                    value="{{ old("notes.{$student->id}") }}"
-                                                    placeholder="Optional note"
-                                                    class="w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm"
-                                                />
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
+                        <div class="bg-emerald-50 text-emerald-800 px-4 py-3 rounded-2xl border border-emerald-100 text-center">
+                            <div class="text-[9px] font-extrabold uppercase tracking-wider text-emerald-600">Promoted</div>
+                            <div class="display-font text-xl font-black mt-0.5">{{ $promotionSummary['recommended_promotions'] }}</div>
                         </div>
-                        <div class="mobile-record-list p-5">
-                            @foreach ($rows as $row)
-                                @php
-                                    $student = $row['student'];
-                                    $recommendedPromote = $row['recommended_status'] === 'promote';
-                                    $selectedClassId = old("target_class_ids.{$student->id}", $recommendedPromote ? $row['recommended_next_class']?->id : $row['current_class']?->id);
-                                @endphp
-                                <article class="mobile-record-card">
-                                    <div class="mobile-record-title">{{ $student->user->fullName() }}</div>
-                                    <div class="mobile-record-subtitle">{{ $student->admission_no }}</div>
-                                    <div class="mobile-record-grid mt-4">
-                                        <div class="mobile-record-item">
-                                            <div class="mobile-record-label">Subjects</div>
-                                            <div class="mobile-record-value">{{ $row['subject_count'] }}</div>
-                                        </div>
-                                        <div class="mobile-record-item">
-                                            <div class="mobile-record-label">Overall %</div>
-                                            <div class="mobile-record-value">{{ number_format((float) $row['overall_percentage'], 2) }}%</div>
-                                        </div>
-                                        <div class="mobile-record-item">
-                                            <div class="mobile-record-label">Recommendation</div>
-                                            <div class="mobile-record-value">{{ $recommendedPromote ? 'Promote' : 'Repeat' }}</div>
-                                        </div>
-                                        <div class="mobile-record-item md:col-span-2">
-                                            <div class="mobile-record-label">Admin decision</div>
-                                            <select name="decisions[{{ $student->id }}]" class="theme-input mt-2 w-full">
+                        <div class="bg-amber-50 text-amber-800 px-4 py-3 rounded-2xl border border-amber-100 text-center">
+                            <div class="text-[9px] font-extrabold uppercase tracking-wider text-amber-600">Repeats</div>
+                            <div class="display-font text-xl font-black mt-0.5">{{ $promotionSummary['recommended_repeats'] }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <form method="POST" action="{{ route('admin.sessions.promotions.process') }}" class="space-y-6">
+                    @csrf
+                    <input type="hidden" name="source_session_id" value="{{ $promotionSourceSession->id }}" />
+                    <input type="hidden" name="target_session_id" value="{{ $currentSession->id }}" />
+
+                    @foreach ($promotionPreviewByClass as $className => $rows)
+                        <div class="card bg-white border border-slate-200 rounded-[18px] p-5 shadow-sm space-y-4">
+                            <div class="border-b border-slate-100 pb-3 flex items-center justify-between">
+                                <div>
+                                    <h3 class="display-font text-base font-extrabold text-slate-900">{{ $className }}</h3>
+                                    <p class="text-xs font-semibold text-slate-400 mt-1">{{ $rows->count() }} student record{{ $rows->count() === 1 ? '' : 's' }}</p>
+                                </div>
+                                <x-status-badge status="Active" />
+                            </div>
+
+                            <x-data-table :headers="['Student', 'Subjects', 'Overall Score %', 'System recommendation', 'Admin Decision', 'Target Class Assignment', 'Action Notes']">
+                                @foreach ($rows as $row)
+                                    @php
+                                        $student = $row['student'];
+                                        $recommendedPromote = $row['recommended_status'] === 'promote';
+                                        $selectedClassId = old("target_class_ids.{$student->id}", $recommendedPromote ? $row['recommended_next_class']?->id : $row['current_class']?->id);
+                                    @endphp
+                                    <tr class="hover:bg-slate-50/80 transition duration-150">
+                                        <td class="px-6 py-4 align-top">
+                                            <div class="font-bold text-slate-900 text-xs">{{ $student->user->fullName() }}</div>
+                                            <div class="text-[10px] font-semibold text-slate-400 mt-0.5 font-mono">{{ $student->admission_no }}</div>
+                                        </td>
+                                        <td class="px-6 py-4 align-top text-xs font-semibold text-slate-600">{{ $row['subject_count'] }}</td>
+                                        <td class="px-6 py-4 align-top text-xs">
+                                            <div class="font-bold text-slate-900">{{ number_format((float) $row['overall_percentage'], 2) }}%</div>
+                                            <div class="text-[10px] font-semibold text-slate-400 mt-0.5">Threshold: {{ number_format((float) $row['promotion_threshold'], 2) }}%</div>
+                                        </td>
+                                        <td class="px-6 py-4 align-top">
+                                            <x-status-badge :status="$recommendedPromote ? 'Present' : 'Absent'" class="scale-90" />
+                                        </td>
+                                        <td class="px-6 py-4 align-top">
+                                            <select name="decisions[{{ $student->id }}]" class="theme-input text-xs !py-1.5 w-full">
                                                 <option value="promote" @selected(old("decisions.{$student->id}", $row['recommended_status']) === 'promote')>Promote</option>
-                                                <option value="repeat" @selected(old("decisions.{$student->id}", $row['recommended_status']) === 'repeat')>Repeat class</option>
+                                                <option value="repeat" @selected(old("decisions.{$student->id}", $row['recommended_status']) === 'repeat')>Repeat</option>
                                             </select>
-                                        </div>
-                                        <div class="mobile-record-item md:col-span-2">
-                                            <div class="mobile-record-label">Target class</div>
-                                            <select name="target_class_ids[{{ $student->id }}]" class="theme-input mt-2 w-full">
+                                        </td>
+                                        <td class="px-6 py-4 align-top">
+                                            <select name="target_class_ids[{{ $student->id }}]" class="theme-input text-xs !py-1.5 w-full">
                                                 <option value="">Select class</option>
                                                 @foreach ($classes as $class)
                                                     <option value="{{ $class->id }}" @selected((string) $selectedClassId === (string) $class->id)>
@@ -278,197 +229,300 @@
                                                 @endforeach
                                             </select>
                                             @if ($row['recommended_next_class'])
-                                                <div class="mt-2 text-xs text-slate-500">Suggested next class: {{ $row['recommended_next_class']->display_name }}</div>
+                                                <div class="text-[10px] font-semibold text-blue-600 mt-1.5">Next suggested class: {{ $row['recommended_next_class']->display_name }}</div>
                                             @endif
-                                        </div>
-                                        <div class="mobile-record-item md:col-span-2">
-                                            <div class="mobile-record-label">Note</div>
+                                        </td>
+                                        <td class="px-6 py-4 align-top">
                                             <input
                                                 name="notes[{{ $student->id }}]"
                                                 value="{{ old("notes.{$student->id}") }}"
-                                                placeholder="Optional note"
-                                                class="theme-input mt-2 w-full"
+                                                placeholder="Add review notes"
+                                                class="theme-input text-xs !py-1.5 w-full"
                                             />
-                                        </div>
-                                    </div>
-                                </article>
+                                        </td>
+                                    </tr>
+                                @endforeach
+                            </x-data-table>
+                        </div>
+                    @endforeach
+
+                    <div class="pt-4 border-t border-slate-100 flex justify-end">
+                        @if ($promotionPreview->isEmpty())
+                            <div class="rounded-xl border border-dashed border-slate-350 p-4 text-xs font-semibold text-slate-500 text-center w-full">No student records require promotion processing in this closed session.</div>
+                        @else
+                            <x-action-button type="submit" variant="success">Promote Eligible Students Into {{ $currentSession->name }}</x-action-button>
+                        @endif
+                    </div>
+                </form>
+            </div>
+        @elseif ($activeAcademicSection === 'promotion-review' && $sessions->contains(fn ($session) => $session->closed_at !== null))
+            <div class="card bg-white border border-[#c8d6ea] rounded-[18px] p-6 shadow-[0_10px_25px_rgba(15,23,42,0.08)] max-w-2xl mx-auto">
+                <x-empty-state title="Roll over targets unconfigured" description="A session has been closed, but there is no active target current session. Create a new session first." icon="classes" />
+            </div>
+        @endif
+
+        <!-- 5. CLASS SETUP & TEACHER ALLOCATION -->
+        @if ($activeAcademicSection === 'class-setup')
+            <div class="grid gap-8 xl:grid-cols-[0.8fr,1.2fr]">
+                <!-- Create Class Card -->
+                <x-form-card :action="route('admin.classes.store')" method="POST" title="Class setup workspace" description="Add a new class index, assign teachers, room spaces, and student capacities." class="self-start">
+                    <div class="grid gap-4 md:grid-cols-2">
+                        <div class="space-y-1 md:col-span-2">
+                            <label class="text-xs font-bold text-slate-700">Class Name <span class="text-rose-500">*</span></label>
+                            <input name="name" placeholder="e.g. SS 1" class="theme-input w-full" required />
+                        </div>
+                        <div class="space-y-1 md:col-span-2">
+                            <label class="text-xs font-bold text-slate-700">Section Division</label>
+                            <input name="section" placeholder="e.g. Science / Arts / General" class="theme-input w-full" />
+                        </div>
+                        <div class="space-y-1 md:col-span-2">
+                            <label class="text-xs font-bold text-slate-700">Class Teacher Assignment</label>
+                            <select name="class_teacher_id" class="theme-input w-full">
+                                <option value="">Select class teacher</option>
+                                @foreach ($teachers as $teacher)
+                                    <option value="{{ $teacher->id }}">{{ $teacher->fullName() }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-slate-700">Max Capacity</label>
+                            <input name="capacity" type="number" min="1" placeholder="e.g. 40" class="theme-input w-full" />
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-slate-700">Room Location</label>
+                            <input name="room" placeholder="e.g. Block C" class="theme-input w-full" />
+                        </div>
+                        <div class="space-y-1 md:col-span-2">
+                            <label class="text-xs font-bold text-slate-700">Description</label>
+                            <textarea name="description" rows="3" placeholder="Additional details..." class="theme-input w-full"></textarea>
+                        </div>
+                    </div>
+                    <x-slot name="actions">
+                        <x-action-button type="submit" variant="success">Create Class</x-action-button>
+                    </x-slot>
+                </x-form-card>
+
+                <!-- Class List / Update Teachers Cards -->
+                <div x-data="{ selectedClassId: '{{ $classes->first()?->id ?? '' }}' }" class="space-y-6">
+                    <div class="card bg-white border border-[#c8d6ea] rounded-[18px] p-6 shadow-[0_10px_25px_rgba(15,23,42,0.08)]">
+                        <h3 class="display-font text-lg font-bold text-slate-900 leading-snug">Existing class setups</h3>
+                        <p class="text-xs font-semibold text-slate-400 mt-1 mb-4">Configure class directories, edit room slots, and update assigned educational managers.</p>
+                        
+                        <!-- Premium Class Selector Tabs -->
+                        <div class="flex flex-wrap gap-2 pt-4 border-t border-slate-100">
+                            @foreach ($classes as $schoolClass)
+                                <button 
+                                    type="button" 
+                                    @click="selectedClassId = '{{ $schoolClass->id }}'"
+                                    class="px-4 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider transition duration-200 border"
+                                    :class="selectedClassId === '{{ $schoolClass->id }}' 
+                                        ? 'bg-blue-600 border-blue-600 text-white shadow-lg shadow-blue-500/20' 
+                                        : 'bg-slate-50 border-slate-200 text-slate-700 hover:bg-slate-100 hover:text-slate-900'"
+                                >
+                                    {{ $schoolClass->display_name }}
+                                </button>
                             @endforeach
                         </div>
                     </div>
-                @endforeach
 
-                @if ($promotionPreview->isEmpty())
-                    <div class="rounded-2xl border border-dashed border-slate-300 px-4 py-6 text-sm text-slate-500">No students remain in the closed session for promotion processing.</div>
-                @else
-                    <button type="submit" class="theme-button">Continue students into {{ $currentSession->name }}</button>
-                @endif
-            </form>
-        </section>
-    @elseif ($activeAcademicSection === 'promotion-review' && $sessions->contains(fn ($session) => $session->closed_at !== null))
-        <section class="section-card">
-            <h2 class="display-font text-2xl font-bold text-slate-950">Promotion review</h2>
-            <p class="mt-3 text-sm text-slate-500">A session has been closed, but there is no different current session yet. Create the next session and set it as current before processing promotions.</p>
-        </section>
-    @endif
-
-    @if (in_array($activeAcademicSection, ['class-setup', 'subject-setup'], true))
-    <div class="grid gap-8 xl:grid-cols-2">
-    @endif
-        @if ($activeAcademicSection === 'class-setup')
-        <section class="section-card">
-            <h2 class="display-font text-2xl font-bold text-slate-950">Class setup</h2>
-            <form method="POST" action="{{ route('admin.classes.store') }}" class="mt-6 grid gap-4 md:grid-cols-2">
-                @csrf
-                <input name="name" placeholder="SS 1" class="theme-input" required />
-                <input name="section" placeholder="Science / Arts / General" class="theme-input" />
-                <select name="class_teacher_id" class="theme-input">
-                    <option value="">Class teacher</option>
-                    @foreach ($teachers as $teacher)
-                        <option value="{{ $teacher->id }}">{{ $teacher->fullName() }}</option>
-                    @endforeach
-                </select>
-                <input name="capacity" type="number" min="1" placeholder="Capacity" class="theme-input" />
-                <input name="room" placeholder="Room" class="theme-input" />
-                <textarea name="description" rows="3" placeholder="Description" class="theme-input md:col-span-2"></textarea>
-                <button type="submit" class="theme-button md:col-span-2">Create class</button>
-            </form>
-
-            <div class="mt-8">
-                <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-                    <div>
-                        <h3 class="display-font text-xl font-bold text-slate-950">Existing class teacher accounts</h3>
-                        <p class="mt-2 text-sm text-slate-500">Assign one class teacher account to each class. That teacher will use the teaching workspace to manage attendance, classwork, assignments, assessments, exams, and student results for the class.</p>
-                    </div>
-                </div>
-
-                <div class="mt-6 space-y-4">
                     @forelse ($classes as $schoolClass)
-                        <form method="POST" action="{{ route('admin.classes.update', $schoolClass) }}" class="rounded-[1.75rem] border border-slate-200 px-5 py-5">
-                            @csrf
-                            @method('PATCH')
-
-                            <div class="flex flex-col gap-2 lg:flex-row lg:items-start lg:justify-between">
-                                <div>
-                                    <div class="display-font text-xl font-bold text-slate-950">{{ $schoolClass->display_name }}</div>
-                                    <div class="mt-1 text-sm text-slate-500">Current class teacher: {{ $schoolClass->classTeacher?->fullName() ?? 'Not assigned yet' }}</div>
+                        <div x-show="selectedClassId === '{{ $schoolClass->id }}'" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
+                            <x-form-card :action="route('admin.classes.update', $schoolClass)" method="PATCH" title="{{ $schoolClass->display_name }}" description="Current Class Teacher: {{ $schoolClass->classTeacher?->fullName() ?? 'Not allocated' }}">
+                                <div class="grid gap-4 md:grid-cols-2">
+                                    <div class="space-y-1">
+                                        <label class="text-xs font-bold text-slate-750">Class Name <span class="text-rose-500">*</span></label>
+                                        <input name="name" value="{{ old('name', $schoolClass->name) }}" class="theme-input w-full" required />
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-xs font-bold text-slate-750">Section</label>
+                                        <input name="section" value="{{ old('section', $schoolClass->section) }}" class="theme-input w-full" placeholder="Section" />
+                                    </div>
+                                    <div class="space-y-1 md:col-span-2">
+                                        <label class="text-xs font-bold text-slate-750">Class Teacher Allocation</label>
+                                        <select name="class_teacher_id" class="theme-input w-full">
+                                            <option value="">Class teacher</option>
+                                            @foreach ($teachers as $teacher)
+                                                <option value="{{ $teacher->id }}" @selected((string) old('class_teacher_id', $schoolClass->class_teacher_id) === (string) $teacher->id)>{{ $teacher->fullName() }}</option>
+                                            @endforeach
+                                        </select>
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-xs font-bold text-slate-750">Capacity</label>
+                                        <input name="capacity" type="number" min="1" value="{{ old('capacity', $schoolClass->capacity) }}" class="theme-input w-full" placeholder="Capacity" />
+                                    </div>
+                                    <div class="space-y-1">
+                                        <label class="text-xs font-bold text-slate-750">Room</label>
+                                        <input name="room" value="{{ old('room', $schoolClass->room) }}" class="theme-input w-full" placeholder="Room" />
+                                    </div>
+                                    <div class="space-y-1 md:col-span-2">
+                                        <label class="text-xs font-bold text-slate-750">Description</label>
+                                        <textarea name="description" rows="3" class="theme-input w-full" placeholder="Description">{{ old('description', $schoolClass->description) }}</textarea>
+                                    </div>
                                 </div>
-                                <div class="rounded-2xl bg-slate-50 px-4 py-3 text-sm text-slate-600">
-                                    Room {{ $schoolClass->room ?: 'Not set' }} | Capacity {{ $schoolClass->capacity ?: 'Not set' }}
-                                </div>
-                            </div>
-
-                            <div class="mt-5 grid gap-4 md:grid-cols-2">
-                                <input name="name" value="{{ old('name', $schoolClass->name) }}" class="theme-input" required />
-                                <input name="section" value="{{ old('section', $schoolClass->section) }}" class="theme-input" placeholder="Section" />
-                                <select name="class_teacher_id" class="theme-input">
-                                    <option value="">Class teacher</option>
-                                    @foreach ($teachers as $teacher)
-                                        <option value="{{ $teacher->id }}" @selected((string) old('class_teacher_id', $schoolClass->class_teacher_id) === (string) $teacher->id)>{{ $teacher->fullName() }}</option>
-                                    @endforeach
-                                </select>
-                                <input name="capacity" type="number" min="1" value="{{ old('capacity', $schoolClass->capacity) }}" class="theme-input" placeholder="Capacity" />
-                                <input name="room" value="{{ old('room', $schoolClass->room) }}" class="theme-input" placeholder="Room" />
-                                <textarea name="description" rows="3" class="theme-input md:col-span-2" placeholder="Description">{{ old('description', $schoolClass->description) }}</textarea>
-                            </div>
-
-                            <div class="mt-5 flex justify-end">
-                                <button type="submit" class="theme-button">Save class teacher</button>
-                            </div>
-                        </form>
+                                <x-slot name="actions">
+                                    <x-action-button type="submit" variant="success">Save Class Details</x-action-button>
+                                </x-slot>
+                            </x-form-card>
+                        </div>
                     @empty
-                        <div class="rounded-2xl border border-dashed border-slate-300 px-4 py-6 text-sm text-slate-500">No classes have been created yet.</div>
+                        <x-empty-state title="No active class records" description="No school classroom or grade records have been established." icon="classes" />
                     @endforelse
                 </div>
             </div>
-        </section>
         @endif
 
+        <!-- 6. SUBJECT SETUP -->
         @if ($activeAcademicSection === 'subject-setup')
-        <section class="section-card">
-            <h2 class="display-font text-2xl font-bold text-slate-950">Subject setup</h2>
-            <form method="POST" action="{{ route('admin.subjects.store') }}" class="mt-6 space-y-4">
-                @csrf
-                <input name="name" placeholder="Mathematics" class="theme-input w-full" required />
-                <input name="code" placeholder="MTH101" class="theme-input w-full" />
-                <textarea name="description" rows="4" placeholder="Subject description" class="theme-input w-full"></textarea>
-                <button type="submit" class="theme-button">Create subject</button>
-            </form>
-        </section>
-        @endif
-    @if (in_array($activeAcademicSection, ['class-setup', 'subject-setup'], true))
-    </div>
-    @endif
-
-    @if ($activeAcademicSection === 'announcement')
-    <section class="section-card">
-        <h2 class="display-font text-2xl font-bold text-slate-950">Website announcement</h2>
-        <form method="POST" action="{{ route('admin.announcements.store') }}" class="mt-6 space-y-4">
-            @csrf
-            <div class="grid gap-4 md:grid-cols-2">
-                <input name="title" placeholder="Announcement title" class="theme-input" required />
-                <input name="category" placeholder="news / event / update" class="theme-input" value="news" required />
-            </div>
-            <textarea name="excerpt" rows="2" placeholder="Short excerpt" class="theme-input w-full"></textarea>
-            <textarea name="body" rows="5" placeholder="Announcement body" class="theme-input w-full" required></textarea>
-            <label class="flex items-center gap-3 text-sm text-slate-600">
-                <input type="checkbox" name="is_published" value="1" checked class="rounded border-slate-300" />
-                Publish immediately
-            </label>
-            <button type="submit" class="theme-button">Publish announcement</button>
-        </form>
-    </section>
-    @endif
-
-    @if ($activeAcademicSection === 'cbt-control')
-    <section class="section-card">
-        <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-            <div>
-                <h2 class="display-font text-2xl font-bold text-slate-950">CBT control room</h2>
-                <p class="mt-2 text-sm text-slate-500">Turn school CBT on or off globally and activate or deactivate each CBT exam whenever the school is ready.</p>
-            </div>
-            <form method="POST" action="{{ route('admin.cbt.toggle') }}" class="rounded-3xl border border-slate-200 bg-slate-50 px-5 py-5">
-                @csrf
-                <div class="text-xs uppercase tracking-[0.24em] text-slate-500">School CBT</div>
-                <div class="mt-3 text-lg font-semibold text-slate-900">{{ $cbtEnabled ? 'Enabled' : 'Disabled' }}</div>
-                <input type="hidden" name="enabled" value="{{ $cbtEnabled ? 0 : 1 }}" />
-                <button type="submit" class="mt-4 rounded-full {{ $cbtEnabled ? 'border border-rose-300 text-rose-700' : 'bg-slate-900 text-white' }} px-5 py-3 text-sm font-semibold">
-                    {{ $cbtEnabled ? 'Turn CBT off' : 'Turn CBT on' }}
-                </button>
-            </form>
-        </div>
-
-        <div class="mt-6 space-y-4">
-            @forelse ($cbtAssessments as $cbtAssessment)
-                <article class="rounded-3xl border border-slate-200 px-5 py-5">
-                    <div class="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
-                        <div>
-                            <div class="font-semibold text-slate-900">{{ $cbtAssessment->title }}</div>
-                            <div class="mt-1 text-sm text-slate-500">{{ $cbtAssessment->teacher->fullName() }} | {{ $cbtAssessment->subject->name }} | {{ $cbtAssessment->schoolClass->display_name }}</div>
-                            <div class="mt-2 text-xs uppercase tracking-[0.24em] text-slate-500">
-                                {{ $cbtAssessment->cbtQuestions_count }} question(s)
-                                |
-                                {{ $cbtAssessment->cbtAttempts_count }} attempt(s)
-                                |
-                                {{ $cbtAssessment->cbt_is_active ? 'Live' : 'Offline' }}
-                            </div>
-                            @if ($cbtAssessment->cbt_starts_at)
-                                <div class="mt-2 text-sm text-slate-600">Starts {{ $cbtAssessment->cbt_starts_at->format('M j, Y g:i A') }}</div>
-                            @endif
+            <div class="max-w-2xl mx-auto w-full">
+                <x-form-card :action="route('admin.subjects.store')" method="POST" title="Subject setup workspace" description="Establish a new subject directory index in Beloved Schools.">
+                    <div class="space-y-4">
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-slate-700">Subject Name <span class="text-rose-500">*</span></label>
+                            <input name="name" placeholder="e.g. Mathematics" class="theme-input w-full" required />
                         </div>
-                        <form method="POST" action="{{ route('admin.cbt.assessments.toggle', $cbtAssessment) }}">
-                            @csrf
-                            @method('PATCH')
-                            <button type="submit" class="rounded-full {{ $cbtAssessment->cbt_is_active ? 'border border-rose-300 text-rose-700' : 'bg-slate-900 text-white' }} px-5 py-3 text-sm font-semibold">
-                                {{ $cbtAssessment->cbt_is_active ? 'Deactivate exam' : 'Activate exam' }}
-                            </button>
-                        </form>
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-slate-700">Subject Code</label>
+                            <input name="code" placeholder="e.g. MTH101" class="theme-input w-full" />
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-slate-700">Description</label>
+                            <textarea name="description" rows="4" placeholder="Course syllabus overview details..." class="theme-input w-full"></textarea>
+                        </div>
                     </div>
-                </article>
-            @empty
-                <div class="rounded-2xl border border-dashed border-slate-300 px-4 py-6 text-sm text-slate-500">No CBT assessments have been created yet.</div>
-            @endforelse
-        </div>
-    </section>
-    @endif
+                    <x-slot name="actions">
+                        <x-action-button type="submit" variant="success">Create Subject Record</x-action-button>
+                    </x-slot>
+                </x-form-card>
+            </div>
+        @endif
+
+        <!-- 7. ANNOUNCEMENT MANAGEMENT -->
+        @if ($activeAcademicSection === 'announcement')
+            <div class="max-w-3xl mx-auto w-full">
+                <x-form-card :action="route('admin.announcements.store')" method="POST" title="Publish website announcement" description="Broadcast notices, news, and school events to parents and student dashboards immediately.">
+                    <div class="space-y-4">
+                        <div class="grid gap-4 md:grid-cols-2">
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-slate-700">Announcement Title <span class="text-rose-500">*</span></label>
+                                <input name="title" placeholder="e.g. Inter-house sports day" class="theme-input w-full" required />
+                            </div>
+                            <div class="space-y-1">
+                                <label class="text-xs font-bold text-slate-700">Category Tag <span class="text-rose-500">*</span></label>
+                                <input name="category" placeholder="e.g. news / event / update" class="theme-input w-full" value="news" required />
+                            </div>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-slate-700">Short Summary Excerpt</label>
+                            <textarea name="excerpt" rows="2" placeholder="Brief visual overview..." class="theme-input w-full"></textarea>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs font-bold text-slate-700">Announcement Body Contents <span class="text-rose-500">*</span></label>
+                            <textarea name="body" rows="6" placeholder="Write announcement details..." class="theme-input w-full" required></textarea>
+                        </div>
+                        <div class="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/50 px-4 py-3 text-xs font-semibold text-slate-655">
+                            <input type="checkbox" id="announce-publish" name="is_published" value="1" checked class="rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
+                            <label for="announce-publish" class="cursor-pointer">Publish immediately onto active dashboards</label>
+                        </div>
+                    </div>
+                    <x-slot name="actions">
+                        <x-action-button type="submit" variant="success">Publish Announcement</x-action-button>
+                    </x-slot>
+                </x-form-card>
+            </div>
+        @endif
+
+        <!-- 8. CBT全局控制与考试管理 -->
+        @if ($activeAcademicSection === 'cbt-control')
+            <div class="card bg-white border border-[#c8d6ea] rounded-[18px] p-6 shadow-[0_10px_25px_rgba(15,23,42,0.08)]">
+                <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 pb-5 mb-6">
+                    <div>
+                        <h2 class="display-font text-xl font-bold text-slate-900 leading-snug">Computer Based Testing (CBT) control room</h2>
+                        <p class="text-xs font-semibold text-slate-500 mt-1 max-w-2xl leading-relaxed">
+                            Toggle system-wide CBT examinations immediately. Deactivated exams will restrict student launches while live setups allow portal logins.
+                        </p>
+                    </div>
+                    
+                    <form method="POST" action="{{ route('admin.cbt.toggle') }}" class="p-4 rounded-xl border border-slate-100 bg-slate-50/50 shrink-0 text-center flex flex-col justify-between items-center gap-2">
+                        @csrf
+                        <div class="text-[9px] font-extrabold uppercase tracking-wider text-slate-400">Global System status</div>
+                        <div class="font-extrabold text-sm text-slate-850 flex items-center gap-1.5 mt-0.5">
+                            <span class="w-2.5 h-2.5 rounded-full {{ $cbtEnabled ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500' }}"></span>
+                            CBT System {{ $cbtEnabled ? 'LIVE' : 'OFFLINE' }}
+                        </div>
+                        <input type="hidden" name="enabled" value="{{ $cbtEnabled ? 0 : 1 }}" />
+                        <x-action-button type="submit" :variant="$cbtEnabled ? 'danger' : 'accent'" class="!px-3 !py-1.5 !rounded-lg text-[10px] mt-2">
+                            {{ $cbtEnabled ? 'Deactivate globally' : 'Activate globally' }}
+                        </x-action-button>
+                    </form>
+                </div>
+
+                <div>
+                    <x-data-table :headers="['Assessment', 'Subject', 'Class', 'Teacher', 'Questions', 'Attempts', 'Status', 'Actions']">
+                    @forelse ($cbtAssessments as $cbtAssessment)
+                        @php
+                            $cbtPreview = [
+                                'type' => 'subject',
+                                'title' => $cbtAssessment->title,
+                                'subtitle' => ($cbtAssessment->cbt_is_active ? 'Live Assessment' : 'Offline Draft').' - '.($cbtAssessment->schoolClass->display_name ?? 'No class'),
+                                'avatar' => 'CB',
+                                'profileUrl' => route('admin.academics', ['section' => 'cbt-control']),
+                                'ctaLabel' => 'View Full Details',
+                                'fields' => [
+                                    ['label' => 'Subject', 'value' => $cbtAssessment->subject->name ?? 'No subject'],
+                                    ['label' => 'Class', 'value' => $cbtAssessment->schoolClass->display_name ?? 'No class'],
+                                    ['label' => 'Teacher', 'value' => $cbtAssessment->teacher?->fullName() ?? 'No teacher'],
+                                    ['label' => 'Questions', 'value' => $cbtAssessment->cbtQuestions_count.' question(s)'],
+                                    ['label' => 'Attempts', 'value' => $cbtAssessment->cbtAttempts_count.' attempt(s)'],
+                                    ['label' => 'Window Starts', 'value' => $cbtAssessment->cbt_starts_at?->format('M j, Y g:i A') ?? 'No start window'],
+                                    ['label' => 'Status', 'value' => $cbtAssessment->cbt_is_active ? 'Live and accessible' : 'Offline draft'],
+                                ],
+                            ];
+                        @endphp
+                        <tr>
+                            <td>
+                                <div class="table-person">
+                                    <div class="table-avatar">CB</div>
+                                    <div class="table-person-text">
+                                        <strong>{{ $cbtAssessment->title }}</strong>
+                                        <span>{{ $cbtAssessment->cbt_starts_at?->format('M j, Y g:i A') ?? 'No start window' }}</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ $cbtAssessment->subject->name ?? 'No subject' }}</td>
+                            <td>{{ $cbtAssessment->schoolClass->display_name ?? 'No class' }}</td>
+                            <td><span class="table-text-clip">{{ $cbtAssessment->teacher?->fullName() ?? 'No teacher' }}</span></td>
+                            <td>{{ $cbtAssessment->cbtQuestions_count }}</td>
+                            <td>{{ $cbtAssessment->cbtAttempts_count }}</td>
+                            <td>
+                                <x-status-badge
+                                    :status="$cbtAssessment->cbt_is_active ? 'Active' : 'Inactive'"
+                                    :label="$cbtAssessment->cbt_is_active ? 'Live' : 'Offline'"
+                                />
+                            </td>
+                            <td>
+                                <div class="table-action-group">
+                                    <button type="button" class="table-view-btn" data-preview='@json($cbtPreview, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_TAG)'>View</button>
+                                    <form method="POST" action="{{ route('admin.cbt.assessments.toggle', $cbtAssessment) }}" class="contents">
+                                        @csrf
+                                        @method('PATCH')
+                                        <button type="submit" class="{{ $cbtAssessment->cbt_is_active ? 'table-delete-btn' : 'table-toggle-btn' }}">
+                                            {{ $cbtAssessment->cbt_is_active ? 'Deactivate' : 'Activate' }}
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="8">
+                                <x-empty-state title="No active CBT assessments" description="Educational CBT templates or questions have not been set up yet." icon="cbt" />
+                            </td>
+                        </tr>
+                    @endforelse
+                    </x-data-table>
+                </div>
+            </div>
+        @endif
     </div>
+    <x-entity-preview-modal />
 </x-app-layout>

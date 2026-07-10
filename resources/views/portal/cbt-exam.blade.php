@@ -1,91 +1,134 @@
 <x-app-layout>
     <x-slot name="header">
-        <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-                <p class="text-sm font-semibold uppercase tracking-[0.28em] text-slate-500">Student CBT</p>
-                <h1 class="display-font mt-2 text-3xl font-bold text-slate-950">{{ $assessment->title }}</h1>
-                <p class="mt-2 text-sm text-slate-600">{{ $assessment->subject->name }} | {{ $student->schoolClass->name ?? 'Class pending' }} | {{ $assessment->teacher->fullName() }}</p>
-            </div>
-            <div
-                x-data="{ endsAt: new Date(@js(optional($attempt->expires_at)?->toIso8601String())).getTime(), remaining: '' }"
-                x-init="
-                    const tick = () => {
-                        const diff = endsAt - Date.now();
-                        if (diff <= 0) {
-                            remaining = 'Time up';
-                            return;
-                        }
-                        const totalSeconds = Math.floor(diff / 1000);
-                        const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
-                        const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
-                        const seconds = String(totalSeconds % 60).padStart(2, '0');
-                        remaining = `${hours}:${minutes}:${seconds}`;
-                    };
-                    tick();
-                    setInterval(tick, 1000);
-                "
-                class="rounded-3xl brand-gradient px-5 py-4 text-white shadow-xl shadow-slate-900/10 sm:px-6 sm:py-5"
-            >
-                <div class="text-xs uppercase tracking-[0.3em] text-white/70">Time remaining</div>
-                <div class="display-font mt-2 text-2xl font-bold" x-text="remaining"></div>
-                <div class="mt-1 text-sm text-white/80">{{ $assessment->cbt_duration_minutes }} minutes</div>
-            </div>
-        </div>
+        <x-page-header :title="$assessment->title" eyebrow="Student CBT Portal">
+            <x-slot name="description">
+                {{ $assessment->subject->name }} &bull; {{ $student->schoolClass->name ?? 'Class pending assignment' }} &bull; {{ $assessment->teacher->fullName() }}
+            </x-slot>
+            <x-slot name="actions">
+                <div
+                    x-data="{ endsAt: new Date(@js(optional($attempt->expires_at)?->toIso8601String())).getTime(), remaining: '' }"
+                    x-init="
+                        const tick = () => {
+                            const diff = endsAt - Date.now();
+                            if (diff <= 0) {
+                                remaining = 'Time up';
+                                return;
+                            }
+                            const totalSeconds = Math.floor(diff / 1000);
+                            const hours = String(Math.floor(totalSeconds / 3600)).padStart(2, '0');
+                            const minutes = String(Math.floor((totalSeconds % 3600) / 60)).padStart(2, '0');
+                            const seconds = String(totalSeconds % 60).padStart(2, '0');
+                            remaining = `${hours}:${minutes}:${seconds}`;
+                        };
+                        tick();
+                        setInterval(tick, 1000);
+                    "
+                    class="rounded-[18px] bg-gradient-to-r from-[#071833] to-[#0b1f3a] px-5 py-3 text-white border border-[#c8d6ea]/20 shadow-md min-w-[180px] text-center"
+                >
+                    <div class="text-[9px] font-extrabold uppercase tracking-[0.2em] text-slate-350">Time Remaining</div>
+                    <div class="display-font mt-1 text-xl font-black text-[#fbbf24] tracking-tight" x-text="remaining"></div>
+                    <div class="text-[10px] font-bold text-slate-400 mt-0.5">{{ $assessment->cbt_duration_minutes }} Mins Duration</div>
+                </div>
+            </x-slot>
+        </x-page-header>
     </x-slot>
 
-    <section class="section-card">
-        <div class="rounded-[1.75rem] border border-slate-200 bg-slate-50 px-5 py-5 text-sm leading-7 text-slate-600">
-            <div class="font-semibold text-slate-900">Instructions</div>
-            <p class="mt-2 whitespace-pre-line">{{ $assessment->cbt_instructions ?: 'Answer all questions carefully and submit before the timer ends.' }}</p>
-        </div>
+    <div class="space-y-8">
+        <!-- Guidelines Card -->
+        <x-dashboard-card title="Exam Guidelines & Instructions" icon="file-text" accent="gray">
+            <p class="whitespace-pre-line text-sm text-slate-650 leading-relaxed font-semibold">
+                {{ $assessment->cbt_instructions ?: 'Answer all questions carefully and submit before the countdown timer finishes.' }}
+            </p>
+        </x-dashboard-card>
 
-        <form method="POST" action="{{ route('portal.cbt.submit', $assessment) }}" class="mt-8 space-y-6">
+        <!-- Exam Questions Form -->
+        <form method="POST" action="{{ route('portal.cbt.submit', $assessment) }}" class="space-y-6">
             @csrf
             @foreach ($assessment->cbtQuestions as $index => $question)
-                <article class="rounded-3xl border border-slate-200 px-5 py-5">
-                    <div class="text-xs uppercase tracking-[0.24em] text-slate-500">Question {{ $index + 1 }} | {{ ucfirst($question->question_type) }} | {{ number_format((float) $question->points, 2) }} mark(s)</div>
-                    <p class="mt-3 whitespace-pre-line text-sm leading-7 text-slate-700">{{ $question->prompt }}</p>
+                <article class="rounded-[18px] border border-slate-200 bg-white p-5 shadow-sm space-y-4 hover:border-[#fbbf24] transition-all">
+                    <!-- Question Header Info -->
+                    <div class="flex items-center justify-between gap-3 flex-wrap border-b border-slate-100 pb-3">
+                        <div class="flex items-center gap-2">
+                            <span class="inline-flex h-6 w-6 items-center justify-center rounded-full bg-[#071833] text-[10px] font-black text-white shrink-0">
+                                {{ $index + 1 }}
+                            </span>
+                            <x-status-badge :status="$question->question_type === 'objective' ? 'open' : 'marked'" :label="ucfirst($question->question_type)" />
+                        </div>
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500 bg-slate-100 border border-slate-250 rounded-full px-2.5 py-0.5">
+                            {{ number_format((float) $question->points, 2) }} Mark(s)
+                        </span>
+                    </div>
 
+                    <!-- Prompt -->
+                    <p class="whitespace-pre-line text-sm font-semibold text-slate-800 leading-relaxed">
+                        {{ $question->prompt }}
+                    </p>
+
+                    <!-- Images -->
                     @if (filled($question->image_paths))
-                        <div class="mt-4 grid gap-3 sm:grid-cols-2">
+                        <div class="grid gap-3 sm:grid-cols-2">
                             @foreach ($question->image_paths as $image)
-                                <a href="{{ asset($image) }}" target="_blank" class="overflow-hidden rounded-3xl border border-slate-200">
-                                    <img src="{{ asset($image) }}" alt="Question image" class="h-56 w-full object-cover" />
+                                <a href="{{ asset($image) }}" target="_blank" class="overflow-hidden rounded-xl border border-slate-200 block shadow-sm hover:opacity-95 transition">
+                                    <img src="{{ asset($image) }}" alt="Question illustration" class="h-48 w-full object-cover" />
                                 </a>
                             @endforeach
                         </div>
                     @endif
 
+                    <!-- Videos -->
                     @if ($question->video_path)
-                        <video controls preload="metadata" class="mt-4 w-full rounded-3xl border border-slate-200 bg-slate-950">
-                            <source src="{{ asset($question->video_path) }}">
-                        </video>
+                        <div class="max-w-md">
+                            <video controls preload="metadata" class="w-full rounded-xl border border-slate-300 bg-slate-950 shadow">
+                                <source src="{{ asset($question->video_path) }}">
+                            </video>
+                        </div>
                     @elseif ($question->video_url)
-                        <a href="{{ $question->video_url }}" target="_blank" class="mt-4 inline-flex text-sm font-semibold text-slate-900">Open question video</a>
-                    @endif
-
-                    @if ($question->resource_link)
-                        <div class="mt-3">
-                            <a href="{{ $question->resource_link }}" target="_blank" class="text-sm font-semibold text-[color:var(--theme-primary)]">Open supporting link</a>
+                        <div>
+                            <a href="{{ $question->video_url }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 transition">
+                                <x-app-icon name="video" class="h-4 w-4 text-blue-500" />
+                                <span>Open Video Resource</span>
+                            </a>
                         </div>
                     @endif
 
+                    <!-- Supporting Link -->
+                    @if ($question->resource_link)
+                        <div class="pt-2">
+                            <a href="{{ $question->resource_link }}" target="_blank" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold text-blue-600 bg-blue-50 hover:bg-blue-100 transition">
+                                <x-app-icon name="link" class="h-4 w-4 text-blue-500" />
+                                <span>Open Supporting Resource Link</span>
+                            </a>
+                        </div>
+                    @endif
+
+                    <!-- Answer Options -->
                     @if ($question->question_type === 'objective')
-                        <div class="mt-5 space-y-3">
-                            @foreach ($question->options as $option)
-                                <label class="flex items-start gap-3 rounded-2xl border border-slate-200 px-4 py-4 text-sm text-slate-700">
-                                    <input type="radio" name="answers[{{ $question->id }}][option]" value="{{ $option->id }}" class="mt-1 rounded border-slate-300" />
-                                    <span>{{ $option->option_text }}</span>
+                        <div class="mt-4 grid gap-3 sm:grid-cols-2">
+                            @foreach ($question->options as $idx => $option)
+                                <label class="flex items-start gap-2.5 rounded-xl border border-slate-200 px-4 py-3 text-xs text-slate-700 bg-slate-50/30 hover:bg-slate-50 hover:border-[#fbbf24] cursor-pointer select-none transition shadow-sm">
+                                    <input type="radio" name="answers[{{ $question->id }}][option]" value="{{ $option->id }}" class="mt-0.5 rounded text-blue-600 border-slate-350 focus:ring-blue-500" />
+                                    <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-black bg-slate-100 text-slate-500">
+                                        {{ chr(65 + $idx) }}
+                                    </span>
+                                    <span class="flex-1 leading-6 font-semibold">{{ $option->option_text }}</span>
                                 </label>
                             @endforeach
                         </div>
                     @else
-                        <textarea name="answers[{{ $question->id }}][text]" rows="6" placeholder="Type your answer here" class="mt-5 w-full rounded-2xl border border-slate-300 px-4 py-3 text-sm"></textarea>
+                        <div class="space-y-1">
+                            <label class="block text-[10px] font-bold text-slate-700 uppercase tracking-wide">Type your response below</label>
+                            <textarea name="answers[{{ $question->id }}][text]" rows="5" placeholder="Write your complete solution or answer notes here..." class="theme-input w-full text-xs font-semibold"></textarea>
+                        </div>
                     @endif
                 </article>
             @endforeach
 
-            <button type="submit" class="theme-button">Submit CBT exam</button>
+            <!-- Action buttons -->
+            <div class="flex items-center justify-end pt-4">
+                <x-action-button type="submit" variant="accent" icon="save">
+                    Submit CBT Exam
+                </x-action-button>
+            </div>
         </form>
-    </section>
+    </div>
 </x-app-layout>

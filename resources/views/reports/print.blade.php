@@ -6,6 +6,7 @@
     <title>Result Sheet - {{ $report->student->user->fullName() }}</title>
     @include('partials.theme-head')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @include('partials.theme-overrides')
 </head>
 <body class="antialiased">
     <main class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
@@ -59,40 +60,42 @@
             </div>
 
             <div class="mt-8 overflow-hidden rounded-[1.75rem] border border-slate-200">
-                <table class="min-w-full text-left text-sm">
-                    <thead class="bg-slate-50 text-slate-500">
-                        <tr>
-                            <th class="px-5 py-4">Subject</th>
-                            <th class="px-5 py-4">Quiz</th>
-                            <th class="px-5 py-4">Test</th>
-                            <th class="px-5 py-4">Project</th>
-                            <th class="px-5 py-4">Exam</th>
-                            <th class="px-5 py-4">Total %</th>
-                            <th class="px-5 py-4">Grade</th>
-                            <th class="px-5 py-4">Remark</th>
-                            <th class="px-5 py-4">Teacher</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        @forelse ($subjectRows as $row)
-                            <tr class="border-t border-slate-200">
-                                <td class="px-5 py-4 font-semibold text-slate-900">{{ $row['subject_name'] }}</td>
-                                <td class="px-5 py-4 text-slate-600">{{ number_format((float) $row['quiz_score'], 2) }}</td>
-                                <td class="px-5 py-4 text-slate-600">{{ number_format((float) $row['test_score'], 2) }}</td>
-                                <td class="px-5 py-4 text-slate-600">{{ number_format((float) $row['project_score'], 2) }}</td>
-                                <td class="px-5 py-4 text-slate-600">{{ number_format((float) $row['exam_score'], 2) }}</td>
-                                <td class="px-5 py-4 font-semibold text-slate-900">{{ number_format((float) $row['percentage'], 2) }}</td>
-                                <td class="px-5 py-4 text-slate-600">{{ $row['grade'] }}</td>
-                                <td class="px-5 py-4 text-slate-600">{{ $row['remark'] }}</td>
-                                <td class="px-5 py-4 text-slate-600">{{ $row['teachers'] ?: 'N/A' }}</td>
-                            </tr>
-                        @empty
+                <div class="overflow-x-auto w-full">
+                    <table class="min-w-full text-left text-sm" style="min-width: 800px;">
+                        <thead class="bg-slate-50 text-slate-500">
                             <tr>
-                                <td colspan="9" class="px-5 py-6 text-sm text-slate-500">No compiled term scores are available for this report yet.</td>
+                                <th class="px-5 py-4">Subject</th>
+                                <th class="px-5 py-4">Quiz</th>
+                                <th class="px-5 py-4">Test</th>
+                                <th class="px-5 py-4">Project</th>
+                                <th class="px-5 py-4">Exam</th>
+                                <th class="px-5 py-4">Total %</th>
+                                <th class="px-5 py-4">Grade</th>
+                                <th class="px-5 py-4">Remark</th>
+                                <th class="px-5 py-4">Teacher</th>
                             </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            @forelse ($subjectRows as $row)
+                                <tr class="border-t border-slate-200">
+                                    <td class="px-5 py-4 font-semibold text-slate-900">{{ $row['subject_name'] }}</td>
+                                    <td class="px-5 py-4 text-slate-600">{{ number_format((float) $row['quiz_score'], 2) }}</td>
+                                    <td class="px-5 py-4 text-slate-600">{{ number_format((float) $row['test_score'], 2) }}</td>
+                                    <td class="px-5 py-4 text-slate-600">{{ number_format((float) $row['project_score'], 2) }}</td>
+                                    <td class="px-5 py-4 text-slate-600">{{ number_format((float) $row['exam_score'], 2) }}</td>
+                                    <td class="px-5 py-4 font-semibold text-slate-900">{{ number_format((float) $row['percentage'], 2) }}</td>
+                                    <td class="px-5 py-4 text-slate-600">{{ $row['grade'] }}</td>
+                                    <td class="px-5 py-4 text-slate-600">{{ $row['remark'] }}</td>
+                                    <td class="px-5 py-4 text-slate-600">{{ $row['teachers'] ?: 'N/A' }}</td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="9" class="px-5 py-6 text-sm text-slate-500">No compiled term scores are available for this report yet.</td>
+                                </tr>
+                            @endforelse
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             <div class="mt-8 grid gap-8 xl:grid-cols-2">

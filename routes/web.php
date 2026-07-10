@@ -33,7 +33,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::middleware('role:admin,principal')->group(function () {
         Route::get('/admin/settings/{section?}', [AdminController::class, 'settings'])
-            ->where('section', 'website-foundation|homepage-media|workspace-backgrounds|site-backgrounds|welcome-popup|gallery-uploader|homepage-text|box-backgrounds-a|box-backgrounds-b|payment-settings|contact-messages')
+            ->where('section', 'website-foundation|theme-colors|landing-builder|homepage-media|workspace-backgrounds|site-backgrounds|welcome-popup|gallery-uploader|homepage-text|box-backgrounds-a|box-backgrounds-b|payment-settings|contact-messages')
             ->name('admin.settings');
         Route::post('/admin/settings', [AdminController::class, 'updateSettings'])->name('admin.settings.update');
         Route::get('/admin/people', [AdminController::class, 'people'])->name('admin.people');

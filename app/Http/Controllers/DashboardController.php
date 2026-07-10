@@ -75,25 +75,32 @@ class DashboardController extends Controller
 
         if ($user->hasAnyRole([UserRole::Admin, UserRole::Principal])) {
             $quickAccessCards = collect([
-                ['title' => 'School Management', 'description' => 'Sessions, terms, classes, and subjects.', 'route' => route('admin.academics'), 'tone' => 'school'],
-                ['title' => 'Student Management', 'description' => 'Student records, classes, and profiles.', 'route' => route('admin.students.index'), 'tone' => 'student'],
-                ['title' => 'Parents Management', 'description' => 'Guardian contacts and linked children.', 'route' => route('admin.parents.index'), 'tone' => 'parent'],
-                ['title' => 'Bills & Payment', 'description' => 'Invoices, collections, and balances.', 'route' => route('admin.finance'), 'tone' => 'finance'],
-                ['title' => 'Reports', 'description' => 'Scores, publications, and print views.', 'route' => route('admin.reports.index'), 'tone' => 'report'],
-                ['title' => 'Staff Management', 'description' => 'Staff records and departments.', 'route' => route('admin.staff.index'), 'tone' => 'staff'],
+                ['title' => 'Register Student', 'description' => 'Open the student intake drawer and create login details.', 'route' => route('admin.students.index', ['register' => 1]), 'tone' => 'student', 'icon' => 'student'],
+                ['title' => 'Add Parent', 'description' => 'Find or link a guardian record to a child profile.', 'route' => route('admin.parents.index'), 'tone' => 'parent', 'icon' => 'parents'],
+                ['title' => 'Record Payment', 'description' => 'Post a confirmed school fee payment.', 'route' => route('admin.finance', ['section' => 'record-payment']), 'tone' => 'finance', 'icon' => 'bills'],
+                ['title' => 'Create Invoice', 'description' => 'Generate a student or class billing record.', 'route' => route('admin.finance', ['section' => 'generate-invoice']), 'tone' => 'finance', 'icon' => 'finance-records'],
+                ['title' => 'View Debtors', 'description' => 'Review students with outstanding balances.', 'route' => route('admin.students.index', ['view' => 'debtors']), 'tone' => 'report', 'icon' => 'reports'],
+                ['title' => 'Publish Announcement', 'description' => 'Post an update for students, parents, or staff.', 'route' => route('admin.academics', ['section' => 'announcement']), 'tone' => 'school', 'icon' => 'announcement'],
+                ['title' => 'Edit Homepage', 'description' => 'Update public homepage slides and content.', 'route' => route('admin.settings', ['section' => 'landing-builder']), 'tone' => 'school', 'icon' => 'settings'],
+                ['title' => 'Generate Report', 'description' => 'Open the report card workspace.', 'route' => route('admin.reports.index'), 'tone' => 'report', 'icon' => 'reports'],
             ]);
         } elseif ($user->hasAnyRole([UserRole::Accountant])) {
             $quickAccessCards = collect([
-                ['title' => 'Bills & Payment', 'description' => 'Create invoices and record collections.', 'route' => route('admin.finance'), 'tone' => 'finance'],
-                ['title' => 'Finance Records', 'description' => 'Balances, printable fee lists, and receipts.', 'route' => route('admin.finance.records'), 'tone' => 'report'],
+                ['title' => 'Bills & Payment', 'description' => 'Create invoices and record collections.', 'route' => route('admin.finance'), 'tone' => 'finance', 'icon' => 'bills'],
+                ['title' => 'Finance Records', 'description' => 'Balances, printable fee lists, and receipts.', 'route' => route('admin.finance.records'), 'tone' => 'report', 'icon' => 'finance-records'],
             ]);
         } elseif ($user->hasAnyRole([UserRole::Teacher])) {
             $quickAccessCards = collect([
-                ['title' => 'Teaching Workspace', 'description' => 'Lessons, assignments, attendance, and CBT.', 'route' => route('teacher.learning'), 'tone' => 'school'],
+                ['title' => 'Publish Lesson Note', 'description' => 'Share a lesson note with a class group.', 'route' => route('teacher.learning', ['section' => 'publish-lesson']), 'tone' => 'school', 'icon' => 'learning'],
+                ['title' => 'Create Assignment', 'description' => 'Assign classwork and collect submissions.', 'route' => route('teacher.learning', ['section' => 'create-assignment']), 'tone' => 'student', 'icon' => 'assignments'],
+                ['title' => 'Create Assessment', 'description' => 'Set up a test, quiz, or exam score sheet.', 'route' => route('teacher.learning', ['section' => 'assessment']), 'tone' => 'report', 'icon' => 'reports'],
+                ['title' => 'Submit Attendance', 'description' => 'Log daily student attendance quickly.', 'route' => route('teacher.learning', ['section' => 'attendance']), 'tone' => 'finance', 'icon' => 'clock'],
+                ['title' => 'Review Submissions', 'description' => 'Open submitted assignments and scores.', 'route' => route('teacher.learning', ['section' => 'submissions']), 'tone' => 'parent', 'icon' => 'eye'],
+                ['title' => 'Open CBT Library', 'description' => 'Manage CBT assessments and attempts.', 'route' => route('teacher.learning', ['section' => 'cbt-list']), 'tone' => 'school', 'icon' => 'portal'],
             ]);
         } elseif ($user->hasAnyRole([UserRole::Student, UserRole::Parent])) {
             $quickAccessCards = collect([
-                ['title' => 'Student Portal', 'description' => 'Results, lessons, attendance, and fees.', 'route' => route('portal.index'), 'tone' => 'student'],
+                ['title' => 'Student Portal', 'description' => 'Results, lessons, attendance, and fees.', 'route' => route('portal.index'), 'tone' => 'student', 'icon' => 'portal'],
             ]);
         }
 

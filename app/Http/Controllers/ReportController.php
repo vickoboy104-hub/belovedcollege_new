@@ -30,6 +30,8 @@ class ReportController extends Controller
 
     public function adminIndex(Request $request, ?string $classSlug = null): View
     {
+        $classSlug = $classSlug ?: trim((string) $request->string('classSlug'));
+        $classSlug = $classSlug !== '' ? $classSlug : null;
         $terms = Term::query()
             ->with('academicSession')
             ->latest('start_date')
@@ -66,7 +68,12 @@ class ReportController extends Controller
                     $student->schoolClass->display_name ?? null,
                 ])));
 
-                return str_contains($haystack, $needle);
+                foreach (array_filter(explode(' ', $needle)) as $word) {
+                    if (! str_contains($haystack, $word)) {
+                        return false;
+                    }
+                }
+                return true;
             })->values();
         }
 

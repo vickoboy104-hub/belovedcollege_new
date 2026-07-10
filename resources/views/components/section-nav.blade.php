@@ -3,14 +3,14 @@
     'active' => null,
 ])
 
-<nav class="section-nav" aria-label="Section navigation">
-    <div class="section-nav-strip">
+<nav class="class-filter-panel" aria-label="Section navigation">
+    <div class="class-chip-list">
         @foreach ($items as $item)
             <a
                 href="{{ $item['href'] }}"
-                class="section-nav-link {{ ($active === $item['key']) ? 'border-transparent text-white shadow-sm' : 'text-slate-700' }}"
+                class="class-chip {{ ($active === $item['key']) ? 'active' : '' }}"
                 @if ($active === $item['key'])
-                    style="background-color: var(--theme-primary);"
+                    aria-current="page"
                 @endif
             >
                 {{ $item['label'] }}

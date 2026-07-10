@@ -6,10 +6,11 @@
     <title>Result Checker</title>
     @include('partials.theme-head')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
+    @include('partials.theme-overrides')
 </head>
-<body class="antialiased">
-    <main class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-        <div class="mx-auto max-w-3xl rounded-[2rem] border border-slate-200 bg-white p-8 shadow-xl shadow-slate-900/5">
+<body class="result-checker-page antialiased">
+    <main class="result-checker-shell mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+        <div class="result-checker-card mx-auto max-w-3xl rounded-[2rem] border border-slate-200 bg-white p-8 shadow-xl shadow-slate-900/5">
             <div class="flex items-center gap-4">
                 <x-application-logo class="h-14 w-14" />
                 <div>
@@ -42,7 +43,7 @@
         </div>
 
         @if ($report)
-            <section class="mt-8 rounded-[2rem] border border-slate-200 bg-white p-8 shadow-xl shadow-slate-900/5">
+            <section class="result-checker-card mt-8 rounded-[2rem] border border-slate-200 bg-white p-8 shadow-xl shadow-slate-900/5">
                 <div class="mb-6 flex flex-wrap gap-3 print:hidden">
                     <button onclick="window.print()" class="theme-button">Print / Save as PDF</button>
                     <a href="{{ route('reports.checker') }}" class="theme-button-secondary">Check another result</a>
@@ -72,34 +73,36 @@
                 </div>
 
                 <div class="mt-8 overflow-hidden rounded-[1.75rem] border border-slate-200">
-                    <table class="min-w-full text-left text-sm">
-                        <thead class="bg-slate-50 text-slate-500">
-                            <tr>
-                                <th class="px-5 py-4">Subject</th>
-                                <th class="px-5 py-4">Quiz</th>
-                                <th class="px-5 py-4">Test</th>
-                                <th class="px-5 py-4">Project</th>
-                                <th class="px-5 py-4">Exam</th>
-                                <th class="px-5 py-4">Total %</th>
-                                <th class="px-5 py-4">Grade</th>
-                                <th class="px-5 py-4">Remark</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @foreach ($subjectRows as $row)
-                                <tr class="border-t border-slate-200">
-                                    <td class="px-5 py-4 font-semibold text-slate-900">{{ $row['subject_name'] }}</td>
-                                    <td class="px-5 py-4 text-slate-600">{{ number_format((float) $row['quiz_score'], 2) }}</td>
-                                    <td class="px-5 py-4 text-slate-600">{{ number_format((float) $row['test_score'], 2) }}</td>
-                                    <td class="px-5 py-4 text-slate-600">{{ number_format((float) $row['project_score'], 2) }}</td>
-                                    <td class="px-5 py-4 text-slate-600">{{ number_format((float) $row['exam_score'], 2) }}</td>
-                                    <td class="px-5 py-4 font-semibold text-slate-900">{{ number_format((float) $row['percentage'], 2) }}</td>
-                                    <td class="px-5 py-4 text-slate-600">{{ $row['grade'] }}</td>
-                                    <td class="px-5 py-4 text-slate-600">{{ $row['remark'] }}</td>
+                    <div class="overflow-x-auto w-full">
+                        <table class="min-w-full text-left text-sm" style="min-width: 800px;">
+                            <thead class="bg-slate-50 text-slate-500">
+                                <tr>
+                                    <th class="px-5 py-4">Subject</th>
+                                    <th class="px-5 py-4">Quiz</th>
+                                    <th class="px-5 py-4">Test</th>
+                                    <th class="px-5 py-4">Project</th>
+                                    <th class="px-5 py-4">Exam</th>
+                                    <th class="px-5 py-4">Total %</th>
+                                    <th class="px-5 py-4">Grade</th>
+                                    <th class="px-5 py-4">Remark</th>
                                 </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @foreach ($subjectRows as $row)
+                                    <tr class="border-t border-slate-200">
+                                        <td class="px-5 py-4 font-semibold text-slate-900">{{ $row['subject_name'] }}</td>
+                                        <td class="px-5 py-4 text-slate-600">{{ number_format((float) $row['quiz_score'], 2) }}</td>
+                                        <td class="px-5 py-4 text-slate-600">{{ number_format((float) $row['test_score'], 2) }}</td>
+                                        <td class="px-5 py-4 text-slate-600">{{ number_format((float) $row['project_score'], 2) }}</td>
+                                        <td class="px-5 py-4 text-slate-600">{{ number_format((float) $row['exam_score'], 2) }}</td>
+                                        <td class="px-5 py-4 font-semibold text-slate-900">{{ number_format((float) $row['percentage'], 2) }}</td>
+                                        <td class="px-5 py-4 text-slate-600">{{ $row['grade'] }}</td>
+                                        <td class="px-5 py-4 text-slate-600">{{ $row['remark'] }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
                 <div class="mt-8 grid gap-6 xl:grid-cols-2">

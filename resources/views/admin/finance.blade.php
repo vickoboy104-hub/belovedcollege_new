@@ -1,15 +1,15 @@
 <x-app-layout>
     <x-slot name="header">
         <div>
-            <p class="text-sm font-semibold uppercase tracking-[0.28em] text-slate-500">Finance desk</p>
-            <h1 class="display-font mt-2 text-3xl font-bold text-slate-950">Fees, invoices, balances, manual payments, and receipts</h1>
+            <p class="text-sm font-semibold uppercase tracking-[0.28em]" style="color: var(--theme-muted, #64748b);">Finance desk</p>
+            <h1 class="display-font mt-2 text-3xl font-bold" style="color: var(--theme-text, #0f172a);">Fees, invoices, balances, manual payments, and receipts</h1>
         </div>
     </x-slot>
 
     <div class="grid gap-8 xl:grid-cols-2">
         <section class="section-card">
-            <h2 class="display-font text-2xl font-bold text-slate-950">Create fee item</h2>
-            <p class="mt-2 text-sm text-slate-500">Use class-linked fee items so every newly registered student can inherit the right term fees.</p>
+            <h2 class="display-font text-2xl font-bold" style="color: var(--theme-text, #0f172a);">Create fee item</h2>
+            <p class="mt-2 text-sm" style="color: var(--theme-muted, #64748b);">Use class-linked fee items so every newly registered student can inherit the right term fees.</p>
             <form method="POST" action="{{ route('admin.fee-items.store') }}" class="mt-6 grid gap-4 md:grid-cols-2">
                 @csrf
                 <input name="name" placeholder="Tuition Fee" class="theme-input" required />
@@ -34,8 +34,8 @@
                 </select>
                 <input name="due_date" type="date" class="theme-input" />
                 <textarea name="description" rows="3" placeholder="Description" class="theme-input md:col-span-2"></textarea>
-                <label class="flex items-center gap-3 rounded-2xl border border-slate-300 px-4 py-3 text-sm text-slate-600 md:col-span-2">
-                    <input type="checkbox" name="is_mandatory" value="1" checked class="rounded border-slate-300" />
+                <label class="flex items-center gap-3 rounded-2xl border px-4 py-3 text-sm md:col-span-2" style="border-color: var(--theme-border, #cbd5e1); color: var(--theme-text, #0f172a);">
+                    <input type="checkbox" name="is_mandatory" value="1" checked class="rounded" style="border-color: var(--theme-border, #cbd5e1);" />
                     Mandatory fee item
                 </label>
                 <button type="submit" class="theme-button md:col-span-2">Create fee item</button>
@@ -43,8 +43,8 @@
         </section>
 
         <section class="section-card">
-            <h2 class="display-font text-2xl font-bold text-slate-950">Generate invoice</h2>
-            <p class="mt-2 text-sm text-slate-500">Apply an invoice to one student or an entire class. Outstanding balances will remain visible until fully paid.</p>
+            <h2 class="display-font text-2xl font-bold" style="color: var(--theme-text, #0f172a);">Generate invoice</h2>
+            <p class="mt-2 text-sm" style="color: var(--theme-muted, #64748b);">Apply an invoice to one student or an entire class. Outstanding balances will remain visible until fully paid.</p>
             <form method="POST" action="{{ route('admin.invoices.store') }}" class="mt-6 grid gap-4 md:grid-cols-2">
                 @csrf
                 <select name="fee_item_id" class="theme-input">
@@ -75,8 +75,8 @@
 
     <div class="mt-8 grid gap-8 xl:grid-cols-[1.1fr,0.9fr]">
         <section class="section-card">
-            <h2 class="display-font text-2xl font-bold text-slate-950">Record direct school payment</h2>
-            <p class="mt-2 text-sm text-slate-500">Use this when payment happens physically at school. The student balance updates immediately and a receipt becomes printable.</p>
+            <h2 class="display-font text-2xl font-bold" style="color: var(--theme-text, #0f172a);">Record direct school payment</h2>
+            <p class="mt-2 text-sm" style="color: var(--theme-muted, #64748b);">Use this when payment happens physically at school. The student balance updates immediately and a receipt becomes printable.</p>
             <form method="POST" action="{{ route('admin.manual-payments.store') }}" class="mt-6 grid gap-4 md:grid-cols-2">
                 @csrf
                 <select name="fee_invoice_id" class="theme-input md:col-span-2" required>
@@ -145,9 +145,9 @@
                 <h2 class="display-font text-2xl font-bold text-slate-950">Printable class fee list</h2>
                 <p class="mt-2 text-sm text-slate-500">Pick a class, tick the fee items you want included, and the total updates automatically for printing or saving as PDF.</p>
             </div>
-            <div class="flex flex-wrap gap-3 print:hidden">
+                <div class="flex flex-wrap gap-3 print:hidden">
                 <button type="button" @click="toggleAll()" class="theme-button-secondary">Select or clear all</button>
-                <button type="button" onclick="window.print()" class="theme-button">Print / Save as PDF</button>
+                <button type="button" onclick="openPrintSettings('.print-card, .receipt-card', { itemsPerPage: 4 })" class="theme-button">Print / Save as PDF</button>
             </div>
         </div>
 
@@ -157,9 +157,8 @@
                     type="button"
                     @click="selectedClassId = {{ $class->id }}; syncDefaults()"
                     class="rounded-2xl border px-4 py-4 text-left transition"
-                    :class="selectedClassId === {{ $class->id }} ? 'border-transparent text-white shadow-lg' : 'border-slate-200 bg-white text-slate-900'"
-                    style="background-color: transparent;"
-                    :style="selectedClassId === {{ $class->id }} ? 'background-color: var(--theme-primary);' : ''"
+                    :class="selectedClassId === {{ $class->id }} ? 'border-transparent text-white shadow-lg' : 'border-slate-200 bg-slate-50 text-slate-900'"
+                    :style="selectedClassId === {{ $class->id }} ? 'background-color: var(--theme-primary);' : 'background-color: #f8fafc;'"
                 >
                     <div class="font-semibold">{{ $class->name }}</div>
                     <div class="mt-1 text-xs opacity-80">Open fee list</div>

@@ -376,7 +376,12 @@ class FinanceController extends Controller
                     $student->schoolClass->display_name ?? null,
                 ])));
 
-                return str_contains($haystack, $needle);
+                foreach (array_filter(explode(' ', $needle)) as $word) {
+                    if (! str_contains($haystack, $word)) {
+                        return false;
+                    }
+                }
+                return true;
             });
         }
 

@@ -1,113 +1,116 @@
 <x-app-layout>
+    @php
+        $compactMoney = function (float $amount): string {
+            $sign = $amount < 0 ? '-' : '';
+            $absolute = abs($amount);
+
+            return match (true) {
+                $absolute >= 1000000000 => $sign.'₦'.number_format($absolute / 1000000000, 2).'B',
+                $absolute >= 1000000 => $sign.'₦'.number_format($absolute / 1000000, 2).'M',
+                $absolute >= 1000 => $sign.'₦'.number_format($absolute / 1000, 1).'K',
+                default => $sign.'₦'.number_format($absolute, 0),
+            };
+        };
+    @endphp
+
     <x-slot name="header">
-        <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-                <p class="text-sm font-semibold uppercase tracking-[0.28em] text-slate-500">Digital campus control room</p>
-                <h1 class="display-font mt-2 text-3xl font-bold text-slate-950">Welcome back, {{ $user->name }}.</h1>
-                <p class="mt-3 max-w-2xl text-base text-slate-600">
-                    {{ $schoolSettings['portal_notice'] ?? 'Manage people, academics, fees, assessments, and communication from one school-wide dashboard.' }}
-                </p>
-            </div>
-            <div class="rounded-3xl brand-gradient px-5 py-4 text-white shadow-xl shadow-slate-900/10 sm:px-6 sm:py-5">
-                <div class="text-xs uppercase tracking-[0.3em] text-white/70">{{ $user->roleLabel() }}</div>
-                <div class="display-font mt-2 text-2xl font-bold">{{ now()->format('F j, Y') }}</div>
-                <div class="mt-1 text-sm text-white/80">{{ $schoolSettings['school_name'] ?? 'SchoolSphere' }}</div>
-            </div>
-        </div>
+        <x-page-header :title="'Welcome back, ' . $user->name . '.'">
+            <x-slot name="eyebrow">Digital campus control room</x-slot>
+            <x-slot name="description">{{ $schoolSettings['portal_notice'] ?? 'Manage people, academics, fees, assessments, and communication from one school-wide dashboard.' }}</x-slot>
+            <x-slot name="actions">
+                <div class="rounded-3xl brand-gradient px-5 py-4 text-white shadow-xl shadow-slate-900/10 sm:px-6 sm:py-5 flex flex-col justify-center min-w-[200px]">
+                    <div class="text-[10px] font-extrabold uppercase tracking-[0.25em] text-white/70">{{ $user->roleLabel() }}</div>
+                    <div class="display-font mt-1.5 text-xl sm:text-2xl font-black tracking-tight">{{ now()->format('F j, Y') }}</div>
+                    <div class="mt-0.5 text-xs font-bold text-white/80 uppercase tracking-wider">{{ $schoolSettings['school_name'] ?? 'Beloved Schools' }}</div>
+                </div>
+            </x-slot>
+        </x-page-header>
     </x-slot>
 
+    <!-- Stats Section —— vibrant gradient cards -->
     <div class="grid grid-cols-2 gap-4 lg:grid-cols-4">
         @foreach ($stats as $stat)
-            <div class="stat-tile {{ $stat['accent'] }}">
-                <div class="text-sm uppercase tracking-[0.24em] text-slate-500">{{ $stat['label'] }}</div>
-                <div class="display-font mt-3 text-4xl font-bold">{{ $stat['value'] }}</div>
-            </div>
+            @php
+                $accentColor = 'blue';
+                $iconName = 'circle';
+                $lbl = strtolower($stat['label']);
+                if      (str_contains($lbl, 'student'))                            { $accentColor = 'blue';   $iconName = 'student'; }
+                elseif  (str_contains($lbl, 'staff') || str_contains($lbl,'teacher')) { $accentColor = 'green';  $iconName = 'staff'; }
+                elseif  (str_contains($lbl, 'invoice'))                            { $accentColor = 'orange'; $iconName = 'finance'; }
+                elseif  (str_contains($lbl, 'payment'))                            { $accentColor = 'rose';   $iconName = 'finance'; }
+                elseif  (str_contains($lbl, 'parent'))                             { $accentColor = 'purple'; $iconName = 'parents'; }
+                elseif  (str_contains($lbl, 'class'))                              { $accentColor = 'teal';   $iconName = 'classes'; }
+                elseif  (str_contains($lbl, 'subject'))                            { $accentColor = 'orange'; $iconName = 'learning'; }
+                elseif  (str_contains($lbl, 'fee') || str_contains($lbl,'bill'))   { $accentColor = 'gold';   $iconName = 'finance'; }
+                elseif  (str_contains($lbl, 'cbt') || str_contains($lbl,'exam'))   { $accentColor = 'purple'; $iconName = 'portal'; }
+            @endphp
+            <x-stat-card :label="$stat['label']" :value="$stat['value']" :accent="$accentColor" :icon="$iconName" />
         @endforeach
     </div>
 
+    <!-- Main Grid Section -->
     <div class="mt-8 grid gap-8 lg:grid-cols-[1.25fr,0.95fr]">
-        <section class="section-card">
-            <div>
-                <h2 class="display-font text-2xl font-bold text-slate-950">Quick actions</h2>
-                <p class="mt-1 text-sm text-slate-500">Jump into the part of the platform your role uses most.</p>
-            </div>
-
-            <div class="mt-6 grid gap-4 md:grid-cols-2">
-                <a href="{{ route('dashboard') }}" class="management-module-card module-tone-school">
-                    <div class="management-module-badge">Dashboard</div>
-                    <h3 class="display-font mt-5 text-2xl font-bold">Overview</h3>
-                    <p class="mt-3 text-sm leading-7 text-slate-700">System-wide metrics, announcements, and current operational status.</p>
-                </a>
-
+        <x-section-card class="dashboard-dark-panel dashboard-quick-actions-panel" title="Quick actions" subtitle="Jump into the part of the platform your role uses most." icon="dashboard" tone="blue"
+                        style="background: var(--dashboard-quick-action-bg, var(--theme-secondary)); border:1px solid rgba(255,255,255,0.09); box-shadow:0 20px 48px rgba(2,6,23,0.22); --panel-title-color:#ffffff; --panel-desc-color:rgba(226,232,240,0.82); --panel-content-color:#ffffff;">
+            <div class="mt-4 grid gap-4 md:grid-cols-2">
                 @foreach ($quickAccessCards as $card)
-                    <a href="{{ $card['route'] }}" class="management-module-card module-tone-{{ $card['tone'] }}">
-                        <div class="management-module-badge">{{ $card['title'] }}</div>
-                        <h3 class="display-font mt-5 text-2xl font-bold">{{ $card['title'] }}</h3>
-                        <p class="mt-3 text-sm leading-7 text-slate-700">{{ $card['description'] }}</p>
-                    </a>
+                    <x-quick-action-card 
+                        :title="$card['title']" 
+                        :description="$card['description']" 
+                        :href="$card['route']" 
+                        :icon="$card['icon'] ?? 'circle'" 
+                        :tone="$card['tone'] ?? 'blue'" 
+                    />
                 @endforeach
             </div>
-        </section>
+        </x-section-card>
 
-        <section class="section-card">
-            <h2 class="display-font text-2xl font-bold text-slate-950">Latest announcements</h2>
-            <div class="mt-5 space-y-4">
+        <x-dashboard-card class="dashboard-dark-panel dashboard-announcements-panel" title="Latest announcements" subtitle="Recent publications across the school network" icon="announcement" accent="gold"
+                          style="background: var(--dashboard-announcement-bg, var(--theme-secondary)); border:1px solid var(--theme-border-soft, rgba(255,255,255,0.09)); box-shadow:0 20px 48px rgba(2,6,23,0.22); --panel-title-color:var(--theme-text-dark-card, #ffffff); --panel-desc-color:var(--theme-text-muted, rgba(226,232,240,0.82)); --panel-content-color:var(--theme-text-dark-card, #ffffff);">
+            <div class="mt-4 space-y-4">
                 @forelse ($announcements as $announcement)
-                    <article class="rounded-3xl border border-slate-200 px-5 py-4">
-                        <div class="text-xs uppercase tracking-[0.24em] text-slate-500">{{ $announcement->category }}</div>
-                        <h3 class="mt-2 display-font text-lg font-bold text-slate-900">{{ $announcement->title }}</h3>
-                        <p class="mt-2 text-sm text-slate-600">{{ $announcement->excerpt ?: \Illuminate\Support\Str::limit($announcement->body, 120) }}</p>
+                    <article class="rounded-[16px] p-4 hover:shadow-md transition duration-200"
+                             style="background: var(--theme-card-announcement, rgba(255,255,255,0.05)); border:1px solid var(--theme-border-soft, rgba(255,255,255,0.1));">
+                        <x-status-badge :status="$announcement->category ?? 'General'" class="scale-90 origin-left" />
+                        <h3 class="mt-2.5 display-font text-base font-extrabold leading-snug" style="color:var(--theme-text-dark-card, #ffffff);">{{ $announcement->title }}</h3>
+                        <p class="mt-2 text-xs font-semibold leading-relaxed" style="color:var(--theme-text-muted, rgba(226,232,240,0.80));">{{ $announcement->excerpt ?: \Illuminate\Support\Str::limit($announcement->body, 120) }}</p>
                     </article>
                 @empty
-                    <p class="text-sm text-slate-500">No announcements published yet.</p>
+                    <x-empty-state title="No Announcements Yet" description="When administrators publish updates, they will appear here." icon="announcement" />
                 @endforelse
             </div>
-        </section>
+        </x-dashboard-card>
     </div>
 
+    <!-- Finance Operational Picture -->
     @if ($financeSnapshot)
-        <section class="section-card mt-8">
-            <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
-                <div>
-                    <div class="text-xs uppercase tracking-[0.24em] text-slate-500">School finance board</div>
-                    <h2 class="display-font mt-2 text-2xl font-bold text-slate-950">Operational payment picture</h2>
-                </div>
-                <a href="{{ route('admin.finance.records', ['section' => 'payment-summary']) }}" class="theme-button-secondary">Open finance records</a>
-            </div>
+        <div class="mt-8">
+            <x-section-card class="dashboard-dark-panel dashboard-finance-panel" title="Operational payment picture" subtitle="School finance board" icon="finance" tone="gold"
+                        style="background: var(--dashboard-finance-bg, var(--theme-secondary)); border:1px solid var(--theme-border-soft, rgba(255,255,255,0.09)); box-shadow:0 20px 48px rgba(2,6,23,0.22); --panel-title-color:var(--theme-text-dark-card, #ffffff); --panel-desc-color:var(--theme-text-muted, rgba(226,232,240,0.82)); --panel-content-color:var(--theme-text-dark-card, #ffffff);">
+                <x-slot name="actions">
+                    <x-action-button variant="secondary" :href="route('admin.finance.records', ['section' => 'payment-summary'])" icon="finance-records">
+                        Open Finance Records
+                    </x-action-button>
+                </x-slot>
 
-            <div class="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                <div class="rounded-[1.75rem] border border-slate-200 bg-slate-50 px-5 py-5">
-                    <div class="text-xs uppercase tracking-[0.22em] text-slate-500">Students</div>
-                    <div class="display-font mt-3 text-3xl font-bold text-slate-950">{{ $financeSnapshot['students'] }}</div>
-                    <div class="mt-2 text-sm text-slate-500">{{ $financeSnapshot['classes'] }} class{{ $financeSnapshot['classes'] === 1 ? '' : 'es' }}</div>
-                </div>
-                <div class="rounded-[1.75rem] border border-slate-200 bg-slate-50 px-5 py-5">
-                    <div class="text-xs uppercase tracking-[0.22em] text-slate-500">Total billed</div>
-                    <div class="display-font mt-3 text-3xl font-bold text-slate-950">NGN {{ number_format((float) $financeSnapshot['totalBilled'], 2) }}</div>
-                </div>
-                <div class="rounded-[1.75rem] border border-slate-200 bg-slate-50 px-5 py-5">
-                    <div class="text-xs uppercase tracking-[0.22em] text-slate-500">Total collected</div>
-                    <div class="display-font mt-3 text-3xl font-bold text-slate-950">NGN {{ number_format((float) $financeSnapshot['totalCollected'], 2) }}</div>
-                </div>
-                <div class="rounded-[1.75rem] border border-slate-200 bg-slate-50 px-5 py-5">
-                    <div class="text-xs uppercase tracking-[0.22em] text-slate-500">Outstanding / debtors</div>
-                    <div class="display-font mt-3 text-3xl font-bold text-slate-950">NGN {{ number_format((float) $financeSnapshot['outstanding'], 2) }}</div>
-                    <div class="mt-2 text-sm text-slate-500">{{ $financeSnapshot['debtorStudents'] }} student{{ $financeSnapshot['debtorStudents'] === 1 ? '' : 's' }} owing</div>
-                </div>
-            </div>
+                <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                    <x-stat-card label="Students" :value="$financeSnapshot['students']" accent="blue" :link="route('admin.finance.records', ['section' => 'class-bills'])" linkText="View class billing">
+                        {{ $financeSnapshot['classes'] }} class{{ $financeSnapshot['classes'] === 1 ? '' : 'es' }}
+                    </x-stat-card>
 
-            <div class="mt-5 rounded-[1.75rem] border border-slate-200 bg-white/80 px-5 py-5">
-                <div class="flex items-end justify-between gap-4">
-                    <div>
-                        <div class="text-xs uppercase tracking-[0.22em] text-slate-500">Collection rate</div>
-                        <div class="display-font mt-2 text-3xl font-bold text-slate-950">{{ number_format((float) $financeSnapshot['collectionRate'], 1) }}%</div>
-                    </div>
-                    <a href="{{ route('admin.finance.records', ['section' => 'class-bills']) }}" class="text-sm font-semibold text-[color:var(--theme-primary)]">View class billing</a>
+                    <x-stat-card label="Total billed" :value="$compactMoney((float) $financeSnapshot['totalBilled'])" accent="gold" />
+
+                    <x-stat-card label="Total collected" :value="$compactMoney((float) $financeSnapshot['totalCollected'])" accent="green" />
+
+                    <x-stat-card label="Outstanding" :value="$compactMoney((float) $financeSnapshot['outstanding'])" accent="red">
+                        {{ $financeSnapshot['debtorStudents'] }} student{{ $financeSnapshot['debtorStudents'] === 1 ? '' : 's' }} owing
+                    </x-stat-card>
                 </div>
-                <div class="mt-4 h-3 overflow-hidden rounded-full bg-slate-200">
-                    <div class="h-full rounded-full" style="width: {{ min(100, max(0, (float) $financeSnapshot['collectionRate'])) }}%; background: linear-gradient(135deg, var(--theme-primary), var(--theme-accent));"></div>
+
+                <div class="mt-6 pt-5" style="border-top:1px solid var(--theme-border-soft, rgba(255,255,255,0.12));">
+                    <x-progress-bar :percentage="$financeSnapshot['collectionRate']" label="Collection Rate" color="green" :valueText="number_format((float) $financeSnapshot['collectionRate'], 1) . '%'" />
                 </div>
-            </div>
-        </section>
+            </x-section-card>
+        </div>
     @endif
 </x-app-layout>
