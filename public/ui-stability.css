@@ -1,0 +1,534 @@
+/*
+ * Beloved Schools UI stability and accessibility guardrails.
+ * Loaded last so the established design is preserved while layout and
+ * contrast defects are corrected consistently across public and portal pages.
+ */
+
+:root {
+    --ui-surface: #ffffff;
+    --ui-surface-soft: #f8fafc;
+    --ui-text: #0f172a;
+    --ui-muted: #475569;
+    --ui-placeholder: #64748b;
+    --ui-border: #cbd5e1;
+    --ui-border-strong: #94a3b8;
+    --ui-on-dark: #ffffff;
+    --ui-on-dark-muted: rgba(255, 255, 255, 0.82);
+    --ui-focus: var(--theme-primary, #2563eb);
+}
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    min-width: 320px;
+    overflow-x: hidden;
+}
+
+@supports (overflow: clip) {
+    html,
+    body {
+        overflow-x: clip;
+    }
+}
+
+img,
+video,
+canvas,
+svg,
+iframe {
+    max-width: 100%;
+}
+
+/* Viewport and fixed-sidebar geometry. */
+.site-page-shell,
+.app-shell,
+.public-shell,
+.auth-shell,
+.app-content-shell,
+.public-content-shell,
+.app-content-inner,
+.app-main,
+.admin-page,
+.admin-page-content,
+.page-container {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.site-page-shell,
+.app-shell,
+.public-shell,
+.auth-shell {
+    width: 100%;
+    overflow-x: clip;
+}
+
+.app-content-shell,
+.app-content-inner {
+    width: 100%;
+}
+
+@media (min-width: 1024px) {
+    .app-content-shell {
+        width: calc(100% - var(--app-sidebar-width, 17.5rem)) !important;
+        max-width: calc(100% - var(--app-sidebar-width, 17.5rem)) !important;
+        margin-left: var(--app-sidebar-width, 17.5rem) !important;
+    }
+}
+
+@media (max-width: 1023px) {
+    .app-content-shell {
+        width: 100% !important;
+        max-width: 100% !important;
+        margin-left: 0 !important;
+    }
+}
+
+/* Flex/grid children must shrink rather than extending the viewport. */
+.app-shell :is(.flex, .grid) > *,
+.public-shell :is(.flex, .grid) > *,
+.auth-shell :is(.flex, .grid) > * {
+    min-width: 0;
+}
+
+.app-shell :is(
+    .admin-page-header,
+    .page-header,
+    .page-header-content,
+    .section-header,
+    .table-toolbar,
+    .directory-toolbar,
+    .admin-toolbar-controls,
+    .form-actions,
+    .page-actions,
+    .admin-actions
+) {
+    max-width: 100%;
+}
+
+.admin-page-header,
+.page-header,
+.page-header-content {
+    flex-wrap: wrap;
+}
+
+.admin-page-header > :first-child,
+.page-header > :first-child,
+.page-header-content > :first-child {
+    min-width: 0;
+    flex: 1 1 24rem;
+}
+
+.page-actions,
+.admin-actions,
+.form-actions,
+.section-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.page-actions > *,
+.admin-actions > *,
+.form-actions > *,
+.section-toolbar > * {
+    max-width: 100%;
+}
+
+/* Wide records scroll inside their card instead of cutting off the page. */
+.admin-table-card,
+.admin-table-wrap,
+.admin-table-scroll,
+.table-wrap,
+.desktop-table,
+.data-table-wrap,
+.directory-table-wrap,
+.overflow-x-auto {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.admin-table-scroll,
+.table-wrap,
+.data-table-wrap,
+.directory-table-wrap,
+.overflow-x-auto {
+    width: 100%;
+    overflow-x: auto !important;
+    overflow-y: visible;
+    overscroll-behavior-inline: contain;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-gutter: stable;
+}
+
+.admin-data-table,
+.data-table {
+    width: 100%;
+    max-width: none;
+}
+
+.admin-table-scroll:focus-visible,
+.table-wrap:focus-visible,
+.data-table-wrap:focus-visible,
+.directory-table-wrap:focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--ui-focus) 55%, transparent);
+    outline-offset: 3px;
+    border-radius: 0.8rem;
+}
+
+.app-shell :is(td, th, .mobile-record-value, .card-description, .section-description),
+.public-shell :is(.beloved-school-card p, .beloved-event-item p, .beloved-testi-card p) {
+    overflow-wrap: anywhere;
+}
+
+/* Reliable contrast on light portal surfaces. */
+.app-shell main :is(
+    .admin-shell-card,
+    .admin-card,
+    .admin-card-subtle,
+    .admin-panel,
+    .admin-section,
+    .admin-table-card,
+    .admin-table-wrap,
+    .admin-workspace-card,
+    .admin-toolbar-card,
+    .student-directory-shell,
+    .directory-card,
+    .family-card,
+    .class-card,
+    .class-directory-card,
+    .class-filter-panel,
+    .form-card,
+    .form-section,
+    .filter-card,
+    .section-card,
+    .portal-section-tabs,
+    .entity-preview-card,
+    .empty-state,
+    .modal-box,
+    .dropdown-panel,
+    .popover-panel
+):not(.dashboard-dark-panel):not(.dashboard-finance-panel):not(.dashboard-quick-actions-panel):not(.dashboard-announcements-panel):not(.stat-gradient-card) {
+    color: var(--ui-text) !important;
+}
+
+.app-shell main :is(
+    .admin-shell-card,
+    .admin-card,
+    .admin-panel,
+    .admin-section,
+    .admin-table-card,
+    .form-card,
+    .form-section,
+    .filter-card,
+    .section-card,
+    .entity-preview-card,
+    .empty-state
+):not(.dashboard-dark-panel):not(.dashboard-finance-panel):not(.dashboard-quick-actions-panel):not(.dashboard-announcements-panel):not(.stat-gradient-card)
+:is(h1, h2, h3, h4, h5, h6, .card-title, .section-title, .panel-title) {
+    color: var(--ui-text) !important;
+}
+
+.app-shell main :is(
+    .admin-shell-card,
+    .admin-card,
+    .admin-panel,
+    .admin-section,
+    .admin-table-card,
+    .form-card,
+    .form-section,
+    .filter-card,
+    .section-card,
+    .entity-preview-card,
+    .empty-state
+):not(.dashboard-dark-panel):not(.dashboard-finance-panel):not(.dashboard-quick-actions-panel):not(.dashboard-announcements-panel):not(.stat-gradient-card)
+:is(p, .card-description, .section-description, .page-description, .text-muted) {
+    color: var(--ui-muted) !important;
+}
+
+.app-shell .admin-page-header h1,
+.app-shell .page-header h1,
+.app-shell .page-header-title {
+    color: var(--ui-text) !important;
+}
+
+.app-shell .admin-page-header :is(.eyebrow, .page-description),
+.app-shell .page-header :is(.eyebrow, .page-description) {
+    color: var(--ui-muted) !important;
+}
+
+.app-shell .admin-data-table {
+    color: var(--ui-text) !important;
+    background: var(--ui-surface) !important;
+}
+
+.app-shell .admin-data-table thead th {
+    color: #1e293b !important;
+    background: var(--ui-surface-soft) !important;
+    border-bottom-color: var(--ui-border) !important;
+}
+
+.app-shell .admin-data-table tbody td {
+    color: var(--ui-text) !important;
+    background-color: var(--ui-surface) !important;
+    border-bottom-color: #e2e8f0 !important;
+}
+
+.app-shell .admin-data-table tbody tr:hover td {
+    background-color: #eff6ff !important;
+}
+
+/* Form controls. */
+.app-shell :is(label, .input-label, .auth-label, .form-label),
+.auth-card :is(label, .input-label, .auth-label, .form-label) {
+    color: #334155 !important;
+}
+
+.app-shell :is(
+    input[type="text"], input[type="email"], input[type="password"],
+    input[type="number"], input[type="tel"], input[type="date"],
+    input[type="time"], input[type="search"], input[type="url"],
+    select, textarea, .theme-input, .auth-input
+),
+.auth-card :is(
+    input[type="text"], input[type="email"], input[type="password"],
+    input[type="number"], input[type="tel"], input[type="date"],
+    input[type="time"], input[type="search"], input[type="url"],
+    select, textarea, .theme-input, .auth-input
+) {
+    min-width: 0;
+    max-width: 100%;
+    color: var(--ui-text) !important;
+    background-color: var(--ui-surface) !important;
+    border-color: var(--ui-border-strong) !important;
+}
+
+.app-shell :is(input, textarea)::placeholder,
+.auth-card :is(input, textarea)::placeholder {
+    color: var(--ui-placeholder) !important;
+    opacity: 1;
+}
+
+.app-shell :is(input, select, textarea):disabled,
+.auth-card :is(input, select, textarea):disabled {
+    color: var(--ui-muted) !important;
+    background: #f1f5f9 !important;
+    cursor: not-allowed;
+    opacity: 1;
+}
+
+.app-shell :is(input, select, textarea, button, a):focus-visible,
+.public-shell :is(input, select, textarea, button, a):focus-visible,
+.auth-shell :is(input, select, textarea, button, a):focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--ui-focus) 48%, transparent);
+    outline-offset: 2px;
+}
+
+.btn-primary,
+.theme-button:not(.theme-button-secondary),
+.auth-submit,
+.btn-danger {
+    color: #ffffff !important;
+}
+
+.btn-secondary,
+.theme-button-secondary {
+    color: #1e3a8a !important;
+    background: #ffffff !important;
+    border-color: #94a3b8 !important;
+}
+
+/* Dark dashboard surfaces. */
+.stat-gradient-card,
+.stat-gradient-card :is(.metric-value, .metric-link) {
+    color: var(--ui-on-dark) !important;
+}
+
+.stat-gradient-card :is(.metric-label, .metric-note) {
+    color: var(--ui-on-dark-muted) !important;
+}
+
+.dashboard-dark-panel,
+.dashboard-finance-panel,
+.dashboard-quick-actions-panel,
+.dashboard-announcements-panel {
+    color: var(--ui-on-dark) !important;
+}
+
+.dashboard-dark-panel :is(h1, h2, h3, h4, .card-title, .section-title),
+.dashboard-finance-panel :is(h1, h2, h3, h4, .card-title, .section-title),
+.dashboard-quick-actions-panel :is(h1, h2, h3, h4, .card-title, .section-title),
+.dashboard-announcements-panel :is(h1, h2, h3, h4, .card-title, .section-title) {
+    color: var(--ui-on-dark) !important;
+}
+
+.dashboard-dark-panel :is(p, .card-description, .section-description),
+.dashboard-finance-panel :is(p, .card-description, .section-description),
+.dashboard-quick-actions-panel :is(p, .card-description, .section-description),
+.dashboard-announcements-panel :is(p, .card-description, .section-description) {
+    color: var(--ui-on-dark-muted) !important;
+}
+
+/* Public website contrast corrections. */
+.public-shell .public-topbar,
+.public-shell .public-drawer-panel {
+    color: var(--ui-text) !important;
+}
+
+.public-shell .public-drawer-link:not(.is-primary):not(.public-staff-login-button) {
+    color: #1e293b !important;
+    background: #f8fafc !important;
+    border-color: #cbd5e1 !important;
+}
+
+.public-shell .public-drawer-link.is-primary,
+.public-shell .public-staff-login-button {
+    color: #ffffff !important;
+}
+
+/* The stats bar is a dark brand band; its items must not be white cards. */
+.public-shell .beloved-stats-bar,
+.public-shell .beloved-stats-bar__inner {
+    color: #ffffff !important;
+}
+
+.public-shell .beloved-stats-bar .beloved-stats-bar__item,
+.public-content-shell .beloved-stats-bar .beloved-stats-bar__item {
+    background: transparent !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+.public-shell .beloved-stats-bar__item strong {
+    color: #ffffff !important;
+}
+
+.public-shell .beloved-stats-bar__item p {
+    color: rgba(255, 255, 255, 0.82) !important;
+}
+
+.public-shell :is(
+    .beloved-admission-band,
+    .beloved-newsletter-band,
+    .beloved-newsletter-band__inner
+) :is(h1, h2, h3, strong) {
+    color: #ffffff !important;
+}
+
+.public-shell :is(
+    .beloved-admission-band,
+    .beloved-newsletter-band,
+    .beloved-newsletter-band__inner
+) p {
+    color: rgba(255, 255, 255, 0.84) !important;
+}
+
+.public-shell .beloved-slide__content :is(h1, h2, h3, strong),
+.public-shell .hero-media-copy :is(h1, h2, h3, strong) {
+    color: #ffffff !important;
+}
+
+.public-shell .beloved-slide__content p,
+.public-shell .hero-media-copy p {
+    color: rgba(255, 255, 255, 0.84) !important;
+}
+
+.public-shell :is(.beloved-school-card, .beloved-event-item, .beloved-testi-card)
+:is(h1, h2, h3, h4, strong) {
+    color: var(--ui-text) !important;
+}
+
+.public-shell :is(.beloved-school-card, .beloved-event-item, .beloved-testi-card) p {
+    color: var(--ui-muted) !important;
+}
+
+.public-shell :is(.beloved-gallery-item__overlay, .beloved-video-thumb__label)
+:is(h1, h2, h3, p, span, strong) {
+    color: #ffffff !important;
+}
+
+/* Auth pages and overlays. */
+.auth-card,
+.modal-box,
+.dropdown-panel,
+.popover-panel {
+    color: var(--ui-text) !important;
+    background: var(--ui-surface) !important;
+}
+
+.auth-card :is(h1, h2, h3, h4),
+.modal-box :is(h1, h2, h3, h4),
+.dropdown-panel :is(h1, h2, h3, h4),
+.popover-panel :is(h1, h2, h3, h4) {
+    color: var(--ui-text) !important;
+}
+
+.auth-card :is(p, .form-help, .form-description),
+.modal-box p,
+.dropdown-panel p,
+.popover-panel p {
+    color: var(--ui-muted) !important;
+}
+
+.modal-box,
+.dropdown-panel,
+.popover-panel,
+.drawer-panel {
+    max-width: calc(100vw - 1rem);
+}
+
+@media (max-width: 767px) {
+    .admin-page-header > :first-child,
+    .page-header > :first-child,
+    .page-header-content > :first-child {
+        flex-basis: 100%;
+    }
+
+    .page-actions,
+    .admin-actions,
+    .form-actions {
+        width: 100%;
+    }
+
+    .page-actions > *,
+    .admin-actions > *,
+    .form-actions > * {
+        flex: 1 1 10rem;
+    }
+
+    .app-shell .app-main,
+    .app-shell .admin-page-content,
+    .app-shell .page-container {
+        width: 100%;
+        padding-inline: 0.875rem !important;
+    }
+}
+
+@media (max-width: 479px) {
+    .page-actions > *,
+    .admin-actions > *,
+    .form-actions > * {
+        width: 100%;
+        flex-basis: 100%;
+    }
+}
+
+@media print {
+    html,
+    body,
+    .site-page-shell,
+    .app-content-shell {
+        width: auto !important;
+        max-width: none !important;
+        overflow: visible !important;
+        margin: 0 !important;
+    }
+}
