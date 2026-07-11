@@ -29,6 +29,12 @@ jobs:
           node-version: '22'
           cache: npm
 
+      - name: Prepare environment files
+        run: |
+          cp .env.example .env
+          mkdir -p database
+          touch database/database.sqlite
+
       - name: Configure Composer authentication
         run: composer config --global github-oauth.github.com "${{ github.token }}"
 
@@ -38,11 +44,8 @@ jobs:
       - name: Install PHP dependencies
         run: composer install --no-interaction --prefer-dist --no-progress --optimize-autoloader -vvv
 
-      - name: Prepare Laravel
+      - name: Prepare Laravel database
         run: |
-          cp .env.example .env
-          mkdir -p database
-          touch database/database.sqlite
           php artisan key:generate
           php artisan migrate:fresh --seed --force
 
