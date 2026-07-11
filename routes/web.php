@@ -7,6 +7,7 @@ use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\StudentManagementController;
 use App\Http\Controllers\StudentPortalController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\WebhookController;
@@ -37,7 +38,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->name('admin.settings');
         Route::post('/admin/settings', [AdminController::class, 'updateSettings'])->name('admin.settings.update');
         Route::get('/admin/people', [AdminController::class, 'people'])->name('admin.people');
-        Route::get('/admin/people/students/{classSlug?}', [AdminController::class, 'students'])->name('admin.students.index');
+        Route::get('/admin/people/students/{classSlug?}', [StudentManagementController::class, 'index'])->name('admin.students.index');
         Route::get('/admin/people/parents', [AdminController::class, 'parents'])->name('admin.parents.index');
         Route::get('/admin/people/staff', [AdminController::class, 'staff'])->name('admin.staff.index');
         Route::get('/admin/students/{student}', [AdminController::class, 'showStudent'])->name('admin.students.show');
@@ -76,7 +77,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/admin/students/{student}/record', [ReportController::class, 'adminRecord'])->name('admin.students.record');
     });
 
-        Route::middleware('role:admin,principal,accountant')->group(function () {
+    Route::middleware('role:admin,principal,accountant')->group(function () {
         Route::get('/admin/finance/records/{section?}', [FinanceController::class, 'records'])
             ->where('section', 'printable-fee-list|created-fee-items|student-balances|class-bills|payment-summary|recent-payments|overpayment-tracker|payment-progression')
             ->name('admin.finance.records');

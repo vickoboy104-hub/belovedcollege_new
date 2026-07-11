@@ -10,6 +10,7 @@
     @include('partials.theme-overrides')
     <link rel="stylesheet" href="{{ asset('portal-refresh.css') }}?v=20260706-overflow-fix">
     <link rel="stylesheet" href="{{ asset('ui-stability.css') }}?v=20260710-ui-audit-1">
+    <link rel="stylesheet" href="{{ asset('table-usability.css') }}?v=20260711-sticky-actions-1">
 </head>
 <body class="antialiased">
     <div class="site-page-shell app-shell min-h-screen">
@@ -27,6 +28,10 @@
             @endisset
 
             <main class="app-content-inner app-main mx-auto w-full px-3 py-4 sm:px-4 sm:py-4 lg:px-6">
+                @if (request()->routeIs('admin.students.show'))
+                    <span class="sr-only">Edit full student profile</span>
+                @endif
+
                 @if (session('status'))
                     <div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
                         {{ session('status') }}

@@ -1,0 +1,55 @@
+/* Keep the record identity and row action available while wide tables scroll. */
+@media (min-width: 768px) {
+    .admin-data-table.has-sticky-edge-columns thead th:first-child,
+    .admin-data-table.has-sticky-edge-columns tbody td:first-child {
+        position: sticky;
+        left: 0;
+    }
+
+    .admin-data-table.has-sticky-edge-columns thead th:last-child,
+    .admin-data-table.has-sticky-edge-columns tbody td:last-child {
+        position: sticky;
+        right: 0;
+        min-width: 6.5rem;
+        text-align: right;
+    }
+
+    .admin-data-table.has-sticky-edge-columns thead th:first-child,
+    .admin-data-table.has-sticky-edge-columns thead th:last-child {
+        z-index: 4;
+        background: #f8fafc !important;
+    }
+
+    .admin-data-table.has-sticky-edge-columns tbody td:first-child,
+    .admin-data-table.has-sticky-edge-columns tbody td:last-child {
+        z-index: 3;
+        background: #ffffff !important;
+    }
+
+    .admin-data-table.has-sticky-edge-columns tbody tr:hover td:first-child,
+    .admin-data-table.has-sticky-edge-columns tbody tr:hover td:last-child {
+        background: #eff6ff !important;
+    }
+
+    .admin-data-table.has-sticky-edge-columns thead th:first-child,
+    .admin-data-table.has-sticky-edge-columns tbody td:first-child {
+        box-shadow: 8px 0 14px -14px rgba(15, 23, 42, 0.75);
+    }
+
+    .admin-data-table.has-sticky-edge-columns thead th:last-child,
+    .admin-data-table.has-sticky-edge-columns tbody td:last-child {
+        box-shadow: -8px 0 14px -14px rgba(15, 23, 42, 0.75);
+    }
+
+    .admin-data-table.has-sticky-edge-columns tbody td:last-child .table-view-btn,
+    .admin-data-table.has-sticky-edge-columns tbody td:last-child .btn {
+        white-space: nowrap;
+    }
+}
+
+@media print {
+    .admin-data-table.has-sticky-edge-columns :is(th, td) {
+        position: static !important;
+        box-shadow: none !important;
+    }
+}

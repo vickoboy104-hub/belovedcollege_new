@@ -1,0 +1,75 @@
+name: Quality checks
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: bcmath, ctype, curl, dom, fileinfo, filter, gd, iconv, intl, json, libxml, mbstring, openssl, pcre, pdo, pdo_sqlite, session, simplexml, sodium, sqlite3, tokenizer, xml, xmlwriter, zip
+          coverage: none
+          tools: composer:v2
+
+      - name: Prepare environment files
+        run: |
+          cp .env.example .env
+          mkdir -p database
+          touch database/database.sqlite
+
+      - name: Install PHP dependencies
+        run: |
+          composer config --global github-oauth.github.com "${{ github.token }}"
+          composer validate --no-check-publish --quiet
+          composer install --no-interaction --prefer-dist --no-progress --optimize-autoloader --quiet
+
+      - name: Prepare Laravel database
+        run: |
+          php artisan key:generate --quiet
+          php artisan migrate:fresh --seed --force --quiet
+
+      - name: Verify routes
+        run: php artisan route:list --except-vendor
+
+      - name: Run automated tests
+        run: php artisan test > test-output.txt 2>&1
+
+      - name: Upload test output
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-test-output
+          path: test-output.txt
+          if-no-files-found: error
+          retention-days: 3
+
+  frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Install frontend dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Build frontend
+        run: npm run build
