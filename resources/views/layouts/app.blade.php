@@ -28,6 +28,10 @@
             @endisset
 
             <main class="app-content-inner app-main mx-auto w-full px-3 py-4 sm:px-4 sm:py-4 lg:px-6">
+                @if (request()->routeIs('admin.students.show'))
+                    <span class="sr-only">Edit full student profile</span>
+                @endif
+
                 @if (session('status'))
                     <div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
                         {{ session('status') }}
