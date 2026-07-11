@@ -14,7 +14,7 @@ class AdminPeopleTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_admin_can_view_people_directory_grouped_by_class_and_department(): void
+    public function test_admin_can_view_people_hub_and_open_dedicated_workspaces(): void
     {
         $admin = User::factory()->create([
             'role' => UserRole::Admin,
@@ -56,14 +56,16 @@ class AdminPeopleTest extends TestCase
             'designation' => 'Physics Teacher',
         ]);
 
-        $response = $this->actingAs($admin)->get(route('admin.people', ['search' => 'ADM-001']));
+        $response = $this->actingAs($admin)->get(route('admin.people'));
 
         $response->assertOk();
-        $response->assertSee('Student directory by class');
-        $response->assertSee('JSS 1');
-        $response->assertSee('Amina Yusuf');
-        $response->assertSee('Staff directory by department');
-        $response->assertSee('View / Edit');
+        $response->assertSee('People Hub');
+        $response->assertSee('Dedicated management portals');
+        $response->assertSee('Student Profiles');
+        $response->assertSee('Guardians &amp; Sibling', false);
+        $response->assertSee('Staff Directories');
+        $response->assertSee('1 Records');
+        $response->assertSee('1 Profiles');
     }
 
     public function test_admin_can_filter_people_by_class_and_department(): void
@@ -142,10 +144,9 @@ class AdminPeopleTest extends TestCase
         ]));
 
         $response->assertOk();
-        $response->assertSee('Amina Yusuf');
-        $response->assertDontSee('David Obi');
-        $response->assertSee('Daniel Adeyemi');
-        $response->assertDontSee('Kemi Balogun');
+        $response->assertSee('People Hub');
+        $response->assertSee('2 Records');
+        $response->assertSee('2 Profiles');
     }
 
     public function test_admin_can_open_full_student_profile_page(): void
