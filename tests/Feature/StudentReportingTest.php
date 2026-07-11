@@ -25,14 +25,24 @@ class StudentReportingTest extends TestCase
         [$admin, $student, $term, $subject] = $this->seedReportData();
 
         $indexResponse = $this->actingAs($admin)->get(route('admin.reports.index', [
-            'student_id' => $student->id,
+            'classSlug' => $student->schoolClass->slug,
             'term_id' => $term->id,
+            'search' => $student->admission_no,
         ]));
 
         $indexResponse->assertOk();
-        $indexResponse->assertSee('Official report cards and release control');
+        $indexResponse->assertSee('Choose Student Report Card');
         $indexResponse->assertSee($student->user->fullName());
-        $indexResponse->assertSee($subject->name);
+
+        $workspaceResponse = $this->actingAs($admin)->get(route('admin.reports.show', [
+            'student' => $student,
+            'section' => 'scores',
+            'term_id' => $term->id,
+        ]));
+
+        $workspaceResponse->assertOk();
+        $workspaceResponse->assertSee($student->user->fullName());
+        $workspaceResponse->assertSee($subject->name);
 
         $updateResponse = $this->actingAs($admin)->post(route('admin.reports.update', [$student, $term]), [
             'days_school_open' => 65,
@@ -48,8 +58,9 @@ class StudentReportingTest extends TestCase
             ],
         ]);
 
-        $updateResponse->assertRedirect(route('admin.reports.index', [
-            'student_id' => $student->id,
+        $updateResponse->assertRedirect(route('admin.reports.show', [
+            'student' => $student,
+            'section' => 'remarks',
             'term_id' => $term->id,
         ]));
 
@@ -59,12 +70,16 @@ class StudentReportingTest extends TestCase
             'checker_pin' => '443322',
         ]);
 
-        $publishResponse->assertRedirect(route('admin.reports.index', [
-            'student_id' => $student->id,
+        $publishResponse->assertRedirect(route('admin.reports.show', [
+            'student' => $student,
+            'section' => 'publication',
             'term_id' => $term->id,
         ]));
 
-        $report = StudentTermReport::query()->where('student_id', $student->id)->where('term_id', $term->id)->first();
+        $report = StudentTermReport::query()
+            ->where('student_id', $student->id)
+            ->where('term_id', $term->id)
+            ->first();
 
         $this->assertNotNull($report);
         $this->assertTrue($report->portal_enabled);
@@ -162,53 +177,29 @@ class StudentReportingTest extends TestCase
             'code' => 'MTH-001',
         ]);
 
-        $quiz = Assessment::create([
-            'teacher_id' => $teacher->id,
-            'term_id' => $term->id,
-            'subject_id' => $subject->id,
-            'school_class_id' => $class->id,
-            'title' => 'Math Quiz',
-            'type' => 'quiz',
-            'total_score' => 10,
-        ]);
+        $assessments = [
+            ['title' => 'Math Quiz', 'type' => 'quiz', 'total_score' => 10, 'score' => 8],
+            ['title' => 'Math Test', 'type' => 'test', 'total_score' => 20, 'score' => 15],
+            ['title' => 'Math Exam', 'type' => 'exam', 'total_score' => 70, 'score' => 54],
+        ];
 
-        $test = Assessment::create([
-            'teacher_id' => $teacher->id,
-            'term_id' => $term->id,
-            'subject_id' => $subject->id,
-            'school_class_id' => $class->id,
-            'title' => 'Math Test',
-            'type' => 'test',
-            'total_score' => 20,
-        ]);
+        foreach ($assessments as $definition) {
+            $assessment = Assessment::create([
+                'teacher_id' => $teacher->id,
+                'term_id' => $term->id,
+                'subject_id' => $subject->id,
+                'school_class_id' => $class->id,
+                'title' => $definition['title'],
+                'type' => $definition['type'],
+                'total_score' => $definition['total_score'],
+            ]);
 
-        $exam = Assessment::create([
-            'teacher_id' => $teacher->id,
-            'term_id' => $term->id,
-            'subject_id' => $subject->id,
-            'school_class_id' => $class->id,
-            'title' => 'Math Exam',
-            'type' => 'exam',
-            'total_score' => 70,
-        ]);
-
-        AssessmentResult::create([
-            'assessment_id' => $quiz->id,
-            'student_id' => $student->id,
-            'score' => 8,
-        ]);
-
-        AssessmentResult::create([
-            'assessment_id' => $test->id,
-            'student_id' => $student->id,
-            'score' => 15,
-        ]);
-
-        AssessmentResult::create([
-            'assessment_id' => $exam->id,
-            'student_id' => $student->id,
-            'score' => 54,
-        ]);
+            AssessmentResult::create([
+                'assessment_id' => $assessment->id,
+                'student_id' => $student->id,
+                'score' => $definition['score'],
+            ]);
+        }
 
         return [$admin, $student, $term, $subject];
     }
