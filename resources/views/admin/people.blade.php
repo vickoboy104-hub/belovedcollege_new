@@ -49,7 +49,7 @@
                         <div class="w-10 h-10 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shadow-sm">
                             <x-app-icon name="parents" class="w-5 h-5" />
                         </div>
-                        <h3 class="display-font mt-4 text-xl font-bold text-slate-900">Guardians & Sibling</h3>
+                        <h3 class="display-font mt-4 text-xl font-bold text-slate-900">Guardians &amp; Sibling</h3>
                         <p class="text-xs text-slate-600 mt-2 leading-relaxed">Monitor parent portals, track contact details, check linked children lists, and verify active coverages.</p>
                     </div>
                     <div class="mt-6 pt-4 border-t border-slate-150 flex items-center justify-between">
@@ -93,7 +93,7 @@
                         <p class="text-xs text-slate-500 mt-1 leading-relaxed">Family profile cards, linking multiple children to a single guardian account, and tracing billing balances.</p>
                     </div>
                     <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:border-[#fbbf24] transition duration-200">
-                        <div class="font-bold text-slate-800 text-sm">Staff & Academic structure depts</div>
+                        <div class="font-bold text-slate-800 text-sm">Staff &amp; Academic structure depts</div>
                         <p class="text-xs text-slate-500 mt-1 leading-relaxed">Dedicated teacher directories, employee record numbers, designation titles, and academic qualifications.</p>
                     </div>
                 </div>
