@@ -1,4 +1,10 @@
-@props(['headers' => [], 'pagination' => null, 'minWidth' => '1050px', 'label' => 'Scrollable data table'])
+@props([
+    'headers' => [],
+    'pagination' => null,
+    'minWidth' => '1050px',
+    'stickyEdges' => true,
+    'label' => 'Scrollable data table',
+])
 
 <div {{ $attributes->merge(['class' => 'admin-table-card admin-table-wrap']) }}>
     <div
@@ -7,7 +13,10 @@
         aria-label="{{ $label }}"
         tabindex="0"
     >
-        <table class="admin-data-table" style="min-width: {{ $minWidth }};">
+        <table
+            class="admin-data-table {{ $stickyEdges ? 'has-sticky-edge-columns' : '' }}"
+            style="min-width: {{ $minWidth }};"
+        >
             <thead>
                 <tr>
                     @foreach($headers as $header)
