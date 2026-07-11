@@ -44,7 +44,7 @@ jobs:
         run: php artisan route:list --except-vendor
 
       - name: Run automated tests
-        run: php artisan test --stop-on-failure > test-output.txt 2>&1
+        run: php artisan test > test-output.txt 2>&1
 
       - name: Upload test output
         if: always()
