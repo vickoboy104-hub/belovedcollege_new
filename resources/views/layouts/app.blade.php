@@ -49,5 +49,6 @@
         </div>
     </div>
     @vite(['resources/js/print-settings.js'])
+    <script src="{{ asset('sidebar-scroll-persistence.js') }}?v=20260711-sidebar-scroll-1"></script>
 </body>
 </html>
