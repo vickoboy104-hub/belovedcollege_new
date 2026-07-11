@@ -8,7 +8,7 @@ permissions:
   contents: read
 
 jobs:
-  test:
+  backend:
     runs-on: ubuntu-latest
 
     steps:
@@ -23,40 +23,44 @@ jobs:
           coverage: none
           tools: composer:v2
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '22'
-          cache: npm
-
       - name: Prepare environment files
         run: |
           cp .env.example .env
           mkdir -p database
           touch database/database.sqlite
 
-      - name: Configure Composer authentication
-        run: composer config --global github-oauth.github.com "${{ github.token }}"
-
-      - name: Validate Composer files
-        run: composer validate --no-check-publish
-
       - name: Install PHP dependencies
-        run: composer install --no-interaction --prefer-dist --no-progress --optimize-autoloader -vvv
+        run: |
+          composer config --global github-oauth.github.com "${{ github.token }}"
+          composer validate --no-check-publish --quiet
+          composer install --no-interaction --prefer-dist --no-progress --optimize-autoloader --quiet
 
       - name: Prepare Laravel database
         run: |
-          php artisan key:generate
-          php artisan migrate:fresh --seed --force
+          php artisan key:generate --quiet
+          php artisan migrate:fresh --seed --force --quiet
+
+      - name: Verify routes
+        run: php artisan route:list --except-vendor
+
+      - name: Run automated tests
+        run: php artisan test --stop-on-failure
+
+  frontend:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
 
       - name: Install frontend dependencies
-        run: npm ci
+        run: npm ci --no-audit --no-fund
 
       - name: Build frontend
         run: npm run build
-
-      - name: Verify routes
-        run: php artisan route:list
-
-      - name: Run automated tests
-        run: php artisan test
