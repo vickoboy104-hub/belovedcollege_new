@@ -17,12 +17,13 @@
 @endphp
 
 <a href="{{ $resolvedUrl }}"
+   data-tone="{{ $tone }}"
    {{ $attributes->merge(['class' => 'quick-action-card flex flex-col justify-between gap-5 rounded-[18px] p-5 transition-all duration-200 hover:-translate-y-0.5']) }}
    style="background: {{ $tc['grad'] }} !important; border: 1px solid {{ $tc['border'] }} !important; box-shadow: 0 8px 20px rgba(0,0,0,0.14);">
 
     <div class="space-y-4">
         {{-- Icon --}}
-        <div style="width:2.4rem; height:2.4rem; border-radius:0.75rem; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:{{ $tc['iconBg'] }}; color:{{ $tc['iconFg'] }}; border:1px solid rgba(255,255,255,0.14);">
+        <div class="quick-action-card-icon" style="width:2.4rem; height:2.4rem; border-radius:0.75rem; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:{{ $tc['iconBg'] }}; color:{{ $tc['iconFg'] }}; border:1px solid rgba(255,255,255,0.14);">
             <x-app-icon :name="$icon" class="h-5 w-5" />
         </div>
 

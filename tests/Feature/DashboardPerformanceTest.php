@@ -25,6 +25,8 @@ class DashboardPerformanceTest extends TestCase
         $response->assertSee('Active Invoices');
         $response->assertSee('Payments Logged');
         $response->assertSee('Operational payment picture');
+        $response->assertSee('dashboard-main-grid', false);
+        $response->assertSee('interface-corrections.css', false);
         $response->assertViewHas('financeSnapshot', function (array $snapshot): bool {
             return $snapshot['students'] === 0
                 && $snapshot['classes'] === 0
