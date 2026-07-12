@@ -60,6 +60,8 @@ class StudentManagementPerformanceTest extends TestCase
         $directoryResponse->assertSee('Daniel Adeyemi');
         $directoryResponse->assertSee('BVS-JSS1-GEN-001');
         $directoryResponse->assertSee('has-sticky-edge-columns', false);
+        $directoryResponse->assertSee('student-directory-shell', false);
+        $directoryResponse->assertSee('interface-corrections.css', false);
         $directoryResponse->assertSee('View');
 
         $newStudentsResponse = $this->actingAs($admin)->get(route('admin.students.index', [
