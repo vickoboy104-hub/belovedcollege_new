@@ -49,7 +49,7 @@
     </div>
 
     <!-- Main Grid Section -->
-    <div class="mt-8 grid gap-8 lg:grid-cols-[1.25fr,0.95fr]">
+    <div class="dashboard-main-grid mt-8 grid items-start gap-8 lg:grid-cols-[1.25fr,0.95fr]">
         <x-section-card class="dashboard-dark-panel dashboard-quick-actions-panel" title="Quick actions" subtitle="Jump into the part of the platform your role uses most." icon="dashboard" tone="blue"
                         style="background: var(--dashboard-quick-action-bg, var(--theme-secondary)); border:1px solid rgba(255,255,255,0.09); box-shadow:0 20px 48px rgba(2,6,23,0.22); --panel-title-color:#ffffff; --panel-desc-color:rgba(226,232,240,0.82); --panel-content-color:#ffffff;">
             <div class="mt-4 grid gap-4 md:grid-cols-2">
