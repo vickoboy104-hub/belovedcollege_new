@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="{{ asset('portal-refresh.css') }}?v=20260706-overflow-fix">
     <link rel="stylesheet" href="{{ asset('ui-stability.css') }}?v=20260710-ui-audit-1">
     <link rel="stylesheet" href="{{ asset('table-usability.css') }}?v=20260711-sticky-actions-1">
+    <link rel="stylesheet" href="{{ asset('interface-corrections.css') }}?v=20260712-dashboard-table-1">
 </head>
 <body class="antialiased">
     <div class="site-page-shell app-shell min-h-screen">
