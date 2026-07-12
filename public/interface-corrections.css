@@ -1,0 +1,175 @@
+/* Focused portal corrections for metric labels, dashboard cards, and student tables. */
+
+/* Allow labels to wrap only between words; never split a word letter-by-letter. */
+.metrics-grid .stat-gradient-card .metric-label {
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    hyphens: none !important;
+}
+
+/* Keep dashboard columns top-aligned and let announcements use their natural height. */
+.dashboard-main-grid {
+    align-items: start;
+}
+
+.dashboard-main-grid > .dashboard-announcements-panel {
+    align-self: start;
+    height: auto !important;
+    min-height: 0 !important;
+}
+
+/* Restore strong, readable quick-action icon and link contrast. */
+.dashboard-quick-actions-panel .quick-action-card {
+    --quick-action-strong: #1d4ed8;
+    --quick-action-soft: rgba(37, 99, 235, 0.14);
+    --quick-action-border: rgba(37, 99, 235, 0.28);
+}
+
+.dashboard-quick-actions-panel .quick-action-card[data-tone="green"] {
+    --quick-action-strong: #047857;
+    --quick-action-soft: rgba(5, 150, 105, 0.14);
+    --quick-action-border: rgba(5, 150, 105, 0.28);
+}
+
+.dashboard-quick-actions-panel .quick-action-card[data-tone="purple"] {
+    --quick-action-strong: #7c3aed;
+    --quick-action-soft: rgba(124, 58, 237, 0.14);
+    --quick-action-border: rgba(124, 58, 237, 0.28);
+}
+
+.dashboard-quick-actions-panel .quick-action-card[data-tone="gold"] {
+    --quick-action-strong: #a16207;
+    --quick-action-soft: rgba(202, 138, 4, 0.15);
+    --quick-action-border: rgba(202, 138, 4, 0.30);
+}
+
+.dashboard-quick-actions-panel .quick-action-card[data-tone="orange"] {
+    --quick-action-strong: #c2410c;
+    --quick-action-soft: rgba(234, 88, 12, 0.14);
+    --quick-action-border: rgba(234, 88, 12, 0.28);
+}
+
+.dashboard-quick-actions-panel .quick-action-card[data-tone="red"] {
+    --quick-action-strong: #b91c1c;
+    --quick-action-soft: rgba(220, 38, 38, 0.14);
+    --quick-action-border: rgba(220, 38, 38, 0.28);
+}
+
+.dashboard-quick-actions-panel .quick-action-card[data-tone="gray"] {
+    --quick-action-strong: #334155;
+    --quick-action-soft: rgba(71, 85, 105, 0.14);
+    --quick-action-border: rgba(71, 85, 105, 0.28);
+}
+
+.dashboard-quick-actions-panel .quick-action-card-icon {
+    color: var(--quick-action-strong) !important;
+    background: var(--quick-action-soft) !important;
+    border-color: var(--quick-action-border) !important;
+    opacity: 1 !important;
+}
+
+.dashboard-quick-actions-panel .quick-action-card-icon svg,
+.dashboard-quick-actions-panel .quick-action-card-link {
+    color: var(--quick-action-strong) !important;
+    opacity: 1 !important;
+}
+
+/* Student tables: retain identity and actions while middle columns scroll. */
+@media (min-width: 768px) {
+    .student-directory-shell .admin-table-scroll {
+        position: relative;
+        isolation: isolate;
+        max-height: min(68vh, 44rem);
+        overflow: auto !important;
+        scrollbar-gutter: stable both-edges;
+        overscroll-behavior: contain;
+    }
+
+    .student-directory-shell .admin-data-table.has-sticky-edge-columns {
+        width: 100%;
+        max-width: none;
+        border-collapse: separate !important;
+        border-spacing: 0 !important;
+    }
+
+    .student-directory-shell .admin-data-table.has-sticky-edge-columns thead th {
+        position: sticky;
+        top: 0;
+        z-index: 5;
+        background: #f8fafc !important;
+    }
+
+    .student-directory-shell .admin-data-table.has-sticky-edge-columns thead th:first-child,
+    .student-directory-shell .admin-data-table.has-sticky-edge-columns tbody td:first-child:not([colspan]) {
+        position: sticky !important;
+        left: 0 !important;
+        width: 16rem;
+        min-width: 16rem;
+        max-width: 16rem;
+    }
+
+    .student-directory-shell .admin-data-table.has-sticky-edge-columns thead th:last-child,
+    .student-directory-shell .admin-data-table.has-sticky-edge-columns tbody td:last-child:not([colspan]) {
+        position: sticky !important;
+        right: 0 !important;
+        width: 7rem;
+        min-width: 7rem;
+        max-width: 7rem;
+        text-align: right;
+    }
+
+    .student-directory-shell .admin-data-table.has-sticky-edge-columns thead th:first-child,
+    .student-directory-shell .admin-data-table.has-sticky-edge-columns thead th:last-child {
+        z-index: 8;
+        background: #f8fafc !important;
+    }
+
+    .student-directory-shell .admin-data-table.has-sticky-edge-columns tbody td:first-child:not([colspan]),
+    .student-directory-shell .admin-data-table.has-sticky-edge-columns tbody td:last-child:not([colspan]) {
+        z-index: 6;
+        background: #ffffff !important;
+    }
+
+    .student-directory-shell .admin-data-table.has-sticky-edge-columns tbody tr:hover td:first-child:not([colspan]),
+    .student-directory-shell .admin-data-table.has-sticky-edge-columns tbody tr:hover td:last-child:not([colspan]) {
+        background: #eff6ff !important;
+    }
+
+    .student-directory-shell .admin-data-table.has-sticky-edge-columns thead th:first-child,
+    .student-directory-shell .admin-data-table.has-sticky-edge-columns tbody td:first-child:not([colspan]) {
+        box-shadow: 10px 0 16px -16px rgba(15, 23, 42, 0.85);
+    }
+
+    .student-directory-shell .admin-data-table.has-sticky-edge-columns thead th:last-child,
+    .student-directory-shell .admin-data-table.has-sticky-edge-columns tbody td:last-child:not([colspan]) {
+        box-shadow: -10px 0 16px -16px rgba(15, 23, 42, 0.85);
+    }
+
+    .student-directory-shell .table-person,
+    .student-directory-shell .table-person-text {
+        min-width: 0;
+    }
+
+    .student-directory-shell .table-person-text {
+        max-width: 11.75rem;
+    }
+
+    .student-directory-shell .table-person-text strong,
+    .student-directory-shell .table-person-text span {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .student-directory-shell .admin-data-table.has-sticky-edge-columns tbody td:last-child .table-view-btn {
+        white-space: nowrap;
+    }
+}
+
+@media print {
+    .student-directory-shell .admin-table-scroll {
+        max-height: none !important;
+        overflow: visible !important;
+    }
+}
