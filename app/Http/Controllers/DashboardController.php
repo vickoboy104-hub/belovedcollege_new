@@ -4,14 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Enums\UserRole;
 use App\Models\Announcement;
-use App\Models\Assignment;
-use App\Models\FeeInvoice;
-use App\Models\Lesson;
-use App\Models\Payment;
-use App\Models\SchoolClass;
-use App\Models\StaffProfile;
-use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
@@ -19,56 +13,65 @@ class DashboardController extends Controller
     public function index(Request $request): View
     {
         $user = $request->user();
-        $student = $user->studentProfile()->with('schoolClass', 'feeInvoices')->first();
-        $children = collect();
 
-        if ($user->hasAnyRole(UserRole::Parent)) {
-            $children = Student::query()
-                ->with('user', 'schoolClass', 'feeInvoices')
-                ->where('parent_user_id', $user->id)
-                ->get();
+        // Fetch all dashboard-wide counts and finance totals in one database round trip.
+        // This replaces repeated model counts, sums, and an in-memory debtor ID pluck.
+        $metrics = DB::selectOne(<<<'SQL'
+            SELECT
+                (SELECT COUNT(*) FROM students) AS student_count,
+                (SELECT COUNT(*) FROM staff_profiles) AS staff_count,
+                (SELECT COUNT(*) FROM payments) AS payment_count,
+                (SELECT COUNT(*) FROM school_classes) AS class_count,
+                fee_summary.active_invoice_count,
+                fee_summary.total_billed,
+                fee_summary.total_collected,
+                fee_summary.outstanding,
+                fee_summary.debtor_students
+            FROM (
+                SELECT
+                    COUNT(CASE WHEN status <> ? THEN 1 END) AS active_invoice_count,
+                    COALESCE(SUM(amount_due), 0) AS total_billed,
+                    COALESCE(SUM(amount_paid), 0) AS total_collected,
+                    COALESCE(SUM(balance), 0) AS outstanding,
+                    COUNT(DISTINCT CASE WHEN balance > 0 THEN student_id END) AS debtor_students
+                FROM fee_invoices
+            ) AS fee_summary
+        SQL, ['paid']);
 
-            $student = $children->first();
-        }
+        $studentCount = (int) ($metrics->student_count ?? 0);
+        $staffCount = (int) ($metrics->staff_count ?? 0);
+        $activeInvoiceCount = (int) ($metrics->active_invoice_count ?? 0);
+        $paymentCount = (int) ($metrics->payment_count ?? 0);
 
         $stats = [
             [
                 'label' => 'Students',
-                'value' => Student::count(),
+                'value' => $studentCount,
                 'accent' => 'bg-sky-500/15 text-sky-900',
             ],
             [
                 'label' => 'Staff',
-                'value' => StaffProfile::count(),
+                'value' => $staffCount,
                 'accent' => 'bg-emerald-500/15 text-emerald-900',
             ],
             [
                 'label' => 'Active Invoices',
-                'value' => FeeInvoice::whereNot('status', 'paid')->count(),
+                'value' => $activeInvoiceCount,
                 'accent' => 'bg-amber-500/15 text-amber-900',
             ],
             [
                 'label' => 'Payments Logged',
-                'value' => Payment::count(),
+                'value' => $paymentCount,
                 'accent' => 'bg-rose-500/15 text-rose-900',
             ],
         ];
 
         $announcements = Announcement::query()
+            ->select(['id', 'title', 'body', 'excerpt', 'category', 'published_at'])
             ->where('is_published', true)
             ->latest('published_at')
             ->take(4)
             ->get();
-
-        $roleBlocks = [
-            'teacherAssignments' => Assignment::query()->where('teacher_id', $user->id)->latest()->take(4)->get(),
-            'teacherLessons' => Lesson::query()->where('teacher_id', $user->id)->latest()->take(4)->get(),
-            'studentInvoices' => $student?->feeInvoices()->latest()->take(4)->get() ?? collect(),
-            'studentLessons' => $student
-                ? Lesson::query()->where('school_class_id', $student->school_class_id)->latest()->take(4)->get()
-                : collect(),
-            'children' => $children,
-        ];
 
         $quickAccessCards = collect();
         $financeSnapshot = null;
@@ -105,19 +108,26 @@ class DashboardController extends Controller
         }
 
         if ($user->hasAnyRole([UserRole::Admin, UserRole::Principal, UserRole::Accountant])) {
-            $totalBilled = (float) FeeInvoice::sum('amount_due');
-            $totalCollected = (float) FeeInvoice::sum('amount_paid');
+            $totalBilled = (float) ($metrics->total_billed ?? 0);
+            $totalCollected = (float) ($metrics->total_collected ?? 0);
+
             $financeSnapshot = [
-                'students' => Student::count(),
-                'classes' => SchoolClass::count(),
-                'outstanding' => (float) FeeInvoice::sum('balance'),
-                'debtorStudents' => FeeInvoice::query()->where('balance', '>', 0)->pluck('student_id')->unique()->count(),
+                'students' => $studentCount,
+                'classes' => (int) ($metrics->class_count ?? 0),
+                'outstanding' => (float) ($metrics->outstanding ?? 0),
+                'debtorStudents' => (int) ($metrics->debtor_students ?? 0),
                 'totalBilled' => $totalBilled,
                 'totalCollected' => $totalCollected,
                 'collectionRate' => $totalBilled > 0 ? round(($totalCollected / $totalBilled) * 100, 1) : 0,
             ];
         }
 
-        return view('dashboard', compact('user', 'student', 'stats', 'announcements', 'roleBlocks', 'quickAccessCards', 'financeSnapshot'));
+        return view('dashboard', compact(
+            'user',
+            'stats',
+            'announcements',
+            'quickAccessCards',
+            'financeSnapshot',
+        ));
     }
 }
