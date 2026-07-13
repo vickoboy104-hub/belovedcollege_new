@@ -14,6 +14,7 @@
     <link rel="stylesheet" href="{{ asset('interface-corrections.css') }}?v=20260712-dashboard-table-1">
     <link rel="stylesheet" href="{{ asset('mobile-interface.css') }}?v=20260713-mobile-audit-1">
     <link rel="stylesheet" href="{{ asset('mobile-interface-fixes.css') }}?v=20260713-mobile-audit-2">
+    <link rel="stylesheet" href="{{ asset('student-actions-overlay.css') }}?v=20260713-student-actions-overlay-1">
 </head>
 @php
     $routeCssClass = 'route-'.str_replace('.', '-', request()->route()?->getName() ?? 'unknown');
