@@ -13,6 +13,7 @@ use App\Http\Controllers\StudentPortalController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\WebsiteController;
+use App\Http\Middleware\EnsureCbtSubmissionIsOpen;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [WebsiteController::class, 'home'])->name('home');
@@ -130,7 +131,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/portal', [StudentPortalController::class, 'index'])->name('portal.index');
         Route::post('/portal/assignments/{assignment}/submit', [StudentPortalController::class, 'submitAssignment'])->name('portal.assignments.submit');
         Route::get('/portal/cbt/{assessment}', [CbtController::class, 'takeAssessment'])->name('portal.cbt.show');
-        Route::post('/portal/cbt/{assessment}/submit', [CbtController::class, 'submitAssessment'])->name('portal.cbt.submit');
+        Route::post('/portal/cbt/{assessment}/submit', [CbtController::class, 'submitAssessment'])
+            ->middleware(EnsureCbtSubmissionIsOpen::class)
+            ->name('portal.cbt.submit');
         Route::get('/portal/results/{term}/print', [ReportController::class, 'portalPrint'])->name('portal.results.print');
         Route::get('/portal/student-record', [ReportController::class, 'portalRecord'])->name('portal.record');
     });
