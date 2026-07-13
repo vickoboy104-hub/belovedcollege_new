@@ -1,3 +1,10 @@
+@php
+    $modernPrintDensity = match (true) {
+        $subjectRows->count() >= 18 => 'report-density-tight',
+        $subjectRows->count() >= 14 => 'report-density-compact',
+        default => 'report-density-normal',
+    };
+@endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
@@ -8,17 +15,17 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @include('partials.theme-overrides')
 </head>
-<body class="antialiased">
-    <main class="mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
-        <div class="mb-6 flex flex-wrap gap-3 print:hidden">
+<body class="antialiased {{ $modernPrintDensity }}">
+    <main class="modern-report-page mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
+        <div class="modern-report-actions mb-6 flex flex-wrap gap-3 print:hidden">
             <button onclick="window.print()" class="theme-button">Print / Save as PDF</button>
             <a href="{{ url()->current() }}?layout=classic" class="theme-button-secondary">Open classic one-page version</a>
             <a href="{{ $backUrl }}" class="theme-button-secondary">{{ $backLabel }}</a>
         </div>
 
-        <section class="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-xl shadow-slate-900/5">
-            <div class="flex flex-col gap-6 border-b border-slate-200 pb-6 lg:flex-row lg:items-start lg:justify-between">
-                <div class="flex items-center gap-4">
+        <section class="modern-report-sheet rounded-[2rem] border border-slate-200 bg-white p-8 shadow-xl shadow-slate-900/5">
+            <div class="modern-report-header flex flex-col gap-6 border-b border-slate-200 pb-6 lg:flex-row lg:items-start lg:justify-between">
+                <div class="modern-report-brand flex items-center gap-4">
                     <x-application-logo class="h-16 w-16" />
                     <div>
                         <h1 class="display-font text-3xl font-bold text-slate-950">{{ $schoolSettings['school_name'] ?? 'BELOVED SCHOOLS' }}</h1>
@@ -28,7 +35,7 @@
                     </div>
                 </div>
 
-                <div class="rounded-[1.75rem] border border-slate-200 bg-slate-50 px-5 py-5 text-sm text-slate-600">
+                <div class="modern-report-term rounded-[1.75rem] border border-slate-200 bg-slate-50 px-5 py-5 text-sm text-slate-600">
                     <div class="text-xs uppercase tracking-[0.24em] text-slate-500">Report summary</div>
                     <div class="mt-3">Term: <span class="font-semibold text-slate-900">{{ $report->term->name }}</span></div>
                     <div>Session: <span class="font-semibold text-slate-900">{{ $report->term->academicSession->name ?? 'Not assigned' }}</span></div>
@@ -36,7 +43,7 @@
                 </div>
             </div>
 
-            <div class="mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <div class="modern-report-summary mt-8 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
                 <div class="rounded-[1.5rem] border border-slate-200 bg-slate-50 px-5 py-5">
                     <div class="text-xs uppercase tracking-[0.24em] text-slate-500">Student</div>
                     <div class="mt-2 text-lg font-semibold text-slate-900">{{ $report->student->user->fullName() }}</div>
@@ -59,9 +66,9 @@
                 </div>
             </div>
 
-            <div class="mt-8 overflow-hidden rounded-[1.75rem] border border-slate-200">
-                <div class="overflow-x-auto w-full">
-                    <table class="min-w-full text-left text-sm" style="min-width: 800px;">
+            <div class="modern-report-scores mt-8 overflow-hidden rounded-[1.75rem] border border-slate-200">
+                <div class="modern-report-table-scroll overflow-x-auto w-full">
+                    <table class="modern-report-table min-w-full text-left text-sm" style="min-width: 800px;">
                         <thead class="bg-slate-50 text-slate-500">
                             <tr>
                                 <th class="px-5 py-4">Subject</th>
@@ -98,8 +105,8 @@
                 </div>
             </div>
 
-            <div class="mt-8 grid gap-8 xl:grid-cols-2">
-                <section class="rounded-[1.75rem] border border-slate-200 px-5 py-5">
+            <div class="modern-report-development mt-8 grid gap-8 xl:grid-cols-2">
+                <section class="modern-report-development-card rounded-[1.75rem] border border-slate-200 px-5 py-5">
                     <h2 class="display-font text-xl font-bold text-slate-950">Character development</h2>
                     <div class="mt-4 grid gap-3 sm:grid-cols-2">
                         @foreach ($characterTraits as $key => $label)
@@ -111,7 +118,7 @@
                     </div>
                 </section>
 
-                <section class="rounded-[1.75rem] border border-slate-200 px-5 py-5">
+                <section class="modern-report-development-card rounded-[1.75rem] border border-slate-200 px-5 py-5">
                     <h2 class="display-font text-xl font-bold text-slate-950">Practical skills</h2>
                     <div class="mt-4 grid gap-3 sm:grid-cols-2">
                         @foreach ($practicalSkills as $key => $label)
@@ -124,7 +131,7 @@
                 </section>
             </div>
 
-            <div class="mt-8 grid gap-6 xl:grid-cols-2">
+            <div class="modern-report-remarks mt-8 grid gap-6 xl:grid-cols-2">
                 <div class="rounded-[1.75rem] border border-slate-200 bg-slate-50 px-5 py-5 text-sm leading-7 text-slate-600">
                     <div class="font-semibold text-slate-900">Class teacher remark</div>
                     <p class="mt-2">{{ $report->class_teacher_remark ?: 'No class teacher remark yet.' }}</p>
@@ -139,7 +146,7 @@
                 </div>
             </div>
 
-            <div class="mt-8 grid gap-6 md:grid-cols-3">
+            <div class="modern-report-footer mt-8 grid gap-6 md:grid-cols-3">
                 <div class="rounded-[1.75rem] border border-slate-200 px-5 py-5 text-sm text-slate-600">
                     <div class="text-xs uppercase tracking-[0.24em] text-slate-500">Approved by</div>
                     <div class="mt-3 font-semibold text-slate-900">{{ $report->approver?->fullName() ?? 'Awaiting approval' }}</div>
