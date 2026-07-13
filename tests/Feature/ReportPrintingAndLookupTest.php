@@ -38,7 +38,7 @@ class ReportPrintingAndLookupTest extends TestCase
         ]));
     }
 
-    public function test_modern_and_classic_print_views_receive_dedicated_a4_styles(): void
+    public function test_modern_and_classic_print_views_fill_single_a4_portrait_pages(): void
     {
         [$admin, $student, $term] = $this->seedReportStudent();
 
@@ -54,9 +54,10 @@ class ReportPrintingAndLookupTest extends TestCase
 
         $modernPrintCss = file_get_contents(public_path('report-print-modern.css'));
         $this->assertIsString($modernPrintCss);
-        $this->assertStringContainsString('size: A4 landscape', $modernPrintCss);
-        $this->assertStringContainsString('grid-template-areas', $modernPrintCss);
-        $this->assertStringContainsString('height: 198mm', $modernPrintCss);
+        $this->assertStringContainsString('size: A4 portrait', $modernPrintCss);
+        $this->assertStringContainsString('height: 287mm', $modernPrintCss);
+        $this->assertStringContainsString('flex-direction: column', $modernPrintCss);
+        $this->assertStringNotContainsString('size: A4 landscape', $modernPrintCss);
         $this->assertStringNotContainsString('page-break-after: always', $modernPrintCss);
         $this->assertStringNotContainsString('page-break-before: always', $modernPrintCss);
 
@@ -69,6 +70,12 @@ class ReportPrintingAndLookupTest extends TestCase
         $classic->assertOk();
         $classic->assertSee('report-print-classic', false);
         $classic->assertSee('report-print-classic.css', false);
+
+        $classicPrintCss = file_get_contents(public_path('report-print-classic.css'));
+        $this->assertIsString($classicPrintCss);
+        $this->assertStringContainsString('size: A4 portrait', $classicPrintCss);
+        $this->assertStringContainsString('width: 200mm', $classicPrintCss);
+        $this->assertStringContainsString('height: 287mm', $classicPrintCss);
     }
 
     protected function seedReportStudent(): array
