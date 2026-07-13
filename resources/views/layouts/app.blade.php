@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="{{ asset('table-usability.css') }}?v=20260711-sticky-actions-1">
     <link rel="stylesheet" href="{{ asset('interface-corrections.css') }}?v=20260712-dashboard-table-1">
     <link rel="stylesheet" href="{{ asset('mobile-interface.css') }}?v=20260713-mobile-audit-1">
+    <link rel="stylesheet" href="{{ asset('mobile-interface-fixes.css') }}?v=20260713-mobile-audit-2">
 </head>
 @php
     $routeCssClass = 'route-'.str_replace('.', '-', request()->route()?->getName() ?? 'unknown');
@@ -39,7 +40,7 @@
 
                 @if (session('status'))
                     <div class="mb-6 rounded-2xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-900">
-                        {{ session('status') }}
+                        {{ session('status) }}
                     </div>
                 @endif
 
