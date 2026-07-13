@@ -12,6 +12,7 @@
     <input
         id="{{ $id }}"
         name="{{ $name }}"
+        type="password"
         :type="passwordVisible ? 'text' : 'password'"
         autocomplete="{{ $autocomplete }}"
         @required($required)
