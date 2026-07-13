@@ -7,19 +7,37 @@
     <div class="grid gap-6 md:grid-cols-3">
         <div class="space-y-1">
             <label for="update_password_current_password" class="text-xs font-bold text-slate-700 uppercase tracking-wider">Current Password</label>
-            <input id="update_password_current_password" name="current_password" type="password" class="theme-input w-full mt-1" autocomplete="current-password" />
+            <x-password-input
+                id="update_password_current_password"
+                name="current_password"
+                autocomplete="current-password"
+                wrapper-class="mt-1"
+                input-class="theme-input w-full"
+            />
             <x-input-error :messages="$errors->updatePassword->get('current_password')" class="mt-2" />
         </div>
 
         <div class="space-y-1">
             <label for="update_password_password" class="text-xs font-bold text-slate-700 uppercase tracking-wider">New Password</label>
-            <input id="update_password_password" name="password" type="password" class="theme-input w-full mt-1" autocomplete="new-password" />
+            <x-password-input
+                id="update_password_password"
+                name="password"
+                autocomplete="new-password"
+                wrapper-class="mt-1"
+                input-class="theme-input w-full"
+            />
             <x-input-error :messages="$errors->updatePassword->get('password')" class="mt-2" />
         </div>
 
         <div class="space-y-1">
             <label for="update_password_password_confirmation" class="text-xs font-bold text-slate-700 uppercase tracking-wider">Confirm Password</label>
-            <input id="update_password_password_confirmation" name="password_confirmation" type="password" class="theme-input w-full mt-1" autocomplete="new-password" />
+            <x-password-input
+                id="update_password_password_confirmation"
+                name="password_confirmation"
+                autocomplete="new-password"
+                wrapper-class="mt-1"
+                input-class="theme-input w-full"
+            />
             <x-input-error :messages="$errors->updatePassword->get('password_confirmation')" class="mt-2" />
         </div>
     </div>
@@ -43,4 +61,3 @@
         </x-action-button>
     </x-slot>
 </x-form-card>
-
