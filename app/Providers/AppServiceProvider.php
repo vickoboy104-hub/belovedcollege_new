@@ -36,8 +36,8 @@ class AppServiceProvider extends ServiceProvider
         ]);
 
         View::share('schoolSettings', Setting::publicSettings($settings));
-        View::composer('admin.settings', function ($view) use ($settings): void {
-            $view->with('settings', Setting::forAdminForm($settings));
+        View::composer('admin.settings', function ($view): void {
+            $view->with('settings', Setting::forAdminForm());
         });
     }
 }
