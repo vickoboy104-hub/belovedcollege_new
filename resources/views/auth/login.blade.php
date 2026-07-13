@@ -54,7 +54,14 @@
 
         <div>
             <x-input-label for="password" :value="__('Password')" class="auth-label" />
-            <x-text-input id="password" class="auth-input mt-2 block w-full" type="password" name="password" required autocomplete="current-password" />
+            <x-password-input
+                id="password"
+                name="password"
+                autocomplete="current-password"
+                :required="true"
+                wrapper-class="mt-2"
+                input-class="auth-input block w-full"
+            />
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
 
