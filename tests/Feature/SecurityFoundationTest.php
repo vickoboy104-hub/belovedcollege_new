@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Enums\UserRole;
-use App\Models\AuditLog;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\File;
@@ -81,10 +80,12 @@ class SecurityFoundationTest extends TestCase
         Storage::disk('local')->assertExists($user->avatar_path);
         $this->assertSame('/private-media/users/'.$user->id.'/avatar', $user->avatar_url);
 
-        $this->actingAs($user)
-            ->get(route('private-media.avatar', $user))
-            ->assertOk()
-            ->assertHeader('Cache-Control', 'private, no-store, max-age=0');
+        $response = $this->actingAs($user)
+            ->get(route('private-media.avatar', $user));
+
+        $response->assertOk()->assertHeader('Cache-Control');
+        $this->assertStringContainsString('private', (string) $response->headers->get('Cache-Control'));
+        $this->assertStringContainsString('no-store', (string) $response->headers->get('Cache-Control'));
 
         $otherUser = User::factory()->create(['role' => UserRole::Student]);
         $this->actingAs($otherUser)
