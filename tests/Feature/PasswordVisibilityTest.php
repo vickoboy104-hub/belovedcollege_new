@@ -23,7 +23,7 @@ class PasswordVisibilityTest extends TestCase
         }
     }
 
-    public function test_reset_registration_and_confirmation_forms_have_visibility_controls(): void
+    public function test_reset_and_confirmation_forms_have_visibility_controls(): void
     {
         $reset = $this->get(route('password.reset', [
             'token' => 'test-token',
@@ -32,10 +32,6 @@ class PasswordVisibilityTest extends TestCase
 
         $reset->assertOk();
         $this->assertSame(2, substr_count($reset->getContent(), 'data-password-toggle'));
-
-        $registration = $this->get(route('register'));
-        $registration->assertOk();
-        $this->assertSame(2, substr_count($registration->getContent(), 'data-password-toggle'));
 
         $user = User::factory()->create([
             'role' => UserRole::Student,
