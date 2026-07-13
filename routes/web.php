@@ -19,13 +19,24 @@ Route::get('/', [WebsiteController::class, 'home'])->name('home');
 Route::get('/about', [WebsiteController::class, 'about'])->name('about');
 Route::get('/admissions', [WebsiteController::class, 'admissions'])->name('admissions');
 Route::get('/contact', [WebsiteController::class, 'contact'])->name('contact');
-Route::post('/contact', [WebsiteController::class, 'storeContact'])->name('contact.store');
+Route::post('/contact', [WebsiteController::class, 'storeContact'])
+    ->middleware('throttle:5,1')
+    ->name('contact.store');
 Route::get('/result-checker', [ReportController::class, 'checker'])->name('reports.checker');
-Route::post('/result-checker', [ReportController::class, 'checkerLookup'])->name('reports.checker.lookup');
+Route::post('/result-checker', [ReportController::class, 'checkerLookup'])
+    ->middleware('throttle:8,1')
+    ->name('reports.checker.lookup');
 
-Route::get('/payments/callback/{provider}', [PaymentController::class, 'callback'])->name('payments.callback');
-Route::post('/webhooks/paystack', [WebhookController::class, 'paystack'])->name('webhooks.paystack');
-Route::post('/webhooks/palmpay', [WebhookController::class, 'palmpay'])->name('webhooks.palmpay');
+Route::get('/payments/callback/{provider}', [PaymentController::class, 'callback'])
+    ->where('provider', 'paystack|palmpay')
+    ->middleware('throttle:30,1')
+    ->name('payments.callback');
+Route::post('/webhooks/paystack', [WebhookController::class, 'paystack'])
+    ->middleware('throttle:120,1')
+    ->name('webhooks.paystack');
+Route::post('/webhooks/palmpay', [WebhookController::class, 'palmpay'])
+    ->middleware('throttle:120,1')
+    ->name('webhooks.palmpay');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
