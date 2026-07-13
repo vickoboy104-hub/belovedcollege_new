@@ -47,6 +47,18 @@ class ReportPrintingAndLookupTest extends TestCase
         $modern->assertOk();
         $modern->assertSee('report-print-modern', false);
         $modern->assertSee('report-print-modern.css', false);
+        $modern->assertSee('modern-report-sheet', false);
+        $modern->assertSee('modern-report-scores', false);
+        $modern->assertSee('modern-report-development', false);
+        $modern->assertSee('report-density-normal', false);
+
+        $modernPrintCss = file_get_contents(public_path('report-print-modern.css'));
+        $this->assertIsString($modernPrintCss);
+        $this->assertStringContainsString('size: A4 landscape', $modernPrintCss);
+        $this->assertStringContainsString('grid-template-areas', $modernPrintCss);
+        $this->assertStringContainsString('height: 198mm', $modernPrintCss);
+        $this->assertStringNotContainsString('page-break-after: always', $modernPrintCss);
+        $this->assertStringNotContainsString('page-break-before: always', $modernPrintCss);
 
         $classic = $this->actingAs($admin)->get(route('admin.reports.print', [
             'student' => $student,
