@@ -6,9 +6,13 @@ use App\Enums\PaymentProvider;
 use App\Enums\PaymentStatus;
 use App\Enums\UserRole;
 use App\Models\AcademicSession;
+use App\Models\Assessment;
+use App\Models\CbtAttempt;
 use App\Models\Payment;
+use App\Models\SchoolClass;
 use App\Models\Setting;
 use App\Models\Student;
+use App\Models\Subject;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Http;
@@ -183,6 +187,63 @@ class ProductionReadinessAuditTest extends TestCase
 
         $this->assertSame(PaymentStatus::Paid, $payment->fresh()->status);
         $this->assertNotNull($payment->fresh()->paid_at);
+    }
+
+    public function test_expired_cbt_attempt_cannot_be_submitted(): void
+    {
+        $teacher = User::factory()->create([
+            'role' => UserRole::Teacher,
+            'email_verified_at' => now(),
+            'status' => 'active',
+        ]);
+        $studentUser = User::factory()->create([
+            'role' => UserRole::Student,
+            'email_verified_at' => now(),
+            'status' => 'active',
+        ]);
+        $class = SchoolClass::create([
+            'name' => 'JSS 1',
+            'slug' => 'jss-1-general',
+            'section' => 'General',
+        ]);
+        $subject = Subject::create([
+            'name' => 'Mathematics',
+            'code' => 'MTH-AUDIT',
+        ]);
+        $student = Student::create([
+            'user_id' => $studentUser->id,
+            'school_class_id' => $class->id,
+            'admission_no' => 'CBT-AUDIT-001',
+            'student_id_no' => 'CBT-STD-001',
+            'status' => 'active',
+        ]);
+        $assessment = Assessment::create([
+            'teacher_id' => $teacher->id,
+            'subject_id' => $subject->id,
+            'school_class_id' => $class->id,
+            'title' => 'Expired CBT Audit',
+            'type' => 'exam',
+            'is_cbt' => true,
+            'total_score' => 10,
+            'cbt_duration_minutes' => 30,
+            'cbt_is_active' => true,
+            'cbt_starts_at' => now()->subHour(),
+            'cbt_ends_at' => now()->addHour(),
+        ]);
+        $attempt = CbtAttempt::create([
+            'assessment_id' => $assessment->id,
+            'student_id' => $student->id,
+            'status' => 'in_progress',
+            'started_at' => now()->subHour(),
+            'expires_at' => now()->subMinute(),
+        ]);
+
+        $this->actingAs($studentUser)
+            ->post(route('portal.cbt.submit', $assessment), ['answers' => []])
+            ->assertRedirect(route('portal.index'));
+
+        $this->assertSame('expired', $attempt->fresh()->status);
+        $this->assertNull($attempt->fresh()->submitted_at);
     }
 
     protected function createPayment(PaymentProvider $provider, float $amount): Payment
