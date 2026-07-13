@@ -13,19 +13,31 @@ use App\Http\Controllers\StudentPortalController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\WebsiteController;
+use App\Http\Middleware\EnsureCbtSubmissionIsOpen;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [WebsiteController::class, 'home'])->name('home');
 Route::get('/about', [WebsiteController::class, 'about'])->name('about');
 Route::get('/admissions', [WebsiteController::class, 'admissions'])->name('admissions');
 Route::get('/contact', [WebsiteController::class, 'contact'])->name('contact');
-Route::post('/contact', [WebsiteController::class, 'storeContact'])->name('contact.store');
+Route::post('/contact', [WebsiteController::class, 'storeContact'])
+    ->middleware('throttle:5,1')
+    ->name('contact.store');
 Route::get('/result-checker', [ReportController::class, 'checker'])->name('reports.checker');
-Route::post('/result-checker', [ReportController::class, 'checkerLookup'])->name('reports.checker.lookup');
+Route::post('/result-checker', [ReportController::class, 'checkerLookup'])
+    ->middleware('throttle:8,1')
+    ->name('reports.checker.lookup');
 
-Route::get('/payments/callback/{provider}', [PaymentController::class, 'callback'])->name('payments.callback');
-Route::post('/webhooks/paystack', [WebhookController::class, 'paystack'])->name('webhooks.paystack');
-Route::post('/webhooks/palmpay', [WebhookController::class, 'palmpay'])->name('webhooks.palmpay');
+Route::get('/payments/callback/{provider}', [PaymentController::class, 'callback'])
+    ->where('provider', 'paystack|palmpay')
+    ->middleware('throttle:30,1')
+    ->name('payments.callback');
+Route::post('/webhooks/paystack', [WebhookController::class, 'paystack'])
+    ->middleware('throttle:120,1')
+    ->name('webhooks.paystack');
+Route::post('/webhooks/palmpay', [WebhookController::class, 'palmpay'])
+    ->middleware('throttle:120,1')
+    ->name('webhooks.palmpay');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -119,7 +131,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/portal', [StudentPortalController::class, 'index'])->name('portal.index');
         Route::post('/portal/assignments/{assignment}/submit', [StudentPortalController::class, 'submitAssignment'])->name('portal.assignments.submit');
         Route::get('/portal/cbt/{assessment}', [CbtController::class, 'takeAssessment'])->name('portal.cbt.show');
-        Route::post('/portal/cbt/{assessment}/submit', [CbtController::class, 'submitAssessment'])->name('portal.cbt.submit');
+        Route::post('/portal/cbt/{assessment}/submit', [CbtController::class, 'submitAssessment'])
+            ->middleware(EnsureCbtSubmissionIsOpen::class)
+            ->name('portal.cbt.submit');
         Route::get('/portal/results/{term}/print', [ReportController::class, 'portalPrint'])->name('portal.results.print');
         Route::get('/portal/student-record', [ReportController::class, 'portalRecord'])->name('portal.record');
     });

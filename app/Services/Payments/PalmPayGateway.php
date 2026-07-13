@@ -38,12 +38,8 @@ class PalmPayGateway
 
     public function verify(string $reference): array
     {
-        return [
-            'status' => true,
-            'data' => [
-                'reference' => $reference,
-                'gateway_response' => 'PalmPay verification is handled through the merchant callback/webhook payload.',
-            ],
-        ];
+        throw new RuntimeException(
+            'PalmPay server-to-server payment verification is not configured. No payment has been marked as paid.'
+        );
     }
 }

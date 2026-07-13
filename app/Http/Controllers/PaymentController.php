@@ -11,8 +11,8 @@ use App\Services\Payments\PalmPayGateway;
 use App\Services\Payments\PaystackGateway;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\View\View;
 use Illuminate\Support\Str;
+use Illuminate\View\View;
 use Throwable;
 
 class PaymentController extends Controller
@@ -27,7 +27,8 @@ class PaymentController extends Controller
     {
         $this->authorizeInvoiceAccess($request->user(), $invoice->load('student.user'));
 
-        $providerEnum = PaymentProvider::from($provider);
+        $providerEnum = PaymentProvider::tryFrom($provider);
+        abort_unless($providerEnum, 404);
 
         if ((float) $invoice->balance <= 0) {
             return back()->with('status', 'This invoice has already been settled.');
@@ -55,14 +56,19 @@ class PaymentController extends Controller
                 'payload' => $response,
             ]);
 
-            return redirect()->away((string) data_get($response, 'data.authorization_url'));
+            $authorizationUrl = (string) data_get($response, 'data.authorization_url');
+            abort_if($authorizationUrl === '', 502, 'The payment provider did not return a checkout URL.');
+
+            return redirect()->away($authorizationUrl);
         } catch (Throwable $exception) {
+            report($exception);
+
             $payment->update([
                 'status' => PaymentStatus::Failed,
-                'payload' => ['message' => $exception->getMessage()],
+                'payload' => ['message' => 'Payment initialization failed.'],
             ]);
 
-            return back()->withErrors(['payment' => $exception->getMessage()]);
+            return back()->withErrors(['payment' => 'The payment provider could not be reached. Please try again later.']);
         }
     }
 
@@ -73,7 +79,9 @@ class PaymentController extends Controller
             'invoice_ids.*' => ['integer', 'exists:fee_invoices,id'],
         ]);
 
-        $providerEnum = PaymentProvider::from($provider);
+        $providerEnum = PaymentProvider::tryFrom($provider);
+        abort_unless($providerEnum, 404);
+
         $invoices = FeeInvoice::query()
             ->with('student.user', 'feeItem')
             ->whereIn('id', $validated['invoice_ids'])
@@ -123,42 +131,40 @@ class PaymentController extends Controller
                 'payload' => [...($payment->payload ?? []), 'gateway' => $response],
             ]);
 
-            return redirect()->away((string) data_get($response, 'data.authorization_url'));
+            $authorizationUrl = (string) data_get($response, 'data.authorization_url');
+            abort_if($authorizationUrl === '', 502, 'The payment provider did not return a checkout URL.');
+
+            return redirect()->away($authorizationUrl);
         } catch (Throwable $exception) {
+            report($exception);
+
             $payment->update([
                 'status' => PaymentStatus::Failed,
-                'payload' => [...($payment->payload ?? []), 'message' => $exception->getMessage()],
+                'payload' => [...($payment->payload ?? []), 'message' => 'Payment initialization failed.'],
             ]);
 
-            return back()->withErrors(['payment' => $exception->getMessage()]);
+            return back()->withErrors(['payment' => 'The payment provider could not be reached. Please try again later.']);
         }
     }
 
     public function callback(Request $request, string $provider): RedirectResponse
     {
-        $providerEnum = PaymentProvider::from($provider);
+        $providerEnum = PaymentProvider::tryFrom($provider);
+        abort_unless($providerEnum, 404);
+
         $reference = $request->string('reference')->toString() ?: $request->string('trxref')->toString();
+        abort_if($reference === '', 422, 'A payment reference is required.');
+
         $payment = Payment::with('feeInvoice')->where('reference', $reference)->firstOrFail();
+        abort_unless($payment->provider === $providerEnum, 404);
 
         try {
             $payload = match ($providerEnum) {
                 PaymentProvider::Paystack => $this->paystackGateway->verify($reference),
-                PaymentProvider::PalmPay => [
-                    'status' => true,
-                    'data' => [
-                        'reference' => $reference,
-                        'status' => $request->string('status')->toString(),
-                        'gateway_reference' => $request->string('gateway_reference')->toString(),
-                    ],
-                ],
+                PaymentProvider::PalmPay => $this->palmPayGateway->verify($reference),
             };
 
-            $isSuccessful = match ($providerEnum) {
-                PaymentProvider::Paystack => data_get($payload, 'data.status') === 'success',
-                PaymentProvider::PalmPay => in_array(strtolower((string) data_get($payload, 'data.status')), ['success', 'paid', 'completed'], true),
-            };
-
-            if ($isSuccessful) {
+            if ($this->verifiedPaymentMatches($providerEnum, $payment, $payload)) {
                 $payment = $this->markPaymentSuccessful($payment, [
                     'gateway_reference' => data_get($payload, 'data.reference') ?: data_get($payload, 'data.gateway_reference'),
                     'channel' => data_get($payload, 'data.channel'),
@@ -170,12 +176,16 @@ class PaymentController extends Controller
 
             $payment->update([
                 'status' => PaymentStatus::Failed,
-                'payload' => $payload,
+                'payload' => ['message' => 'Gateway verification did not match the expected payment.'],
             ]);
 
-            return redirect()->route('dashboard')->withErrors(['payment' => 'Payment could not be confirmed.']);
+            return redirect()->route('dashboard')->withErrors(['payment' => 'Payment could not be verified.']);
         } catch (Throwable $exception) {
-            return redirect()->route('dashboard')->withErrors(['payment' => $exception->getMessage()]);
+            report($exception);
+
+            return redirect()->route('dashboard')->withErrors([
+                'payment' => 'Payment confirmation is still pending. No invoice has been marked as paid.',
+            ]);
         }
     }
 
@@ -219,6 +229,25 @@ class PaymentController extends Controller
         }
 
         abort(403);
+    }
+
+    protected function verifiedPaymentMatches(PaymentProvider $provider, Payment $payment, array $payload): bool
+    {
+        $status = strtolower((string) data_get($payload, 'data.status'));
+        $reference = (string) data_get($payload, 'data.reference');
+        $currency = strtoupper((string) data_get($payload, 'data.currency'));
+
+        if ($provider === PaymentProvider::Paystack) {
+            $gatewayAmount = (int) data_get($payload, 'data.amount', -1);
+            $expectedAmount = (int) round(((float) $payment->amount) * 100);
+
+            return $status === 'success'
+                && hash_equals($payment->reference, $reference)
+                && $gatewayAmount === $expectedAmount
+                && $currency === strtoupper((string) $payment->currency);
+        }
+
+        return false;
     }
 
     protected function markPaymentSuccessful(Payment $payment, array $attributes = []): Payment

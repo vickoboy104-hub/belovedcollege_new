@@ -131,7 +131,7 @@ class LoginRequest extends FormRequest
             $user = $profile?->user;
         }
 
-        if (! $user) {
+        if (! $user || strtolower((string) $user->status) !== 'active') {
             return null;
         }
 
