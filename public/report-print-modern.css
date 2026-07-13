@@ -1,316 +1,395 @@
 @page {
     size: A4 landscape;
-    margin: 7mm;
+    margin: 4mm;
 }
 
 @media print {
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box !important;
+    }
+
     html,
     body.report-print-modern {
         width: 100% !important;
+        height: 202mm !important;
         min-width: 0 !important;
         max-width: none !important;
         margin: 0 !important;
         padding: 0 !important;
-        overflow: visible !important;
+        overflow: hidden !important;
         background: #ffffff !important;
         color: #0f172a !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
 
-    body.report-print-modern main {
+    body.report-print-modern .modern-report-page {
         width: 100% !important;
+        height: 202mm !important;
         max-width: none !important;
         margin: 0 !important;
         padding: 0 !important;
+        overflow: hidden !important;
     }
 
-    body.report-print-modern main > .mb-6 {
+    body.report-print-modern .modern-report-actions {
         display: none !important;
     }
 
-    body.report-print-modern main > section {
+    /* The complete modern report is deliberately arranged inside one A4 landscape page. */
+    body.report-print-modern .modern-report-sheet {
+        display: grid !important;
+        grid-template-columns: minmax(0, 2.15fr) minmax(74mm, 0.95fr) !important;
+        grid-template-areas:
+            "header header"
+            "summary development"
+            "scores development"
+            "scores remarks"
+            "footer footer" !important;
+        grid-template-rows: auto auto minmax(0, 1fr) 34mm auto !important;
+        gap: 1.5mm !important;
         width: 100% !important;
+        height: 198mm !important;
+        max-height: 198mm !important;
         margin: 0 !important;
-        padding: 0 !important;
-        border: 0 !important;
-        border-radius: 0 !important;
-        background: transparent !important;
+        padding: 1.5mm !important;
+        overflow: hidden !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 3mm !important;
+        background: #ffffff !important;
         box-shadow: none !important;
+        break-inside: avoid-page !important;
+        page-break-inside: avoid !important;
+        break-before: avoid-page !important;
+        page-break-before: avoid !important;
+        break-after: avoid-page !important;
+        page-break-after: avoid !important;
     }
 
-    /* Page one: school header, student summary and subject scores. */
-    body.report-print-modern main > section > div:nth-child(1) {
+    body.report-print-modern .modern-report-header {
+        grid-area: header;
         display: grid !important;
-        grid-template-columns: minmax(0, 1fr) 58mm !important;
-        align-items: start !important;
-        gap: 5mm !important;
+        grid-template-columns: minmax(0, 1fr) 54mm !important;
+        align-items: center !important;
+        gap: 3mm !important;
+        min-height: 18mm !important;
         margin: 0 !important;
-        padding: 5mm 5mm 3mm !important;
+        padding: 2mm 2.5mm !important;
         border: 1px solid #cbd5e1 !important;
-        border-bottom: 0 !important;
-        border-radius: 4mm 4mm 0 0 !important;
+        border-radius: 2.5mm !important;
         background: #ffffff !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(1) > div:first-child {
-        display: flex !important;
-        align-items: center !important;
-        gap: 3mm !important;
+    body.report-print-modern .modern-report-brand {
         min-width: 0 !important;
+        gap: 2.2mm !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(1) svg,
-    body.report-print-modern main > section > div:nth-child(1) img {
-        width: 14mm !important;
-        height: 14mm !important;
+    body.report-print-modern .modern-report-brand svg,
+    body.report-print-modern .modern-report-brand img {
+        width: 11mm !important;
+        height: 11mm !important;
         flex: 0 0 auto !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(1) h1 {
+    body.report-print-modern .modern-report-brand h1 {
         margin: 0 !important;
-        font-size: 18pt !important;
-        line-height: 1.05 !important;
+        font-size: 14pt !important;
+        line-height: 1.02 !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(1) .text-sm {
-        font-size: 7.5pt !important;
-        line-height: 1.25 !important;
+    body.report-print-modern .modern-report-brand .text-sm {
+        margin-top: 0.35mm !important;
+        font-size: 6.3pt !important;
+        line-height: 1.15 !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(1) > div:last-child {
-        border-radius: 3mm !important;
-        padding: 3mm 4mm !important;
-        font-size: 8pt !important;
-        line-height: 1.35 !important;
+    body.report-print-modern .modern-report-term {
+        min-width: 0 !important;
+        padding: 1.6mm 2mm !important;
+        border-radius: 2mm !important;
+        font-size: 6.4pt !important;
+        line-height: 1.22 !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(1) > div:last-child .mt-3 {
-        margin-top: 1.5mm !important;
+    body.report-print-modern .modern-report-term .text-xs {
+        font-size: 5.6pt !important;
+        letter-spacing: 0.09em !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(2) {
+    body.report-print-modern .modern-report-term .mt-3 {
+        margin-top: 0.8mm !important;
+    }
+
+    body.report-print-modern .modern-report-summary {
+        grid-area: summary;
         display: grid !important;
         grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
-        gap: 3mm !important;
+        align-self: start !important;
+        gap: 1.2mm !important;
+        min-width: 0 !important;
         margin: 0 !important;
-        padding: 0 5mm 3mm !important;
-        border-right: 1px solid #cbd5e1 !important;
-        border-left: 1px solid #cbd5e1 !important;
-        background: #ffffff !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(2) > div {
-        min-height: 19mm !important;
-        border-radius: 3mm !important;
-        padding: 3mm !important;
+    body.report-print-modern .modern-report-summary > div {
+        min-width: 0 !important;
+        min-height: 15mm !important;
+        padding: 1.4mm 1.7mm !important;
+        border-radius: 2mm !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(2) .text-xs {
-        font-size: 6.5pt !important;
+    body.report-print-modern .modern-report-summary .text-xs {
+        font-size: 5.3pt !important;
         letter-spacing: 0.08em !important;
+        white-space: nowrap !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(2) .text-lg {
-        margin-top: 1.2mm !important;
-        font-size: 10pt !important;
-        line-height: 1.15 !important;
-    }
-
-    body.report-print-modern main > section > div:nth-child(2) .text-sm {
-        margin-top: 0.8mm !important;
+    body.report-print-modern .modern-report-summary .text-lg {
+        margin-top: 0.7mm !important;
+        overflow: hidden !important;
         font-size: 7.5pt !important;
-        line-height: 1.15 !important;
+        line-height: 1.08 !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(3) {
+    body.report-print-modern .modern-report-summary .text-sm {
+        margin-top: 0.5mm !important;
+        overflow: hidden !important;
+        font-size: 5.8pt !important;
+        line-height: 1.08 !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+    }
+
+    body.report-print-modern .modern-report-scores {
+        grid-area: scores;
+        align-self: stretch !important;
+        min-width: 0 !important;
+        min-height: 0 !important;
         margin: 0 !important;
-        padding: 0 5mm 5mm !important;
-        overflow: visible !important;
-        border: 1px solid #cbd5e1 !important;
-        border-top: 0 !important;
-        border-radius: 0 0 4mm 4mm !important;
-        background: #ffffff !important;
-        break-after: page !important;
-        page-break-after: always !important;
+        overflow: hidden !important;
+        border-radius: 2mm !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(3) > div {
+    body.report-print-modern .modern-report-table-scroll {
         width: 100% !important;
-        overflow: visible !important;
+        height: 100% !important;
+        overflow: hidden !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(3) table {
+    body.report-print-modern .modern-report-table {
         width: 100% !important;
         min-width: 0 !important;
         max-width: none !important;
         table-layout: fixed !important;
         border-collapse: collapse !important;
-        font-size: 7.5pt !important;
-        line-height: 1.15 !important;
+        font-size: 6.2pt !important;
+        line-height: 1.08 !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(3) th,
-    body.report-print-modern main > section > div:nth-child(3) td {
-        padding: 1.25mm 0.9mm !important;
+    body.report-print-modern .modern-report-table thead {
+        display: table-header-group !important;
+    }
+
+    body.report-print-modern .modern-report-table th,
+    body.report-print-modern .modern-report-table td {
+        padding: 0.58mm 0.55mm !important;
         border-color: #cbd5e1 !important;
         vertical-align: middle !important;
         overflow-wrap: normal !important;
         word-break: normal !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(3) th:nth-child(1),
-    body.report-print-modern main > section > div:nth-child(3) td:nth-child(1) {
-        width: 22% !important;
+    body.report-print-modern .modern-report-table th {
+        font-size: 5.8pt !important;
+        line-height: 1 !important;
+        white-space: nowrap !important;
+    }
+
+    body.report-print-modern .modern-report-table tr {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+
+    body.report-print-modern .modern-report-table th:nth-child(1),
+    body.report-print-modern .modern-report-table td:nth-child(1) {
+        width: 21% !important;
         text-align: left !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(3) th:nth-child(2),
-    body.report-print-modern main > section > div:nth-child(3) td:nth-child(2),
-    body.report-print-modern main > section > div:nth-child(3) th:nth-child(3),
-    body.report-print-modern main > section > div:nth-child(3) td:nth-child(3),
-    body.report-print-modern main > section > div:nth-child(3) th:nth-child(4),
-    body.report-print-modern main > section > div:nth-child(3) td:nth-child(4),
-    body.report-print-modern main > section > div:nth-child(3) th:nth-child(5),
-    body.report-print-modern main > section > div:nth-child(3) td:nth-child(5) {
-        width: 8% !important;
+    body.report-print-modern .modern-report-table th:nth-child(2),
+    body.report-print-modern .modern-report-table td:nth-child(2),
+    body.report-print-modern .modern-report-table th:nth-child(3),
+    body.report-print-modern .modern-report-table td:nth-child(3),
+    body.report-print-modern .modern-report-table th:nth-child(4),
+    body.report-print-modern .modern-report-table td:nth-child(4),
+    body.report-print-modern .modern-report-table th:nth-child(5),
+    body.report-print-modern .modern-report-table td:nth-child(5) {
+        width: 7.5% !important;
         text-align: center !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(3) th:nth-child(6),
-    body.report-print-modern main > section > div:nth-child(3) td:nth-child(6) {
-        width: 8% !important;
+    body.report-print-modern .modern-report-table th:nth-child(6),
+    body.report-print-modern .modern-report-table td:nth-child(6) {
+        width: 8.5% !important;
         text-align: center !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(3) th:nth-child(7),
-    body.report-print-modern main > section > div:nth-child(3) td:nth-child(7) {
+    body.report-print-modern .modern-report-table th:nth-child(7),
+    body.report-print-modern .modern-report-table td:nth-child(7) {
         width: 7% !important;
         text-align: center !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(3) th:nth-child(8),
-    body.report-print-modern main > section > div:nth-child(3) td:nth-child(8) {
-        width: 13% !important;
+    body.report-print-modern .modern-report-table th:nth-child(8),
+    body.report-print-modern .modern-report-table td:nth-child(8) {
+        width: 12% !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(3) th:nth-child(9),
-    body.report-print-modern main > section > div:nth-child(3) td:nth-child(9) {
-        width: 18% !important;
+    body.report-print-modern .modern-report-table th:nth-child(9),
+    body.report-print-modern .modern-report-table td:nth-child(9) {
+        width: 21.5% !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(3) thead {
-        display: table-header-group !important;
+    body.report-print-modern.report-density-compact .modern-report-table {
+        font-size: 5.65pt !important;
+        line-height: 1.03 !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(3) tr {
+    body.report-print-modern.report-density-compact .modern-report-table th,
+    body.report-print-modern.report-density-compact .modern-report-table td {
+        padding-top: 0.38mm !important;
+        padding-bottom: 0.38mm !important;
+    }
+
+    body.report-print-modern.report-density-tight .modern-report-table {
+        font-size: 5.15pt !important;
+        line-height: 1 !important;
+    }
+
+    body.report-print-modern.report-density-tight .modern-report-table th,
+    body.report-print-modern.report-density-tight .modern-report-table td {
+        padding-top: 0.22mm !important;
+        padding-bottom: 0.22mm !important;
+    }
+
+    body.report-print-modern .modern-report-development {
+        grid-area: development;
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+        align-content: start !important;
+        gap: 1.2mm !important;
+        min-width: 0 !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        overflow: hidden !important;
+    }
+
+    body.report-print-modern .modern-report-development-card {
+        min-width: 0 !important;
+        margin: 0 !important;
+        padding: 1.5mm !important;
+        border-radius: 2mm !important;
         break-inside: avoid !important;
         page-break-inside: avoid !important;
     }
 
-    /* Page two: development, remarks and signatures. */
-    body.report-print-modern main > section > div:nth-child(4) {
-        display: grid !important;
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        gap: 4mm !important;
+    body.report-print-modern .modern-report-development-card h2 {
         margin: 0 !important;
-        padding: 5mm 5mm 3mm !important;
-        border: 1px solid #cbd5e1 !important;
-        border-bottom: 0 !important;
-        border-radius: 4mm 4mm 0 0 !important;
-        background: #ffffff !important;
-        break-before: page !important;
-        page-break-before: always !important;
+        font-size: 7.8pt !important;
+        line-height: 1.08 !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(4) > section {
-        padding: 3mm !important;
-        border-radius: 3mm !important;
-        break-inside: avoid !important;
-    }
-
-    body.report-print-modern main > section > div:nth-child(4) h2 {
-        font-size: 11pt !important;
-        line-height: 1.15 !important;
-    }
-
-    body.report-print-modern main > section > div:nth-child(4) > section > div {
+    body.report-print-modern .modern-report-development-card > div {
         display: grid !important;
         grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        gap: 1.5mm !important;
-        margin-top: 2mm !important;
+        gap: 0.7mm !important;
+        margin-top: 0.9mm !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(4) > section > div > div {
-        min-height: 10mm !important;
-        padding: 1.5mm 2mm !important;
+    body.report-print-modern .modern-report-development-card > div > div {
+        min-width: 0 !important;
+        min-height: 6.7mm !important;
+        padding: 0.75mm 1mm !important;
+        border-radius: 1.4mm !important;
+    }
+
+    body.report-print-modern .modern-report-development-card .text-sm {
+        font-size: 5.55pt !important;
+        line-height: 1.08 !important;
+    }
+
+    body.report-print-modern .modern-report-development-card .mt-1 {
+        margin-top: 0.35mm !important;
+    }
+
+    body.report-print-modern .modern-report-remarks {
+        grid-area: remarks;
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        align-self: stretch !important;
+        gap: 1mm !important;
+        min-width: 0 !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        overflow: hidden !important;
+    }
+
+    body.report-print-modern .modern-report-remarks > div {
+        min-width: 0 !important;
+        min-height: 0 !important;
+        padding: 1.25mm !important;
+        overflow: hidden !important;
         border-radius: 2mm !important;
+        font-size: 5.2pt !important;
+        line-height: 1.1 !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(4) .text-sm {
-        font-size: 7.5pt !important;
-        line-height: 1.2 !important;
+    body.report-print-modern .modern-report-remarks p {
+        margin-top: 0.45mm !important;
+        overflow-wrap: anywhere !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(4) .mt-1 {
-        margin-top: 0.6mm !important;
+    body.report-print-modern .modern-report-remarks .mt-4 {
+        margin-top: 0.9mm !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(5) {
-        display: grid !important;
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        gap: 4mm !important;
-        margin: 0 !important;
-        padding: 0 5mm 3mm !important;
-        border-right: 1px solid #cbd5e1 !important;
-        border-left: 1px solid #cbd5e1 !important;
-        background: #ffffff !important;
-    }
-
-    body.report-print-modern main > section > div:nth-child(5) > div {
-        min-height: 31mm !important;
-        padding: 3mm !important;
-        border-radius: 3mm !important;
-        font-size: 8pt !important;
-        line-height: 1.35 !important;
-        break-inside: avoid !important;
-    }
-
-    body.report-print-modern main > section > div:nth-child(5) .mt-2 {
-        margin-top: 1mm !important;
-    }
-
-    body.report-print-modern main > section > div:nth-child(5) .mt-4 {
-        margin-top: 2mm !important;
-    }
-
-    body.report-print-modern main > section > div:nth-child(6) {
+    body.report-print-modern .modern-report-footer {
+        grid-area: footer;
         display: grid !important;
         grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-        gap: 4mm !important;
+        gap: 1.2mm !important;
+        min-width: 0 !important;
         margin: 0 !important;
-        padding: 0 5mm 5mm !important;
-        border: 1px solid #cbd5e1 !important;
-        border-top: 0 !important;
-        border-radius: 0 0 4mm 4mm !important;
-        background: #ffffff !important;
-        break-inside: avoid !important;
-        page-break-inside: avoid !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(6) > div {
-        min-height: 24mm !important;
-        padding: 3mm !important;
-        border-radius: 3mm !important;
-        font-size: 8pt !important;
-        line-height: 1.25 !important;
+    body.report-print-modern .modern-report-footer > div {
+        min-width: 0 !important;
+        min-height: 15mm !important;
+        padding: 1.3mm 1.7mm !important;
+        border-radius: 2mm !important;
+        font-size: 5.8pt !important;
+        line-height: 1.1 !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(6) .mt-3 {
-        margin-top: 1.5mm !important;
+    body.report-print-modern .modern-report-footer .text-xs {
+        font-size: 5.1pt !important;
+        letter-spacing: 0.08em !important;
     }
 
-    body.report-print-modern main > section > div:nth-child(6) .mt-10 {
-        margin-top: 5mm !important;
+    body.report-print-modern .modern-report-footer .mt-3 {
+        margin-top: 0.8mm !important;
+    }
+
+    body.report-print-modern .modern-report-footer .mt-1 {
+        margin-top: 0.35mm !important;
+    }
+
+    body.report-print-modern .modern-report-footer .mt-10 {
+        margin-top: 2.6mm !important;
+        padding-top: 0.7mm !important;
     }
 }
