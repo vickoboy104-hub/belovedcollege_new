@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Middleware\ApplySecurityHeaders;
+use App\Http\Middleware\AuditUserActions;
 use App\Http\Middleware\DeferAutoplayMedia;
 use App\Http\Middleware\EnsureUserHasRole;
 use App\Http\Middleware\InjectReportPrintAssets;
@@ -37,6 +38,7 @@ return Application::configure(basePath: dirname(__DIR__))
             InjectReportPrintAssets::class,
             ApplySecurityHeaders::class,
             RequirePasswordChange::class,
+            AuditUserActions::class,
         ]);
 
         $middleware->alias([
