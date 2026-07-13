@@ -35,7 +35,7 @@ class ReportPrintingAndLookupTest extends TestCase
             'section' => 'overview',
             'term_id' => $term->id,
             'search' => $student->student_id_no,
-        ]), false);
+        ]));
     }
 
     public function test_modern_and_classic_print_views_receive_dedicated_a4_styles(): void
