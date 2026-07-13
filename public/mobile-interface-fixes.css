@@ -1,0 +1,40 @@
+/* Final mobile-only corrections kept separate from the broader responsive pass. */
+
+@media (max-width: 1023px) {
+    /* A route can match more than one broad navigation pattern. Visually mark only
+       the last matching mobile destination so two tabs never appear selected. */
+    .mobile-bottom-nav-link.is-active:has(~ .mobile-bottom-nav-link.is-active) {
+        border-color: transparent !important;
+        background: transparent !important;
+        color: rgba(255, 255, 255, 0.72) !important;
+    }
+
+    /* Avoid fixed navigation covering the final card or form control. */
+    .app-main > :last-child,
+    .admin-page-content > :last-child {
+        scroll-margin-bottom: 6rem;
+    }
+
+    /* Keep report-directory controls compact even when browser datalist UI is used. */
+    .route-admin-reports-index #report-student-search {
+        display: block !important;
+        height: 2.95rem !important;
+        min-height: 2.95rem !important;
+        max-height: 2.95rem !important;
+        padding-block: 0 !important;
+        resize: none !important;
+        overflow: hidden !important;
+    }
+
+    .route-admin-reports-index #report-student-search-form p {
+        margin-top: 0.15rem !important;
+        font-size: 0.75rem !important;
+        line-height: 1.35 !important;
+    }
+
+    /* Student names must wrap at spaces rather than breaking in the middle. */
+    .route-admin-students-index .mobile-record-title {
+        overflow-wrap: normal !important;
+        word-break: keep-all !important;
+    }
+}
