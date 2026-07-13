@@ -1,0 +1,71 @@
+@page {
+    size: A4 portrait;
+    margin: 7mm;
+}
+
+body.report-print-classic {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+/* Narrow only the subject column so score columns have more breathing room. */
+body.report-print-classic .classic-table .subject-head,
+body.report-print-classic .classic-table .subject-cell {
+    width: 27mm !important;
+    max-width: 27mm !important;
+}
+
+body.report-print-classic .classic-table .subject-cell {
+    padding: 0 0.7mm !important;
+    white-space: normal !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+    hyphens: none !important;
+    font-size: 2.4mm !important;
+    line-height: 1.02 !important;
+}
+
+body.report-print-classic .classic-table .ability-head {
+    width: auto !important;
+    min-width: 0 !important;
+}
+
+body.report-print-classic .classic-table .remarks-head {
+    width: 18mm !important;
+}
+
+body.report-print-classic .classic-table th:not(.subject-head),
+body.report-print-classic .classic-table td:not(.subject-cell) {
+    padding-right: 0.45mm !important;
+    padding-left: 0.45mm !important;
+}
+
+@media print {
+    html,
+    body.report-print-classic {
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        background: #ffffff !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    body.report-print-classic .classic-wrap {
+        width: auto !important;
+        min-height: auto !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: #ffffff !important;
+        box-shadow: none !important;
+    }
+
+    body.report-print-classic .classic-sheet,
+    body.report-print-classic .classic-table tr,
+    body.report-print-classic .classic-lower,
+    body.report-print-classic .classic-remarks {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+}
