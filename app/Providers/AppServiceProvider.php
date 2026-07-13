@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Models\Setting;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -34,6 +35,9 @@ class AppServiceProvider extends ServiceProvider
             'mail.from.name' => $settings['mail_from_name'] ?? $settings['school_name'] ?? config('mail.from.name'),
         ]);
 
-        view()->share('schoolSettings', $settings);
+        View::share('schoolSettings', Setting::publicSettings($settings));
+        View::composer('admin.settings', function ($view) use ($settings): void {
+            $view->with('settings', Setting::forAdminForm($settings));
+        });
     }
 }
