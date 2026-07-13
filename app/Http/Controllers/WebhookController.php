@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Enums\PaymentProvider;
 use App\Enums\PaymentStatus;
 use App\Models\Payment;
 use App\Models\Setting;
@@ -20,23 +21,42 @@ class WebhookController extends Controller
             return response()->json(['message' => 'Invalid signature'], 401);
         }
 
-        if ($request->input('event') === 'charge.success') {
-            $payment = Payment::with('feeInvoice')->where('reference', $request->input('data.reference'))->first();
+        if ($request->input('event') !== 'charge.success') {
+            return response()->json(['received' => true]);
+        }
 
-            if ($payment) {
-                $payment->update([
-                    'status' => PaymentStatus::Paid,
-                    'gateway_reference' => $request->input('data.reference'),
-                    'channel' => $request->input('data.channel'),
-                    'paid_at' => now(),
-                    'receipt_no' => $payment->receipt_no ?: 'RCP-'.now()->format('Ymd').'-'.Str::upper(Str::random(5)),
-                    'payload' => array_merge($payment->payload ?? [], $request->all()),
-                ]);
+        $reference = (string) $request->input('data.reference');
+        $payment = Payment::with('feeInvoice')
+            ->where('reference', $reference)
+            ->where('provider', PaymentProvider::Paystack->value)
+            ->first();
 
-                $payment->feeInvoice?->syncBalance();
-                if (! $payment->feeInvoice) {
-                    $payment->allocateBundleInvoices();
-                }
+        if (! $payment) {
+            return response()->json(['message' => 'Payment reference not found'], 404);
+        }
+
+        $gatewayAmount = (int) $request->input('data.amount', -1);
+        $expectedAmount = (int) round(((float) $payment->amount) * 100);
+        $currency = strtoupper((string) $request->input('data.currency'));
+        $status = strtolower((string) $request->input('data.status'));
+
+        if ($status !== 'success' || $gatewayAmount !== $expectedAmount || $currency !== strtoupper((string) $payment->currency)) {
+            return response()->json(['message' => 'Payment verification mismatch'], 422);
+        }
+
+        if ($payment->status !== PaymentStatus::Paid) {
+            $payment->update([
+                'status' => PaymentStatus::Paid,
+                'gateway_reference' => $reference,
+                'channel' => $request->input('data.channel'),
+                'paid_at' => now(),
+                'receipt_no' => $payment->receipt_no ?: 'RCP-'.now()->format('Ymd').'-'.Str::upper(Str::random(5)),
+                'payload' => array_merge($payment->payload ?? [], ['gateway' => $request->input('data', [])]),
+            ]);
+
+            $payment->feeInvoice?->syncBalance();
+            if (! $payment->feeInvoice) {
+                $payment->allocateBundleInvoices();
             }
         }
 
@@ -45,28 +65,8 @@ class WebhookController extends Controller
 
     public function palmpay(Request $request): JsonResponse
     {
-        $reference = (string) ($request->input('reference') ?? $request->input('orderNo') ?? data_get($request->input('data'), 'reference'));
-        $status = strtolower((string) ($request->input('status') ?? data_get($request->input('data'), 'status')));
-
-        if ($reference && in_array($status, ['success', 'paid', 'completed'], true)) {
-            $payment = Payment::with('feeInvoice')->where('reference', $reference)->first();
-
-            if ($payment) {
-                $payment->update([
-                    'status' => PaymentStatus::Paid,
-                    'gateway_reference' => $request->input('transactionId') ?? data_get($request->input('data'), 'transactionId'),
-                    'paid_at' => now(),
-                    'receipt_no' => $payment->receipt_no ?: 'RCP-'.now()->format('Ymd').'-'.Str::upper(Str::random(5)),
-                    'payload' => array_merge($payment->payload ?? [], $request->all()),
-                ]);
-
-                $payment->feeInvoice?->syncBalance();
-                if (! $payment->feeInvoice) {
-                    $payment->allocateBundleInvoices();
-                }
-            }
-        }
-
-        return response()->json(['received' => true]);
+        return response()->json([
+            'message' => 'PalmPay webhook verification is not configured. No payment was updated.',
+        ], 503);
     }
 }
