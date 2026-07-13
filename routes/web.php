@@ -5,6 +5,7 @@ use App\Http\Controllers\CbtController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PrivateMediaController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StudentManagementController;
@@ -28,6 +29,9 @@ Route::post('/webhooks/palmpay', [WebhookController::class, 'palmpay'])->name('w
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/private-media/users/{user}/avatar', [PrivateMediaController::class, 'avatar'])
+        ->middleware('throttle:120,1')
+        ->name('private-media.avatar');
     Route::post('/payments/{invoice}/checkout/{provider}', [PaymentController::class, 'checkout'])->name('payments.checkout');
     Route::post('/payments/checkout/{provider}', [PaymentController::class, 'checkoutSelection'])->name('payments.selection.checkout');
     Route::get('/payments/{payment}/receipt', [PaymentController::class, 'receipt'])->name('payments.receipt');

@@ -1,9 +1,12 @@
 <?php
 
+use App\Http\Middleware\ApplySecurityHeaders;
+use App\Http\Middleware\AuditUserActions;
 use App\Http\Middleware\DeferAutoplayMedia;
 use App\Http\Middleware\EnsureUserHasRole;
 use App\Http\Middleware\InjectReportPrintAssets;
 use App\Http\Middleware\OptimizeUploadedMedia;
+use App\Http\Middleware\RequirePasswordChange;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -33,6 +36,9 @@ return Application::configure(basePath: dirname(__DIR__))
             OptimizeUploadedMedia::class,
             DeferAutoplayMedia::class,
             InjectReportPrintAssets::class,
+            ApplySecurityHeaders::class,
+            RequirePasswordChange::class,
+            AuditUserActions::class,
         ]);
 
         $middleware->alias([

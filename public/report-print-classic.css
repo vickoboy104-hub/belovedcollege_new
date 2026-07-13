@@ -1,6 +1,6 @@
 @page {
     size: A4 portrait;
-    margin: 7mm;
+    margin: 5mm;
 }
 
 body.report-print-classic {
@@ -8,7 +8,7 @@ body.report-print-classic {
     print-color-adjust: exact;
 }
 
-/* Narrow only the subject column so score columns have more breathing room. */
+/* Narrow only the subject column so the score columns keep usable breathing room. */
 body.report-print-classic .classic-table .subject-head,
 body.report-print-classic .classic-table .subject-cell {
     width: 27mm !important;
@@ -41,27 +41,66 @@ body.report-print-classic .classic-table td:not(.subject-cell) {
 }
 
 @media print {
+    *,
+    *::before,
+    *::after {
+        box-sizing: border-box !important;
+    }
+
     html,
     body.report-print-classic {
-        width: 100% !important;
+        width: 200mm !important;
+        height: 287mm !important;
+        min-width: 200mm !important;
+        max-width: 200mm !important;
+        min-height: 287mm !important;
+        max-height: 287mm !important;
         margin: 0 !important;
         padding: 0 !important;
-        overflow: visible !important;
+        overflow: hidden !important;
         background: #ffffff !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
 
+    body.report-print-classic .classic-actions {
+        display: none !important;
+    }
+
     body.report-print-classic .classic-wrap {
-        width: auto !important;
-        min-height: auto !important;
+        display: flex !important;
+        width: 200mm !important;
+        height: 287mm !important;
+        min-width: 200mm !important;
+        max-width: 200mm !important;
+        min-height: 287mm !important;
+        max-height: 287mm !important;
         margin: 0 !important;
         padding: 0 !important;
+        overflow: hidden !important;
         background: #ffffff !important;
         box-shadow: none !important;
     }
 
-    body.report-print-classic .classic-sheet,
+    body.report-print-classic .classic-sheet {
+        width: 200mm !important;
+        height: 287mm !important;
+        min-height: 287mm !important;
+        margin: 0 !important;
+        padding: 2.2mm !important;
+        overflow: hidden !important;
+        border: 1px solid #111 !important;
+        background: #fffdf8 !important;
+    }
+
+    body.report-print-classic .classic-header {
+        grid-template-columns: 23mm minmax(0, 1fr) 30mm !important;
+    }
+
+    body.report-print-classic .classic-table {
+        width: 100% !important;
+    }
+
     body.report-print-classic .classic-table tr,
     body.report-print-classic .classic-lower,
     body.report-print-classic .classic-remarks {
