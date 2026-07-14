@@ -65,19 +65,20 @@ class TeacherAccessController extends Controller
     public function store(Request $request, TeacherAccessService $teacherAccess): RedirectResponse
     {
         $allTeachers = $request->boolean('all_teachers');
+        $teacherRule = Rule::exists('users', 'id')->where(fn ($query) => $query
+            ->where('role', UserRole::Teacher->value)
+            ->where('status', 'active'));
 
         $validated = $request->validate([
             'all_teachers' => ['nullable', 'boolean'],
-            'teacher_ids' => [Rule::requiredIf(! $allTeachers), 'nullable', 'array', 'min:1', 'max:250'],
-            'teacher_ids.*' => [
-                'integer',
-                Rule::exists('users', 'id')->where(fn ($query) => $query
-                    ->where('role', UserRole::Teacher->value)
-                    ->where('status', 'active')),
-            ],
-            'school_class_ids' => ['required', 'array', 'min:1', 'max:50'],
+            'teacher_id' => ['nullable', 'integer', $teacherRule],
+            'teacher_ids' => ['nullable', 'array', 'max:250'],
+            'teacher_ids.*' => ['integer', 'distinct', $teacherRule],
+            'school_class_id' => ['nullable', 'integer', 'exists:school_classes,id'],
+            'school_class_ids' => ['nullable', 'array', 'max:50'],
             'school_class_ids.*' => ['integer', 'distinct', 'exists:school_classes,id'],
-            'subject_ids' => ['required', 'array', 'min:1', 'max:100'],
+            'subject_id' => ['nullable', 'integer', 'exists:subjects,id'],
+            'subject_ids' => ['nullable', 'array', 'max:100'],
             'subject_ids.*' => ['integer', 'distinct', 'exists:subjects,id'],
         ]);
 
@@ -86,15 +87,38 @@ class TeacherAccessController extends Controller
                 ->where('role', UserRole::Teacher->value)
                 ->where('status', 'active')
                 ->pluck('id')
-            : collect($validated['teacher_ids'] ?? [])->map(fn ($id) => (int) $id)->unique()->values();
+            : collect($validated['teacher_ids'] ?? [])
+                ->push($validated['teacher_id'] ?? null)
+                ->filter()
+                ->map(fn ($id) => (int) $id)
+                ->unique()
+                ->values();
 
-        $classIds = collect($validated['school_class_ids'])->map(fn ($id) => (int) $id)->unique()->values();
-        $subjectIds = collect($validated['subject_ids'])->map(fn ($id) => (int) $id)->unique()->values();
+        $classIds = collect($validated['school_class_ids'] ?? [])
+            ->push($validated['school_class_id'] ?? null)
+            ->filter()
+            ->map(fn ($id) => (int) $id)
+            ->unique()
+            ->values();
+        $subjectIds = collect($validated['subject_ids'] ?? [])
+            ->push($validated['subject_id'] ?? null)
+            ->filter()
+            ->map(fn ($id) => (int) $id)
+            ->unique()
+            ->values();
 
+        $missing = [];
         if ($teacherIds->isEmpty()) {
-            throw ValidationException::withMessages([
-                'teacher_ids' => 'There are no active teachers available for this permission grant.',
-            ]);
+            $missing['teacher_ids'] = 'Select at least one active teacher or choose every active teacher.';
+        }
+        if ($classIds->isEmpty()) {
+            $missing['school_class_ids'] = 'Select at least one class.';
+        }
+        if ($subjectIds->isEmpty()) {
+            $missing['subject_ids'] = 'Select at least one subject.';
+        }
+        if ($missing !== []) {
+            throw ValidationException::withMessages($missing);
         }
 
         $combinationCount = $teacherIds->count() * $classIds->count() * $subjectIds->count();
