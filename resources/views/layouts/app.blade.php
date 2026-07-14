@@ -1,5 +1,15 @@
+@php
+    $storedThemePreset = $schoolSettings['theme_preset'] ?? 'light-corporate';
+    $activeThemePreset = match ($storedThemePreset) {
+        'dark-corporate', 'midnight-cyber' => 'dark-corporate',
+        'colourful-professional' => 'colourful-professional',
+        'custom' => 'custom',
+        default => 'light-corporate',
+    };
+    $themeDocumentClass = 'theme-'.$activeThemePreset;
+@endphp
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="{{ $themeDocumentClass }}" data-theme-preset="{{ $activeThemePreset }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -19,6 +29,8 @@
     <link rel="stylesheet" href="{{ asset('mobile-interface-fixes.css') }}?v=20260713-mobile-audit-2">
     <link rel="stylesheet" href="{{ asset('student-actions-overlay.css') }}?v=20260713-student-actions-overlay-1">
     <link rel="stylesheet" href="{{ asset('report-search-controls.css') }}?v=20260714-report-search-2">
+    <link rel="stylesheet" href="{{ asset('theme-variants.css') }}?v=20260714-theme-variants-1">
+    <link rel="stylesheet" href="{{ asset('theme-settings-presets.css') }}?v=20260714-theme-settings-presets-1">
 </head>
 @php
     $routeCssClass = 'route-'.str_replace('.', '-', request()->route()?->getName() ?? 'unknown');

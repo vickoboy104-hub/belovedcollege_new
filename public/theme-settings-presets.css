@@ -1,0 +1,51 @@
+/* Theme settings should present the three supported, tested variants only. */
+.route-admin-settings label:has(input[type="radio"][name="theme_preset"][value="custom"]),
+.route-admin-settings form:has(input[name="settings_section"][value="theme-colors"]) .rounded-2xl:has(input[name="theme_primary"]) {
+    display: none !important;
+}
+
+.route-admin-settings label:has(input[type="radio"][name="theme_preset"][value="light-corporate"]) {
+    background: #ffffff !important;
+    border-color: #cbd5e1 !important;
+    color: #0f172a !important;
+}
+
+.route-admin-settings label:has(input[type="radio"][name="theme_preset"][value="light-corporate"]) > div > span {
+    color: #0f172a !important;
+}
+
+.route-admin-settings label:has(input[type="radio"][name="theme_preset"][value="dark-corporate"]) {
+    background: linear-gradient(145deg, #020617, #0f172a) !important;
+    border-color: #475569 !important;
+    color: #ffffff !important;
+}
+
+.route-admin-settings label:has(input[type="radio"][name="theme_preset"][value="dark-corporate"]) > div > span {
+    color: #ffffff !important;
+}
+
+.route-admin-settings label:has(input[type="radio"][name="theme_preset"][value="colourful-professional"]) {
+    background:
+        radial-gradient(circle at top right, rgba(245, 158, 11, 0.28), transparent 34%),
+        linear-gradient(145deg, #eff6ff, #ede9fe 52%, #ecfdf5) !important;
+    border-color: #a78bfa !important;
+    color: #312e81 !important;
+}
+
+.route-admin-settings label:has(input[type="radio"][name="theme_preset"][value="colourful-professional"]) > div > span {
+    color: #312e81 !important;
+}
+
+.route-admin-settings form:has(input[name="settings_section"][value="theme-colors"]) .form-stack::after {
+    content: "Choose Light, Dark, or Colourful, then save. The Light theme preserves the current approved appearance.";
+    display: block;
+    margin-top: 1rem;
+    border: 1px solid var(--theme-border, #cbd5e1);
+    border-radius: 0.75rem;
+    background: var(--theme-surface-soft, #f1f5f9);
+    padding: 0.85rem 1rem;
+    color: var(--theme-muted, #475569);
+    font-size: 0.76rem;
+    font-weight: 650;
+    line-height: 1.5;
+}

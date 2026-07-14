@@ -1,0 +1,522 @@
+/*
+ * Beloved Schools theme variants
+ * Loaded after the legacy portal styles so the selected preset remains authoritative.
+ * The light preset intentionally keeps the existing approved appearance unchanged.
+ */
+
+html.theme-light-corporate {
+    color-scheme: light;
+}
+
+/* --------------------------------------------------------------------------
+   Dark corporate: high-contrast surfaces and readable text
+   -------------------------------------------------------------------------- */
+html.theme-dark-corporate {
+    color-scheme: dark;
+    --ui-ink: #f8fafc !important;
+    --ui-muted: #e2e8f0 !important;
+    --ui-border: #475569 !important;
+    --ui-card: #0f172a !important;
+    --ui-page: #020617 !important;
+    --theme-bg: #020617 !important;
+    --theme-surface: #0f172a !important;
+    --theme-surface-soft: #172033 !important;
+    --theme-card: #0f172a !important;
+    --theme-card-soft: #172033 !important;
+    --theme-text: #f8fafc !important;
+    --theme-muted: #e2e8f0 !important;
+    --theme-border: #475569 !important;
+    --theme-border-soft: rgba(148, 163, 184, 0.34) !important;
+    --theme-header-bg: #0b1220 !important;
+    --theme-topbar-text: #ffffff !important;
+    --theme-topbar-subtext: #e2e8f0 !important;
+    --theme-sidebar-text: #f8fafc !important;
+    --dashboard-card: #0f172a !important;
+    --dashboard-card-text: #ffffff !important;
+    --dashboard-card-text-muted: #e2e8f0 !important;
+    --dashboard-announcement-text: #ffffff !important;
+    --dashboard-quick-action-text: #ffffff !important;
+    --dashboard-quick-action-text-muted: #e2e8f0 !important;
+    --dashboard-stat-text: #ffffff !important;
+    --dashboard-stat-text-muted: #f1f5f9 !important;
+}
+
+html.theme-dark-corporate body,
+html.theme-dark-corporate .site-page-shell,
+html.theme-dark-corporate .app-content-shell,
+html.theme-dark-corporate .app-main {
+    background-color: #020617 !important;
+    color: #f8fafc !important;
+}
+
+html.theme-dark-corporate .app-shell {
+    --portal-page-bg: #020617 !important;
+    --portal-card-bg: #0f172a !important;
+    --portal-card-bg-soft: #172033 !important;
+    --portal-card-border: #475569 !important;
+    --portal-card-border-hover: #facc15 !important;
+    background:
+        radial-gradient(circle at 12% 0%, rgba(37, 99, 235, 0.18), transparent 28%),
+        radial-gradient(circle at 90% 8%, rgba(250, 204, 21, 0.08), transparent 24%),
+        #020617 !important;
+}
+
+html.theme-dark-corporate .app-topbar {
+    background: rgba(11, 18, 32, 0.98) !important;
+    border-color: #334155 !important;
+}
+
+html.theme-dark-corporate .app-sidebar,
+html.theme-dark-corporate .mobile-sidebar-panel {
+    background: linear-gradient(180deg, #020617 0%, #0b1220 55%, #111827 100%) !important;
+    border-color: #334155 !important;
+}
+
+html.theme-dark-corporate .app-shell :is(
+    .app-header-card,
+    .section-card,
+    .section-card-panel,
+    .admin-panel,
+    .admin-toolbar-card,
+    .admin-table-card,
+    .admin-table-wrap,
+    .form-section,
+    .filter-card,
+    .mesh-card,
+    .mobile-record-card,
+    .management-module-card,
+    .section-nav,
+    .drawer-panel,
+    .modal-panel
+) {
+    background: #0f172a !important;
+    border-color: #475569 !important;
+    color: #f8fafc !important;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.28) !important;
+}
+
+html.theme-dark-corporate .app-shell :is(
+    .dashboard-quick-actions-panel,
+    .dashboard-announcements-panel,
+    .dashboard-finance-panel,
+    .dashboard-dark-panel
+) {
+    color: #ffffff !important;
+    --panel-title-color: #ffffff !important;
+    --panel-desc-color: #e2e8f0 !important;
+    --panel-content-color: #f8fafc !important;
+}
+
+html.theme-dark-corporate .app-shell :is(h1, h2, h3, h4, h5, h6, .section-title, .card-title, .display-font, strong) {
+    color: #ffffff !important;
+}
+
+html.theme-dark-corporate .app-shell :is(
+    p,
+    .section-description,
+    .card-description,
+    .metric-note,
+    .table-person-text span,
+    small
+) {
+    color: #e2e8f0 !important;
+}
+
+html.theme-dark-corporate .app-shell :is(
+    .text-slate-950,
+    .text-slate-900,
+    .text-slate-800,
+    .text-slate-700,
+    .text-gray-950,
+    .text-gray-900,
+    .text-gray-800,
+    .text-gray-700
+) {
+    color: #ffffff !important;
+}
+
+html.theme-dark-corporate .app-shell :is(
+    .text-slate-600,
+    .text-slate-500,
+    .text-gray-600,
+    .text-gray-500
+) {
+    color: #e2e8f0 !important;
+}
+
+html.theme-dark-corporate .app-shell :is(
+    .text-slate-400,
+    .text-slate-300,
+    .text-gray-400,
+    .text-gray-300
+) {
+    color: #cbd5e1 !important;
+}
+
+html.theme-dark-corporate .app-shell :is(.text-blue-500, .text-blue-600, .text-blue-700, .text-sky-500, .text-sky-600, .text-sky-700) {
+    color: #bfdbfe !important;
+}
+
+html.theme-dark-corporate .app-shell :is(.text-amber-500, .text-amber-600, .text-amber-700, .text-yellow-500, .text-yellow-600, .text-yellow-700) {
+    color: #fde68a !important;
+}
+
+html.theme-dark-corporate .app-shell :is(.text-green-500, .text-green-600, .text-green-700, .text-emerald-500, .text-emerald-600, .text-emerald-700) {
+    color: #a7f3d0 !important;
+}
+
+html.theme-dark-corporate .app-shell :is(.text-red-500, .text-red-600, .text-red-700, .text-rose-500, .text-rose-600, .text-rose-700) {
+    color: #fecaca !important;
+}
+
+html.theme-dark-corporate .app-shell :is(.text-purple-500, .text-purple-600, .text-purple-700, .text-violet-500, .text-violet-600, .text-violet-700) {
+    color: #ddd6fe !important;
+}
+
+html.theme-dark-corporate .app-shell :is(
+    .bg-white,
+    .bg-white\/90,
+    .bg-white\/80,
+    .bg-slate-50,
+    .bg-slate-100,
+    .bg-gray-50,
+    .bg-gray-100
+) {
+    background-color: #0f172a !important;
+}
+
+html.theme-dark-corporate .app-shell :is(
+    .border-slate-100,
+    .border-slate-200,
+    .border-slate-300,
+    .border-gray-100,
+    .border-gray-200,
+    .border-gray-300
+) {
+    border-color: #475569 !important;
+}
+
+html.theme-dark-corporate .app-shell :is(
+    input,
+    select,
+    textarea,
+    .theme-input,
+    .auth-input
+) {
+    background: #0b1220 !important;
+    border-color: #64748b !important;
+    color: #ffffff !important;
+    caret-color: #facc15 !important;
+}
+
+html.theme-dark-corporate .app-shell :is(input, textarea)::placeholder {
+    color: #cbd5e1 !important;
+    opacity: 1 !important;
+}
+
+html.theme-dark-corporate .app-shell select option {
+    background: #0b1220 !important;
+    color: #ffffff !important;
+}
+
+html.theme-dark-corporate .admin-data-table {
+    color: #f8fafc !important;
+}
+
+html.theme-dark-corporate .admin-data-table thead th {
+    background: #172033 !important;
+    border-color: #475569 !important;
+    color: #ffffff !important;
+}
+
+html.theme-dark-corporate .admin-data-table tbody td {
+    background: #0f172a !important;
+    border-color: #334155 !important;
+    color: #f8fafc !important;
+}
+
+html.theme-dark-corporate .admin-data-table tbody tr:hover td {
+    background: #1e293b !important;
+}
+
+html.theme-dark-corporate .admin-data-table.has-sticky-edge-columns :is(th:last-child, td:last-child:not([colspan])),
+html.theme-dark-corporate .admin-data-table.has-sticky-edge-columns :is(th:first-child, td:first-child:not([colspan])) {
+    background: #172033 !important;
+}
+
+html.theme-dark-corporate .app-shell :is(.admin-table-pagination, .pagination, nav[role="navigation"]) {
+    color: #e2e8f0 !important;
+}
+
+html.theme-dark-corporate .app-shell hr,
+html.theme-dark-corporate .app-shell [class*="border-t"],
+html.theme-dark-corporate .app-shell [class*="border-b"] {
+    border-color: #475569 !important;
+}
+
+html.theme-dark-corporate .app-shell :is(.theme-button-secondary, .btn-secondary) {
+    background: #172033 !important;
+    border-color: #64748b !important;
+    color: #ffffff !important;
+}
+
+html.theme-dark-corporate .app-shell :is(.theme-button-secondary, .btn-secondary):hover {
+    background: #25324a !important;
+    border-color: #facc15 !important;
+}
+
+html.theme-dark-corporate .app-shell :is(.empty-state, .admin-empty-state) {
+    color: #e2e8f0 !important;
+}
+
+/* Preserve clear semantic badges on dark surfaces. */
+html.theme-dark-corporate .app-shell span[class*="bg-green-"],
+html.theme-dark-corporate .app-shell span[class*="bg-emerald-"] {
+    background: rgba(16, 185, 129, 0.2) !important;
+    border-color: rgba(110, 231, 183, 0.55) !important;
+    color: #d1fae5 !important;
+}
+
+html.theme-dark-corporate .app-shell span[class*="bg-red-"],
+html.theme-dark-corporate .app-shell span[class*="bg-rose-"] {
+    background: rgba(244, 63, 94, 0.2) !important;
+    border-color: rgba(253, 164, 175, 0.55) !important;
+    color: #ffe4e6 !important;
+}
+
+html.theme-dark-corporate .app-shell span[class*="bg-amber-"],
+html.theme-dark-corporate .app-shell span[class*="bg-yellow-"] {
+    background: rgba(245, 158, 11, 0.2) !important;
+    border-color: rgba(253, 230, 138, 0.55) !important;
+    color: #fef3c7 !important;
+}
+
+html.theme-dark-corporate .app-shell span[class*="bg-blue-"],
+html.theme-dark-corporate .app-shell span[class*="bg-sky-"] {
+    background: rgba(59, 130, 246, 0.2) !important;
+    border-color: rgba(147, 197, 253, 0.55) !important;
+    color: #dbeafe !important;
+}
+
+/* Guest/login cards also need readable dark-mode text. */
+html.theme-dark-corporate .auth-form-panel,
+html.theme-dark-corporate .auth-card,
+html.theme-dark-corporate .auth-mobile-brand {
+    background: #0f172a !important;
+    color: #f8fafc !important;
+}
+
+html.theme-dark-corporate .auth-card :is(h1, h2, h3, label, strong) {
+    color: #ffffff !important;
+}
+
+html.theme-dark-corporate .auth-card :is(p, small, .text-slate-500, .text-slate-600) {
+    color: #e2e8f0 !important;
+}
+
+html.theme-dark-corporate .auth-card :is(input, select, textarea, .auth-input) {
+    background: #0b1220 !important;
+    border-color: #64748b !important;
+    color: #ffffff !important;
+}
+
+/* --------------------------------------------------------------------------
+   Colourful professional: visibly different from the approved light preset
+   -------------------------------------------------------------------------- */
+html.theme-colourful-professional {
+    color-scheme: light;
+    --ui-page: #eef2ff !important;
+    --ui-card: #ffffff !important;
+    --ui-ink: #172554 !important;
+    --ui-muted: #475569 !important;
+    --ui-border: #c4b5fd !important;
+    --theme-bg: #eef2ff !important;
+    --theme-surface: #ffffff !important;
+    --theme-surface-soft: #f5f3ff !important;
+    --theme-card: #ffffff !important;
+    --theme-card-soft: #eef2ff !important;
+    --theme-secondary: #312e81 !important;
+    --theme-sidebar-bg: #1e1b4b !important;
+    --theme-sidebar-active: #7c3aed !important;
+    --theme-header-bg: #312e81 !important;
+    --theme-topbar-text: #ffffff !important;
+    --theme-topbar-subtext: #e0e7ff !important;
+    --theme-border: #c4b5fd !important;
+    --theme-border-soft: rgba(124, 58, 237, 0.24) !important;
+    --dashboard-card-text: #172554 !important;
+    --dashboard-card-text-muted: #475569 !important;
+    --dashboard-announcement-text: #ffffff !important;
+    --dashboard-quick-action-bg: linear-gradient(135deg, #1e1b4b 0%, #312e81 52%, #4c1d95 100%) !important;
+    --dashboard-announcement-bg: linear-gradient(135deg, #7c3aed 0%, #4f46e5 55%, #2563eb 100%) !important;
+    --dashboard-finance-bg: linear-gradient(135deg, #0f766e 0%, #0369a1 52%, #312e81 100%) !important;
+    --dashboard-quick-action-text: #ffffff !important;
+    --dashboard-quick-action-text-muted: #ede9fe !important;
+    --dashboard-stat-text: #ffffff !important;
+    --dashboard-stat-text-muted: #f8fafc !important;
+}
+
+html.theme-colourful-professional body,
+html.theme-colourful-professional .site-page-shell,
+html.theme-colourful-professional .app-content-shell {
+    background-color: #eef2ff !important;
+    color: #172554 !important;
+}
+
+html.theme-colourful-professional .app-shell {
+    --portal-page-bg: #eef2ff !important;
+    --portal-card-bg: #ffffff !important;
+    --portal-card-bg-soft: #faf5ff !important;
+    --portal-card-border: #c4b5fd !important;
+    --portal-card-border-hover: #f59e0b !important;
+    background:
+        radial-gradient(circle at 8% 2%, rgba(37, 99, 235, 0.16), transparent 29%),
+        radial-gradient(circle at 92% 4%, rgba(124, 58, 237, 0.16), transparent 27%),
+        radial-gradient(circle at 54% 100%, rgba(245, 158, 11, 0.12), transparent 30%),
+        #eef2ff !important;
+}
+
+html.theme-colourful-professional .app-topbar {
+    background: linear-gradient(90deg, #1e1b4b 0%, #312e81 48%, #4c1d95 100%) !important;
+    border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+html.theme-colourful-professional .app-sidebar,
+html.theme-colourful-professional .mobile-sidebar-panel {
+    background:
+        radial-gradient(circle at 22% 8%, rgba(245, 158, 11, 0.16), transparent 25%),
+        linear-gradient(180deg, #1e1b4b 0%, #312e81 55%, #172554 100%) !important;
+}
+
+html.theme-colourful-professional .app-shell :is(
+    .app-header-card,
+    .section-card,
+    .section-card-panel,
+    .admin-panel,
+    .admin-toolbar-card,
+    .admin-table-card,
+    .form-section,
+    .filter-card,
+    .mesh-card,
+    .mobile-record-card,
+    .management-module-card,
+    .section-nav
+) {
+    background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.99), rgba(248, 250, 255, 0.96)) !important;
+    border-color: #c4b5fd !important;
+    box-shadow:
+        0 15px 34px rgba(79, 70, 229, 0.12),
+        0 2px 8px rgba(37, 99, 235, 0.06) !important;
+}
+
+html.theme-colourful-professional .app-shell :is(
+    .dashboard-quick-actions-panel,
+    .dashboard-announcements-panel,
+    .dashboard-finance-panel,
+    .dashboard-dark-panel
+) {
+    color: #ffffff !important;
+    --panel-title-color: #ffffff !important;
+    --panel-desc-color: #ede9fe !important;
+    --panel-content-color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+html.theme-colourful-professional .app-shell .management-module-card:nth-child(4n + 1),
+html.theme-colourful-professional .app-shell .quick-action-card:nth-child(4n + 1) {
+    background: linear-gradient(145deg, #eff6ff, #dbeafe) !important;
+    border-color: #93c5fd !important;
+}
+
+html.theme-colourful-professional .app-shell .management-module-card:nth-child(4n + 2),
+html.theme-colourful-professional .app-shell .quick-action-card:nth-child(4n + 2) {
+    background: linear-gradient(145deg, #faf5ff, #ede9fe) !important;
+    border-color: #c4b5fd !important;
+}
+
+html.theme-colourful-professional .app-shell .management-module-card:nth-child(4n + 3),
+html.theme-colourful-professional .app-shell .quick-action-card:nth-child(4n + 3) {
+    background: linear-gradient(145deg, #ecfdf5, #d1fae5) !important;
+    border-color: #6ee7b7 !important;
+}
+
+html.theme-colourful-professional .app-shell .management-module-card:nth-child(4n),
+html.theme-colourful-professional .app-shell .quick-action-card:nth-child(4n) {
+    background: linear-gradient(145deg, #fffbeb, #fef3c7) !important;
+    border-color: #fcd34d !important;
+}
+
+html.theme-colourful-professional .app-shell :is(h1, h2, h3, h4, h5, h6, .section-title, .card-title, .display-font) {
+    color: #172554 !important;
+}
+
+html.theme-colourful-professional .app-shell :is(p, .section-description, .card-description, .text-slate-500, .text-slate-600) {
+    color: #475569 !important;
+}
+
+html.theme-colourful-professional .app-shell .dashboard-dark-panel :is(h1, h2, h3, h4, h5, h6, p, .section-title, .section-description, .display-font, strong) {
+    color: #ffffff !important;
+}
+
+html.theme-colourful-professional .app-shell .dashboard-dark-panel :is(.text-slate-400, .text-slate-500, .text-slate-600, small) {
+    color: #ede9fe !important;
+}
+
+html.theme-colourful-professional .admin-data-table thead th {
+    background: linear-gradient(180deg, #eef2ff, #e0e7ff) !important;
+    border-color: #c4b5fd !important;
+    color: #312e81 !important;
+}
+
+html.theme-colourful-professional .admin-data-table tbody td {
+    background: rgba(255, 255, 255, 0.97) !important;
+    border-color: #e0e7ff !important;
+    color: #1e293b !important;
+}
+
+html.theme-colourful-professional .admin-data-table tbody tr:hover td {
+    background: #f5f3ff !important;
+}
+
+html.theme-colourful-professional .admin-data-table.has-sticky-edge-columns :is(th:last-child, td:last-child:not([colspan])),
+html.theme-colourful-professional .admin-data-table.has-sticky-edge-columns :is(th:first-child, td:first-child:not([colspan])) {
+    background: #eef2ff !important;
+}
+
+html.theme-colourful-professional .app-shell :is(input, select, textarea, .theme-input) {
+    background: #ffffff !important;
+    border-color: #a5b4fc !important;
+    color: #172554 !important;
+}
+
+html.theme-colourful-professional .app-shell :is(input, textarea)::placeholder {
+    color: #64748b !important;
+    opacity: 1 !important;
+}
+
+html.theme-colourful-professional .app-shell :is(.theme-button-secondary, .btn-secondary) {
+    background: #eef2ff !important;
+    border-color: #a5b4fc !important;
+    color: #3730a3 !important;
+}
+
+html.theme-colourful-professional .app-shell :is(.theme-button-secondary, .btn-secondary):hover {
+    background: #e0e7ff !important;
+    border-color: #7c3aed !important;
+}
+
+/* Keep printouts independent from the interactive theme. */
+@media print {
+    html.theme-dark-corporate,
+    html.theme-colourful-professional {
+        color-scheme: light;
+    }
+
+    html.theme-dark-corporate body,
+    html.theme-dark-corporate .app-shell,
+    html.theme-colourful-professional body,
+    html.theme-colourful-professional .app-shell {
+        background: #ffffff !important;
+        color: #0f172a !important;
+    }
+}

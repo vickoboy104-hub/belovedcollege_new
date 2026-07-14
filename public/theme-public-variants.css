@@ -1,0 +1,167 @@
+/* Public website theme variants. Light remains the approved existing design. */
+
+html.theme-dark-corporate .public-shell {
+    --public-page-bg: #020617 !important;
+    --public-section-bg: #0b1220 !important;
+    --public-card-bg: #0f172a !important;
+    --public-text: #f8fafc !important;
+    --public-text-muted: #e2e8f0 !important;
+    --public-border: rgba(148, 163, 184, 0.34) !important;
+    --public-nav-text: #f8fafc !important;
+    background: #020617 !important;
+    color: #f8fafc !important;
+}
+
+html.theme-dark-corporate .public-topbar,
+html.theme-dark-corporate .public-drawer-panel,
+html.theme-dark-corporate .public-footer {
+    background: rgba(11, 18, 32, 0.98) !important;
+    border-color: #334155 !important;
+    color: #f8fafc !important;
+}
+
+html.theme-dark-corporate .public-shell :is(
+    .beloved-section,
+    .beloved-welcome,
+    .beloved-schools,
+    .beloved-events,
+    .beloved-gallery,
+    .beloved-testimonials,
+    .public-content-shell > section
+) {
+    background-color: #020617 !important;
+    color: #f8fafc !important;
+}
+
+html.theme-dark-corporate .public-shell :is(
+    .beloved-school-card,
+    .beloved-event-item,
+    .beloved-testi-card,
+    .beloved-principal-card,
+    .beloved-director-cta,
+    .mesh-card,
+    .section-card,
+    [class*="rounded-"][class*="border"]
+) {
+    background: #0f172a !important;
+    border-color: #475569 !important;
+    color: #f8fafc !important;
+    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.28) !important;
+}
+
+html.theme-dark-corporate .public-shell :is(
+    h1, h2, h3, h4, h5, h6,
+    .beloved-sec-title,
+    .beloved-welcome__lead,
+    .beloved-school-card__body h3,
+    .beloved-event-item h3,
+    .nav-brand-title,
+    strong
+) {
+    color: #ffffff !important;
+}
+
+html.theme-dark-corporate .public-shell :is(
+    p,
+    .beloved-sec-sub,
+    .beloved-welcome__body,
+    .beloved-school-card__body p,
+    .beloved-event-item p,
+    .beloved-testi-card p,
+    .nav-brand-subtitle,
+    .text-slate-500,
+    .text-slate-600,
+    .text-slate-700,
+    small
+) {
+    color: #e2e8f0 !important;
+}
+
+html.theme-dark-corporate .public-shell :is(.public-nav-pill, .public-drawer-link) {
+    color: #f8fafc !important;
+}
+
+html.theme-dark-corporate .public-shell :is(.public-nav-pill:hover, .public-nav-pill.is-active, .public-drawer-link.is-primary) {
+    background: rgba(96, 165, 250, 0.18) !important;
+    color: #ffffff !important;
+}
+
+html.theme-dark-corporate .public-shell :is(input, select, textarea) {
+    background: #0b1220 !important;
+    border-color: #64748b !important;
+    color: #ffffff !important;
+}
+
+html.theme-dark-corporate .public-shell :is(input, textarea)::placeholder {
+    color: #cbd5e1 !important;
+    opacity: 1 !important;
+}
+
+html.theme-colourful-professional .public-shell {
+    --public-page-bg: #eef2ff !important;
+    --public-section-bg: #f8faff !important;
+    --public-card-bg: #ffffff !important;
+    --public-text: #172554 !important;
+    --public-text-muted: #475569 !important;
+    --public-border: rgba(124, 58, 237, 0.2) !important;
+    --public-nav-text: #312e81 !important;
+    background:
+        radial-gradient(circle at 8% 4%, rgba(37, 99, 235, 0.12), transparent 28%),
+        radial-gradient(circle at 92% 6%, rgba(124, 58, 237, 0.12), transparent 28%),
+        #eef2ff !important;
+    color: #172554 !important;
+}
+
+html.theme-colourful-professional .classic-topbar {
+    background: linear-gradient(90deg, #1e1b4b, #312e81, #4c1d95) !important;
+}
+
+html.theme-colourful-professional .public-topbar {
+    background: rgba(255, 255, 255, 0.97) !important;
+    border-color: #c4b5fd !important;
+}
+
+html.theme-colourful-professional .public-shell :is(
+    .beloved-school-card,
+    .beloved-event-item,
+    .beloved-testi-card,
+    .beloved-principal-card,
+    .beloved-director-cta,
+    .mesh-card,
+    .section-card
+) {
+    background: linear-gradient(145deg, #ffffff, #f8faff) !important;
+    border-color: #c4b5fd !important;
+    box-shadow: 0 14px 32px rgba(79, 70, 229, 0.12) !important;
+}
+
+html.theme-colourful-professional .public-shell .beloved-school-card:nth-child(3n + 1),
+html.theme-colourful-professional .public-shell .beloved-event-item:nth-child(3n + 1),
+html.theme-colourful-professional .public-shell .beloved-testi-card:nth-child(3n + 1) {
+    background: linear-gradient(145deg, #eff6ff, #ffffff) !important;
+    border-color: #93c5fd !important;
+}
+
+html.theme-colourful-professional .public-shell .beloved-school-card:nth-child(3n + 2),
+html.theme-colourful-professional .public-shell .beloved-event-item:nth-child(3n + 2),
+html.theme-colourful-professional .public-shell .beloved-testi-card:nth-child(3n + 2) {
+    background: linear-gradient(145deg, #faf5ff, #ffffff) !important;
+    border-color: #c4b5fd !important;
+}
+
+html.theme-colourful-professional .public-shell .beloved-school-card:nth-child(3n),
+html.theme-colourful-professional .public-shell .beloved-event-item:nth-child(3n),
+html.theme-colourful-professional .public-shell .beloved-testi-card:nth-child(3n) {
+    background: linear-gradient(145deg, #ecfdf5, #ffffff) !important;
+    border-color: #6ee7b7 !important;
+}
+
+html.theme-colourful-professional .public-shell :is(.public-nav-pill:hover, .public-nav-pill.is-active) {
+    background: #ede9fe !important;
+    color: #5b21b6 !important;
+}
+
+html.theme-colourful-professional .public-footer {
+    background: rgba(255, 255, 255, 0.94) !important;
+    border-color: #c4b5fd !important;
+}
