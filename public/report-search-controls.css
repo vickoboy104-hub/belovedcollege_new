@@ -1,0 +1,54 @@
+/* Keep the report-directory lookup compact and aligned on desktop.
+   This file is route-scoped so other forms retain their existing sizing. */
+
+.route-admin-reports-index #report-student-search-form {
+    align-items: end !important;
+}
+
+.route-admin-reports-index #report-student-search-form > div {
+    align-self: end !important;
+    height: auto !important;
+    min-height: 0 !important;
+}
+
+.route-admin-reports-index #report-student-search-form input[type="search"],
+.route-admin-reports-index #report-student-search-form select {
+    display: block !important;
+    width: 100% !important;
+    height: 2.75rem !important;
+    min-height: 2.75rem !important;
+    max-height: 2.75rem !important;
+    flex: 0 0 2.75rem !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    line-height: 1.2 !important;
+}
+
+.route-admin-reports-index #report-student-search-form input[type="search"] {
+    appearance: auto !important;
+}
+
+.route-admin-reports-index #report-student-search-form .flex.flex-wrap {
+    min-height: 2.75rem !important;
+    align-items: stretch !important;
+}
+
+.route-admin-reports-index #report-student-search-form .flex.flex-wrap > * {
+    min-height: 2.75rem !important;
+}
+
+@media (min-width: 1024px) {
+    .route-admin-reports-index #report-student-search-form {
+        gap: 0.85rem !important;
+    }
+}
+
+@media (max-width: 1023px) {
+    .route-admin-reports-index #report-student-search-form input[type="search"],
+    .route-admin-reports-index #report-student-search-form select {
+        height: 2.85rem !important;
+        min-height: 2.85rem !important;
+        max-height: 2.85rem !important;
+        flex-basis: 2.85rem !important;
+    }
+}
