@@ -2,20 +2,33 @@
 
 namespace App\Services\Payments;
 
+use App\Contracts\PaymentGateway;
+use App\Enums\PaymentProvider;
 use App\Models\Payment;
 use App\Models\Setting;
 use RuntimeException;
 
-class PalmPayGateway
+class PalmPayGateway implements PaymentGateway
 {
+    public function provider(): PaymentProvider
+    {
+        return PaymentProvider::PalmPay;
+    }
+
+    public function isConfigured(): bool
+    {
+        return filled(Setting::getValue('palmpay_checkout_url'))
+            && filled(Setting::getValue('palmpay_merchant_id'))
+            && filled(Setting::getValue('palmpay_private_key'));
+    }
+
     public function initialize(object $invoice, Payment $payment): array
     {
-        $checkoutUrl = Setting::getValue('palmpay_checkout_url');
-
-        if (! $checkoutUrl) {
-            throw new RuntimeException('PalmPay checkout URL is not configured in admin settings.');
+        if (! $this->isConfigured()) {
+            throw new RuntimeException('PalmPay merchant checkout is not completely configured.');
         }
 
+        $checkoutUrl = Setting::getValue('palmpay_checkout_url');
         $query = http_build_query([
             'reference' => $payment->reference,
             'amount' => number_format((float) $payment->amount, 2, '.', ''),
@@ -36,10 +49,10 @@ class PalmPayGateway
         ];
     }
 
-    public function verify(string $reference): array
+    public function verify(string $reference, array $context = []): array
     {
         throw new RuntimeException(
-            'PalmPay server-to-server payment verification is not configured. No payment has been marked as paid.'
+            'PalmPay server-to-server verification requires the merchant-specific API contract supplied during PalmPay onboarding. No payment was marked as paid.'
         );
     }
 }
