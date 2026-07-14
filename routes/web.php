@@ -10,6 +10,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StudentManagementController;
 use App\Http\Controllers\StudentPortalController;
+use App\Http\Controllers\TeacherAccessController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\WebsiteController;
@@ -69,6 +70,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::patch('/admin/staff/{staffProfile}/deactivate', [AdminController::class, 'deactivateStaff'])->name('admin.staff.deactivate');
         Route::delete('/admin/students/{student}', [AdminController::class, 'destroyStudent'])->name('admin.students.destroy');
         Route::delete('/admin/staff/{staffProfile}', [AdminController::class, 'destroyStaff'])->name('admin.staff.destroy');
+        Route::get('/admin/teacher-access', [TeacherAccessController::class, 'index'])->name('admin.teacher-access.index');
+        Route::post('/admin/teacher-access', [TeacherAccessController::class, 'store'])->name('admin.teacher-access.store');
+        Route::patch('/admin/teacher-access/{assignment}/revoke', [TeacherAccessController::class, 'revoke'])->name('admin.teacher-access.revoke');
+        Route::patch('/admin/teacher-access/{assignment}/restore', [TeacherAccessController::class, 'restore'])->name('admin.teacher-access.restore');
         Route::get('/admin/academics/{section?}', [AdminController::class, 'academics'])
             ->where('section', 'session-setup|term-setup|session-rollover|promotion-review|class-setup|subject-setup|announcement|cbt-control')
             ->name('admin.academics');
