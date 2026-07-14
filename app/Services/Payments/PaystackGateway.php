@@ -2,13 +2,25 @@
 
 namespace App\Services\Payments;
 
+use App\Contracts\PaymentGateway;
+use App\Enums\PaymentProvider;
 use App\Models\Payment;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Http;
 use RuntimeException;
 
-class PaystackGateway
+class PaystackGateway implements PaymentGateway
 {
+    public function provider(): PaymentProvider
+    {
+        return PaymentProvider::Paystack;
+    }
+
+    public function isConfigured(): bool
+    {
+        return filled(Setting::getValue('paystack_secret_key'));
+    }
+
     public function initialize(object $invoice, Payment $payment): array
     {
         $secret = Setting::getValue('paystack_secret_key');
@@ -19,10 +31,12 @@ class PaystackGateway
 
         $response = Http::withToken($secret)
             ->acceptJson()
+            ->timeout(30)
+            ->retry(2, 300)
             ->post('https://api.paystack.co/transaction/initialize', [
                 'email' => $invoice->student->user->email,
                 'amount' => (int) round(((float) $payment->amount) * 100),
-                'currency' => 'NGN',
+                'currency' => $payment->currency,
                 'reference' => $payment->reference,
                 'callback_url' => route('payments.callback', 'paystack'),
                 'metadata' => [
@@ -40,7 +54,7 @@ class PaystackGateway
         return $response->json();
     }
 
-    public function verify(string $reference): array
+    public function verify(string $reference, array $context = []): array
     {
         $secret = Setting::getValue('paystack_secret_key');
 
@@ -50,7 +64,9 @@ class PaystackGateway
 
         $response = Http::withToken($secret)
             ->acceptJson()
-            ->get("https://api.paystack.co/transaction/verify/{$reference}");
+            ->timeout(30)
+            ->retry(2, 300)
+            ->get('https://api.paystack.co/transaction/verify/'.rawurlencode($reference));
 
         if ($response->failed()) {
             throw new RuntimeException($response->json('message') ?: 'Unable to verify Paystack payment.');
