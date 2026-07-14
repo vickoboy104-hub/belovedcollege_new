@@ -6,6 +6,7 @@ use App\Enums\UserRole;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\View;
 use Tests\TestCase;
 
 class ThemeVariantsTest extends TestCase
@@ -35,6 +36,7 @@ class ThemeVariantsTest extends TestCase
 
         foreach (['light-corporate', 'dark-corporate', 'colourful-professional'] as $preset) {
             Setting::setMany(['theme_preset' => $preset], 'school');
+            View::share('schoolSettings', Setting::publicSettings());
 
             $this->actingAs($admin)
                 ->get(route('dashboard'))
