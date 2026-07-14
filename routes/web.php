@@ -83,6 +83,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/admin/staff/{staffProfile}', [AdminController::class, 'destroyStaff'])->name('admin.staff.destroy');
         Route::get('/admin/teacher-access', [TeacherAccessController::class, 'index'])->name('admin.teacher-access.index');
         Route::post('/admin/teacher-access', [TeacherAccessController::class, 'store'])->name('admin.teacher-access.store');
+        Route::patch('/admin/teacher-access/bulk', [TeacherAccessController::class, 'bulkUpdate'])->name('admin.teacher-access.bulk');
         Route::patch('/admin/teacher-access/{assignment}/revoke', [TeacherAccessController::class, 'revoke'])->name('admin.teacher-access.revoke');
         Route::patch('/admin/teacher-access/{assignment}/restore', [TeacherAccessController::class, 'restore'])->name('admin.teacher-access.restore');
         Route::get('/admin/academics/{section?}', [AdminController::class, 'academics'])
