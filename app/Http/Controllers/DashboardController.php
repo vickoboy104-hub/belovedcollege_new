@@ -80,6 +80,7 @@ class DashboardController extends Controller
             $quickAccessCards = collect([
                 ['title' => 'Register Student', 'description' => 'Open the student intake drawer and create login details.', 'route' => route('admin.students.index', ['register' => 1]), 'tone' => 'student', 'icon' => 'student'],
                 ['title' => 'Add Parent', 'description' => 'Find or link a guardian record to a child profile.', 'route' => route('admin.parents.index'), 'tone' => 'parent', 'icon' => 'parents'],
+                ['title' => 'Teacher Access', 'description' => 'Grant or remove exact subject and class permissions for teachers.', 'route' => route('admin.teacher-access.index'), 'tone' => 'school', 'icon' => 'learning'],
                 ['title' => 'Record Payment', 'description' => 'Post a confirmed school fee payment.', 'route' => route('admin.finance', ['section' => 'record-payment']), 'tone' => 'finance', 'icon' => 'bills'],
                 ['title' => 'Create Invoice', 'description' => 'Generate a student or class billing record.', 'route' => route('admin.finance', ['section' => 'generate-invoice']), 'tone' => 'finance', 'icon' => 'finance-records'],
                 ['title' => 'View Debtors', 'description' => 'Review students with outstanding balances.', 'route' => route('admin.students.index', ['view' => 'debtors']), 'tone' => 'report', 'icon' => 'reports'],

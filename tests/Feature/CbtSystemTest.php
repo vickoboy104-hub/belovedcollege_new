@@ -12,6 +12,7 @@ use App\Models\SchoolClass;
 use App\Models\Setting;
 use App\Models\Student;
 use App\Models\Subject;
+use App\Models\TeacherSubjectAssignment;
 use App\Models\Term;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -224,6 +225,19 @@ class CbtSystemTest extends TestCase
         $subject = Subject::create([
             'name' => 'Physics',
             'code' => 'PHY101',
+        ]);
+
+        $admin = User::factory()->create([
+            'role' => UserRole::Admin,
+        ]);
+
+        TeacherSubjectAssignment::create([
+            'teacher_id' => $teacher->id,
+            'school_class_id' => $class->id,
+            'subject_id' => $subject->id,
+            'assigned_by' => $admin->id,
+            'is_active' => true,
+            'assigned_at' => now(),
         ]);
 
         $session = AcademicSession::create([
