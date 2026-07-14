@@ -30,6 +30,7 @@
     <link rel="stylesheet" href="{{ asset('student-actions-overlay.css') }}?v=20260713-student-actions-overlay-1">
     <link rel="stylesheet" href="{{ asset('report-search-controls.css') }}?v=20260714-report-search-2">
     <link rel="stylesheet" href="{{ asset('theme-variants.css') }}?v=20260714-theme-variants-1">
+    <link rel="stylesheet" href="{{ asset('theme-settings-presets.css') }}?v=20260714-theme-settings-presets-1">
 </head>
 @php
     $routeCssClass = 'route-'.str_replace('.', '-', request()->route()?->getName() ?? 'unknown');
