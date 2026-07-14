@@ -11,10 +11,12 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\StudentManagementController;
 use App\Http\Controllers\StudentPortalController;
 use App\Http\Controllers\TeacherAccessController;
+use App\Http\Controllers\TeacherAccessMapController;
 use App\Http\Controllers\TeacherController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\WebsiteController;
 use App\Http\Middleware\EnsureCbtSubmissionIsOpen;
+use App\Http\Middleware\EnsureTeacherSubjectAssignment;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [WebsiteController::class, 'home'])->name('home');
@@ -114,19 +116,34 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::middleware('role:admin,principal,teacher')->group(function () {
+        Route::get('/teacher/access-map', TeacherAccessMapController::class)->name('teacher.access-map');
         Route::get('/teacher/learning/{section?}', [TeacherController::class, 'learning'])
             ->where('section', 'publish-lesson|create-assignment|assessment|record-result|attendance|cbt-create|cbt-list|latest-content|submissions|cbt-attempts')
             ->name('teacher.learning');
         Route::post('/teacher/lessons', [TeacherController::class, 'storeLesson'])->name('teacher.lessons.store');
         Route::post('/teacher/assignments', [TeacherController::class, 'storeAssignment'])->name('teacher.assignments.store');
         Route::post('/teacher/assessments', [TeacherController::class, 'storeAssessment'])->name('teacher.assessments.store');
-        Route::post('/teacher/cbt-assessments', [CbtController::class, 'storeAssessment'])->name('teacher.cbt.assessments.store');
-        Route::get('/teacher/cbt-assessments/{assessment}', [CbtController::class, 'showAssessment'])->name('teacher.cbt.assessments.show');
-        Route::post('/teacher/cbt-assessments/{assessment}/questions', [CbtController::class, 'storeQuestion'])->name('teacher.cbt.questions.store');
-        Route::patch('/teacher/cbt-questions/{question}', [CbtController::class, 'updateQuestion'])->name('teacher.cbt.questions.update');
-        Route::delete('/teacher/cbt-questions/{question}', [CbtController::class, 'destroyQuestion'])->name('teacher.cbt.questions.destroy');
-        Route::get('/teacher/cbt-attempts/{attempt}', [CbtController::class, 'showAttemptReview'])->name('teacher.cbt.attempts.show');
-        Route::post('/teacher/cbt-answers/{answer}/grade', [CbtController::class, 'gradeAnswer'])->name('teacher.cbt.answers.grade');
+        Route::post('/teacher/cbt-assessments', [CbtController::class, 'storeAssessment'])
+            ->middleware(EnsureTeacherSubjectAssignment::class)
+            ->name('teacher.cbt.assessments.store');
+        Route::get('/teacher/cbt-assessments/{assessment}', [CbtController::class, 'showAssessment'])
+            ->middleware(EnsureTeacherSubjectAssignment::class)
+            ->name('teacher.cbt.assessments.show');
+        Route::post('/teacher/cbt-assessments/{assessment}/questions', [CbtController::class, 'storeQuestion'])
+            ->middleware(EnsureTeacherSubjectAssignment::class)
+            ->name('teacher.cbt.questions.store');
+        Route::patch('/teacher/cbt-questions/{question}', [CbtController::class, 'updateQuestion'])
+            ->middleware(EnsureTeacherSubjectAssignment::class)
+            ->name('teacher.cbt.questions.update');
+        Route::delete('/teacher/cbt-questions/{question}', [CbtController::class, 'destroyQuestion'])
+            ->middleware(EnsureTeacherSubjectAssignment::class)
+            ->name('teacher.cbt.questions.destroy');
+        Route::get('/teacher/cbt-attempts/{attempt}', [CbtController::class, 'showAttemptReview'])
+            ->middleware(EnsureTeacherSubjectAssignment::class)
+            ->name('teacher.cbt.attempts.show');
+        Route::post('/teacher/cbt-answers/{answer}/grade', [CbtController::class, 'gradeAnswer'])
+            ->middleware(EnsureTeacherSubjectAssignment::class)
+            ->name('teacher.cbt.answers.grade');
         Route::post('/teacher/results', [TeacherController::class, 'storeResult'])->name('teacher.results.store');
         Route::post('/teacher/attendance', [TeacherController::class, 'storeAttendance'])->name('teacher.attendance.store');
         Route::post('/teacher/submissions/{submission}/grade', [TeacherController::class, 'gradeSubmission'])->name('teacher.submissions.grade');
