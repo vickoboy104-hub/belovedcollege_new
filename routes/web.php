@@ -5,6 +5,7 @@ use App\Http\Controllers\CbtController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PaymentGatewaySettingsController;
 use App\Http\Controllers\PrivateMediaController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
@@ -62,6 +63,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->where('section', 'website-foundation|theme-colors|landing-builder|homepage-media|workspace-backgrounds|site-backgrounds|welcome-popup|gallery-uploader|homepage-text|box-backgrounds-a|box-backgrounds-b|payment-settings|contact-messages')
             ->name('admin.settings');
         Route::post('/admin/settings', [AdminController::class, 'updateSettings'])->name('admin.settings.update');
+        Route::get('/admin/payment-gateways', [PaymentGatewaySettingsController::class, 'index'])->name('admin.payment-gateways.index');
+        Route::put('/admin/payment-gateways', [PaymentGatewaySettingsController::class, 'update'])->name('admin.payment-gateways.update');
         Route::get('/admin/people', [AdminController::class, 'people'])->name('admin.people');
         Route::get('/admin/people/students/{classSlug?}', [StudentManagementController::class, 'index'])->name('admin.students.index');
         Route::get('/admin/people/parents', [AdminController::class, 'parents'])->name('admin.parents.index');
