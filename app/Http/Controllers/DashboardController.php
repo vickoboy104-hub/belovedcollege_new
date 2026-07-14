@@ -14,8 +14,6 @@ class DashboardController extends Controller
     {
         $user = $request->user();
 
-        // Fetch all dashboard-wide counts and finance totals in one database round trip.
-        // This replaces repeated model counts, sums, and an in-memory debtor ID pluck.
         $metrics = DB::selectOne(<<<'SQL'
             SELECT
                 (SELECT COUNT(*) FROM students) AS student_count,
@@ -44,26 +42,10 @@ class DashboardController extends Controller
         $paymentCount = (int) ($metrics->payment_count ?? 0);
 
         $stats = [
-            [
-                'label' => 'Students',
-                'value' => $studentCount,
-                'accent' => 'bg-sky-500/15 text-sky-900',
-            ],
-            [
-                'label' => 'Staff',
-                'value' => $staffCount,
-                'accent' => 'bg-emerald-500/15 text-emerald-900',
-            ],
-            [
-                'label' => 'Active Invoices',
-                'value' => $activeInvoiceCount,
-                'accent' => 'bg-amber-500/15 text-amber-900',
-            ],
-            [
-                'label' => 'Payments Logged',
-                'value' => $paymentCount,
-                'accent' => 'bg-rose-500/15 text-rose-900',
-            ],
+            ['label' => 'Students', 'value' => $studentCount, 'accent' => 'bg-sky-500/15 text-sky-900'],
+            ['label' => 'Staff', 'value' => $staffCount, 'accent' => 'bg-emerald-500/15 text-emerald-900'],
+            ['label' => 'Active Invoices', 'value' => $activeInvoiceCount, 'accent' => 'bg-amber-500/15 text-amber-900'],
+            ['label' => 'Payments Logged', 'value' => $paymentCount, 'accent' => 'bg-rose-500/15 text-rose-900'],
         ];
 
         $announcements = Announcement::query()
@@ -81,6 +63,7 @@ class DashboardController extends Controller
                 ['title' => 'Register Student', 'description' => 'Open the student intake drawer and create login details.', 'route' => route('admin.students.index', ['register' => 1]), 'tone' => 'student', 'icon' => 'student'],
                 ['title' => 'Add Parent', 'description' => 'Find or link a guardian record to a child profile.', 'route' => route('admin.parents.index'), 'tone' => 'parent', 'icon' => 'parents'],
                 ['title' => 'Teacher Access', 'description' => 'Grant or remove exact subject and class permissions for teachers.', 'route' => route('admin.teacher-access.index'), 'tone' => 'school', 'icon' => 'learning'],
+                ['title' => 'Payment Gateways', 'description' => 'Enable checkout providers and securely configure merchant credentials.', 'route' => route('admin.payment-gateways.index'), 'tone' => 'finance', 'icon' => 'finance'],
                 ['title' => 'Record Payment', 'description' => 'Post a confirmed school fee payment.', 'route' => route('admin.finance', ['section' => 'record-payment']), 'tone' => 'finance', 'icon' => 'bills'],
                 ['title' => 'Create Invoice', 'description' => 'Generate a student or class billing record.', 'route' => route('admin.finance', ['section' => 'generate-invoice']), 'tone' => 'finance', 'icon' => 'finance-records'],
                 ['title' => 'View Debtors', 'description' => 'Review students with outstanding balances.', 'route' => route('admin.students.index', ['view' => 'debtors']), 'tone' => 'report', 'icon' => 'reports'],
@@ -123,12 +106,6 @@ class DashboardController extends Controller
             ];
         }
 
-        return view('dashboard', compact(
-            'user',
-            'stats',
-            'announcements',
-            'quickAccessCards',
-            'financeSnapshot',
-        ));
+        return view('dashboard', compact('user', 'stats', 'announcements', 'quickAccessCards', 'financeSnapshot'));
     }
 }
