@@ -2,27 +2,28 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\AssignmentSubmission;
 use App\Models\Assignment;
+use App\Models\AssignmentSubmission;
+use App\Models\Assessment;
 use App\Models\AssessmentResult;
 use App\Models\AttendanceRecord;
-use App\Models\Assessment;
 use App\Models\CbtAttempt;
 use App\Models\Lesson;
 use App\Models\SchoolClass;
 use App\Models\Student;
 use App\Models\Subject;
 use App\Models\Term;
+use App\Services\TeacherAccessService;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
 class TeacherController extends Controller
 {
-    public function learning(Request $request, ?string $section = null): View
+    public function learning(Request $request, TeacherAccessService $teacherAccess, ?string $section = null): View
     {
         $teacher = $request->user();
         $sections = collect([
@@ -38,75 +39,93 @@ class TeacherController extends Controller
             'cbt-attempts',
         ]);
         $activeTeachingSection = $sections->contains($section) ? $section : 'publish-lesson';
+        $privileged = $teacherAccess->isPrivileged($teacher);
+        $teachingAssignments = $teacherAccess->activeAssignments($teacher);
+        $classIds = $teacherAccess->classIds($teacher);
+        $subjectIds = $teacherAccess->subjectIds($teacher);
 
-        $managedClasses = $teacher->managedClasses()
+        $classes = SchoolClass::query()
+            ->when(! $privileged, fn (Builder $query) => $query->whereIn('id', $classIds ?? collect()))
             ->orderBy('name')
             ->orderBy('section')
             ->get();
-        $classTeacherMode = ! $teacher->hasAnyRole(['admin', 'principal']) && $managedClasses->isNotEmpty();
-        $classes = $classTeacherMode
-            ? $managedClasses
-            : SchoolClass::orderBy('name')->orderBy('section')->get();
-        $classIds = $classes->pluck('id');
-        $subjects = Subject::orderBy('name')->get();
+        $subjects = Subject::query()
+            ->when(! $privileged, fn (Builder $query) => $query->whereIn('id', $subjectIds ?? collect()))
+            ->orderBy('name')
+            ->get();
+        $classSubjectMap = $privileged
+            ? $classes->mapWithKeys(fn (SchoolClass $schoolClass) => [$schoolClass->id => $subjects->pluck('id')->all()])->all()
+            : $teacherAccess->classSubjectMap($teacher);
+        $managedClasses = $classes;
+        $classTeacherMode = ! $privileged;
+        $hasTeachingAccess = $privileged || $teachingAssignments->isNotEmpty();
         $terms = Term::with('academicSession')->latest()->get();
         $students = Student::with('user', 'schoolClass')
-            ->when($classTeacherMode, fn ($query) => $query->whereIn('school_class_id', $classIds))
+            ->when(! $privileged, fn (Builder $query) => $query->whereIn('school_class_id', $classIds ?? collect()))
             ->orderBy('admission_no')
             ->get();
 
-        $lessons = Lesson::query()
-            ->with('subject', 'schoolClass', 'teacher')
-            ->when($classTeacherMode, fn ($query) => $query->whereIn('school_class_id', $classIds), fn ($query) => $query->where('teacher_id', $teacher->id))
-            ->latest()
-            ->take(10)
-            ->get();
-        $assignments = Assignment::query()
-            ->with('subject', 'schoolClass', 'teacher')
-            ->when($classTeacherMode, fn ($query) => $query->whereIn('school_class_id', $classIds), fn ($query) => $query->where('teacher_id', $teacher->id))
-            ->latest()
-            ->take(10)
-            ->get();
-        $assessments = Assessment::query()
-            ->with('subject', 'schoolClass', 'term', 'teacher')
-            ->when($classTeacherMode, fn ($query) => $query->whereIn('school_class_id', $classIds), fn ($query) => $query->where('teacher_id', $teacher->id))
-            ->latest()
-            ->take(20)
-            ->get();
-        $cbtAssessments = Assessment::query()
-            ->when($classTeacherMode, fn ($query) => $query->whereIn('school_class_id', $classIds), fn ($query) => $query->where('teacher_id', $teacher->id))
+        $lessonsQuery = Lesson::query()->with('subject', 'schoolClass', 'teacher');
+        $teacherAccess->scopePairs($lessonsQuery, $teacher);
+        $lessons = $lessonsQuery->latest()->take(10)->get();
+
+        $assignmentsQuery = Assignment::query()->with('subject', 'schoolClass', 'teacher');
+        $teacherAccess->scopePairs($assignmentsQuery, $teacher);
+        $assignments = $assignmentsQuery->latest()->take(10)->get();
+
+        $assessmentsQuery = Assessment::query()->with('subject', 'schoolClass', 'term', 'teacher');
+        $teacherAccess->scopePairs($assessmentsQuery, $teacher);
+        $assessments = $assessmentsQuery->latest()->take(20)->get();
+
+        $cbtAssessmentsQuery = Assessment::query()
             ->where('is_cbt', true)
             ->with('subject', 'schoolClass', 'term', 'teacher')
-            ->withCount('cbtQuestions', 'cbtAttempts')
+            ->withCount('cbtQuestions', 'cbtAttempts');
+        $teacherAccess->scopePairs($cbtAssessmentsQuery, $teacher);
+        $cbtAssessments = $cbtAssessmentsQuery
             ->latest('cbt_starts_at')
             ->take(8)
             ->get();
-        $cbtAttemptsNeedingReview = CbtAttempt::query()
-            ->whereHas('assessment', function ($query) use ($classTeacherMode, $classIds, $teacher): void {
-                $query->where('is_cbt', true);
 
-                if ($classTeacherMode) {
-                    $query->whereIn('school_class_id', $classIds);
-                } else {
-                    $query->where('teacher_id', $teacher->id);
-                }
+        $cbtAttemptsNeedingReview = CbtAttempt::query()
+            ->whereHas('assessment', function (Builder $query) use ($teacherAccess, $teacher): void {
+                $query->where('is_cbt', true);
+                $teacherAccess->scopePairs($query, $teacher);
             })
             ->with('assessment.subject', 'assessment.schoolClass', 'student.user')
             ->whereIn('status', ['submitted', 'graded'])
             ->latest('submitted_at')
             ->take(8)
             ->get();
+
         $submissions = AssignmentSubmission::query()
-            ->whereHas('assignment', fn ($query) => $classTeacherMode ? $query->whereIn('school_class_id', $classIds) : $query->where('teacher_id', $teacher->id))
-            ->with('assignment.teacher', 'student.user', 'student.schoolClass')
+            ->whereHas('assignment', fn (Builder $query) => $teacherAccess->scopePairs($query, $teacher))
+            ->with('assignment.teacher', 'assignment.subject', 'student.user', 'student.schoolClass')
             ->latest()
             ->take(10)
             ->get();
 
-        return view('teacher.learning', compact('classes', 'subjects', 'terms', 'students', 'lessons', 'assignments', 'assessments', 'cbtAssessments', 'cbtAttemptsNeedingReview', 'submissions', 'activeTeachingSection', 'managedClasses', 'classTeacherMode'));
+        return view('teacher.learning', compact(
+            'classes',
+            'subjects',
+            'terms',
+            'students',
+            'lessons',
+            'assignments',
+            'assessments',
+            'cbtAssessments',
+            'cbtAttemptsNeedingReview',
+            'submissions',
+            'activeTeachingSection',
+            'managedClasses',
+            'classTeacherMode',
+            'teachingAssignments',
+            'classSubjectMap',
+            'hasTeachingAccess',
+        ));
     }
 
-    public function storeLesson(Request $request): RedirectResponse
+    public function storeLesson(Request $request, TeacherAccessService $teacherAccess): RedirectResponse
     {
         $validated = $request->validate([
             'subject_id' => ['required', 'exists:subjects,id'],
@@ -121,7 +140,7 @@ class TeacherController extends Controller
             'note_images.*' => ['image', 'max:10240'],
         ]);
 
-        $this->ensureTeacherCanManageClass($request, (int) $validated['school_class_id']);
+        $teacherAccess->authorizePair($request->user(), (int) $validated['school_class_id'], (int) $validated['subject_id']);
 
         $noteImages = $request->hasFile('note_images')
             ? $this->storeUploadedFiles($request->file('note_images'), 'teaching/lesson-images', Str::slug($validated['title']).'-note')
@@ -139,7 +158,7 @@ class TeacherController extends Controller
         return back()->with('status', 'Lesson published successfully.');
     }
 
-    public function storeAssignment(Request $request): RedirectResponse
+    public function storeAssignment(Request $request, TeacherAccessService $teacherAccess): RedirectResponse
     {
         $validated = $request->validate([
             'subject_id' => ['required', 'exists:subjects,id'],
@@ -153,7 +172,7 @@ class TeacherController extends Controller
             'status' => ['required', 'string', 'max:255'],
         ]);
 
-        $this->ensureTeacherCanManageClass($request, (int) $validated['school_class_id']);
+        $teacherAccess->authorizePair($request->user(), (int) $validated['school_class_id'], (int) $validated['subject_id']);
 
         $request->user()->assignments()->create([
             ...collect($validated)->except('attachment_images')->all(),
@@ -165,7 +184,7 @@ class TeacherController extends Controller
         return back()->with('status', 'Assignment created successfully.');
     }
 
-    public function storeAssessment(Request $request): RedirectResponse
+    public function storeAssessment(Request $request, TeacherAccessService $teacherAccess): RedirectResponse
     {
         $validated = $request->validate([
             'term_id' => ['nullable', 'exists:terms,id'],
@@ -178,14 +197,14 @@ class TeacherController extends Controller
             'notes' => ['nullable', 'string', 'max:1000'],
         ]);
 
-        $this->ensureTeacherCanManageClass($request, (int) $validated['school_class_id']);
+        $teacherAccess->authorizePair($request->user(), (int) $validated['school_class_id'], (int) $validated['subject_id']);
 
         $request->user()->assessments()->create($validated);
 
         return back()->with('status', 'Assessment added successfully.');
     }
 
-    public function storeResult(Request $request): RedirectResponse
+    public function storeResult(Request $request, TeacherAccessService $teacherAccess): RedirectResponse
     {
         $validated = $request->validate([
             'assessment_id' => ['required', 'exists:assessments,id'],
@@ -198,11 +217,16 @@ class TeacherController extends Controller
         $assessment = Assessment::query()
             ->with('schoolClass')
             ->findOrFail($validated['assessment_id']);
-        $student = Student::query()
-            ->findOrFail($validated['student_id']);
-        $this->ensureTeacherCanManageClass($request, (int) $assessment->school_class_id);
+        $student = Student::query()->findOrFail($validated['student_id']);
+        $teacherAccess->authorizePair($request->user(), (int) $assessment->school_class_id, (int) $assessment->subject_id);
 
-        if ($student->school_class_id !== $assessment->school_class_id) {
+        if ((float) $validated['score'] > (float) $assessment->total_score) {
+            return back()->withErrors([
+                'score' => 'The obtained score cannot be greater than the assessment total score.',
+            ])->withInput();
+        }
+
+        if ((int) $student->school_class_id !== (int) $assessment->school_class_id) {
             return back()->withErrors([
                 'student_id' => 'This student does not belong to the selected class assessment.',
             ])->withInput();
@@ -219,7 +243,7 @@ class TeacherController extends Controller
         return back()->with('status', 'Result saved successfully.');
     }
 
-    public function storeAttendance(Request $request): RedirectResponse
+    public function storeAttendance(Request $request, TeacherAccessService $teacherAccess): RedirectResponse
     {
         $validated = $request->validate([
             'school_class_id' => ['required', 'exists:school_classes,id'],
@@ -229,10 +253,10 @@ class TeacherController extends Controller
             'note' => ['nullable', 'string', 'max:500'],
         ]);
 
-        $this->ensureTeacherCanManageClass($request, (int) $validated['school_class_id']);
+        $teacherAccess->authorizeClass($request->user(), (int) $validated['school_class_id']);
         $student = Student::query()->findOrFail($validated['student_id']);
 
-        if ($student->school_class_id !== (int) $validated['school_class_id']) {
+        if ((int) $student->school_class_id !== (int) $validated['school_class_id']) {
             return back()->withErrors([
                 'student_id' => 'This student does not belong to the selected class.',
             ])->withInput();
@@ -254,15 +278,25 @@ class TeacherController extends Controller
         return back()->with('status', 'Attendance updated.');
     }
 
-    public function gradeSubmission(Request $request, AssignmentSubmission $submission): RedirectResponse
+    public function gradeSubmission(Request $request, AssignmentSubmission $submission, TeacherAccessService $teacherAccess): RedirectResponse
     {
         $validated = $request->validate([
             'score' => ['required', 'numeric', 'min:0'],
             'feedback' => ['nullable', 'string', 'max:2000'],
         ]);
 
-        $submission->loadMissing('assignment.schoolClass');
-        $this->ensureTeacherCanManageClass($request, (int) $submission->assignment->school_class_id);
+        $submission->loadMissing('assignment.schoolClass', 'assignment.subject');
+        $teacherAccess->authorizePair(
+            $request->user(),
+            (int) $submission->assignment->school_class_id,
+            (int) $submission->assignment->subject_id,
+        );
+
+        if ((float) $validated['score'] > (float) $submission->assignment->total_score) {
+            return back()->withErrors([
+                'score' => 'The awarded score cannot be greater than the assignment total score.',
+            ]);
+        }
 
         $submission->update([
             'score' => $validated['score'],
@@ -271,30 +305,6 @@ class TeacherController extends Controller
         ]);
 
         return back()->with('status', 'Submission graded successfully.');
-    }
-
-    protected function ensureTeacherCanManageClass(Request $request, int $schoolClassId): void
-    {
-        $allowedClassIds = $this->managedClassIds($request);
-
-        if ($allowedClassIds === null) {
-            return;
-        }
-
-        abort_unless($allowedClassIds->contains($schoolClassId), 403);
-    }
-
-    protected function managedClassIds(Request $request): ?Collection
-    {
-        $user = $request->user();
-
-        if ($user->hasAnyRole(['admin', 'principal'])) {
-            return null;
-        }
-
-        $managedClassIds = $user->managedClasses()->pluck('school_classes.id');
-
-        return $managedClassIds->isNotEmpty() ? $managedClassIds : null;
     }
 
     protected function storeUploadedFiles(array $files, string $directory, string $prefix): array
