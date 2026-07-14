@@ -64,10 +64,16 @@
             </main>
         </div>
     </div>
+    @isset($paymentGatewayCatalog)
+        <script type="application/json" id="payment-gateway-catalog">{!! json_encode($paymentGatewayCatalog, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
+    @endisset
     @vite(['resources/js/print-settings.js'])
     <script src="{{ asset('sidebar-scroll-persistence.js') }}?v=20260711-sidebar-scroll-1"></script>
     @if (request()->routeIs('teacher.*'))
         <script src="{{ asset('teacher-access-filter.js') }}?v=20260714-teacher-access-1"></script>
     @endif
+    @isset($paymentGatewayCatalog)
+        <script src="{{ asset('payment-gateway-buttons.js') }}?v=20260714-payment-gateways-1"></script>
+    @endisset
 </body>
 </html>
