@@ -3,8 +3,15 @@
     'pagination' => null,
     'minWidth' => '1050px',
     'stickyEdges' => true,
+    'stickyActions' => true,
     'label' => 'Scrollable data table',
 ])
+
+@php
+    $lastHeader = collect($headers)->last();
+    $lastHeaderText = strtolower(trim(strip_tags((string) $lastHeader)));
+    $hasActionColumn = $stickyActions && str_contains($lastHeaderText, 'action');
+@endphp
 
 <div {{ $attributes->merge(['class' => 'admin-table-card admin-table-wrap']) }}>
     <div
@@ -14,8 +21,9 @@
         tabindex="0"
     >
         <table
-            class="admin-data-table {{ $stickyEdges ? 'has-sticky-edge-columns' : '' }}"
+            class="admin-data-table {{ $stickyEdges ? 'has-sticky-edge-columns' : '' }} {{ $hasActionColumn ? 'has-sticky-actions' : '' }}"
             style="min-width: {{ $minWidth }};"
+            @if ($hasActionColumn) data-sticky-actions @endif
         >
             <thead>
                 <tr>

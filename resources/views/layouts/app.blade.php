@@ -13,12 +13,12 @@
     @include('partials.theme-overrides')
     <link rel="stylesheet" href="{{ asset('portal-refresh.css') }}?v=20260706-overflow-fix">
     <link rel="stylesheet" href="{{ asset('ui-stability.css') }}?v=20260710-ui-audit-1">
-    <link rel="stylesheet" href="{{ asset('table-usability.css') }}?v=20260711-sticky-actions-1">
+    <link rel="stylesheet" href="{{ asset('table-usability.css') }}?v=20260714-sticky-actions-2">
     <link rel="stylesheet" href="{{ asset('interface-corrections.css') }}?v=20260712-dashboard-table-1">
     <link rel="stylesheet" href="{{ asset('mobile-interface.css') }}?v=20260713-mobile-audit-1">
     <link rel="stylesheet" href="{{ asset('mobile-interface-fixes.css') }}?v=20260713-mobile-audit-2">
     <link rel="stylesheet" href="{{ asset('student-actions-overlay.css') }}?v=20260713-student-actions-overlay-1">
-    <link rel="stylesheet" href="{{ asset('report-search-controls.css') }}?v=20260714-report-search-1">
+    <link rel="stylesheet" href="{{ asset('report-search-controls.css') }}?v=20260714-report-search-2">
 </head>
 @php
     $routeCssClass = 'route-'.str_replace('.', '-', request()->route()?->getName() ?? 'unknown');
@@ -69,6 +69,13 @@
     @endisset
     @vite(['resources/js/print-settings.js'])
     <script src="{{ asset('sidebar-scroll-persistence.js') }}?v=20260711-sidebar-scroll-1"></script>
+    @if (auth()->user()?->hasAnyRole(['admin', 'principal']))
+        <script
+            src="{{ asset('admin-navigation-shortcuts.js') }}?v=20260714-admin-shortcuts-1"
+            data-teacher-access-url="{{ route('admin.teacher-access.index') }}"
+            data-payment-gateways-url="{{ route('admin.payment-gateways.index') }}"
+        ></script>
+    @endif
     @if (request()->routeIs('teacher.*'))
         <script src="{{ asset('teacher-access-filter.js') }}?v=20260714-teacher-access-1"></script>
     @endif

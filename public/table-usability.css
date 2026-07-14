@@ -1,55 +1,102 @@
-/* Keep the record identity and row action available while wide tables scroll. */
+/* Keep row actions visible as an overlay while wide tables scroll horizontally. */
+.admin-table-scroll {
+    position: relative;
+    isolation: isolate;
+    overscroll-behavior-inline: contain;
+}
+
+.admin-data-table {
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.admin-data-table.has-sticky-actions thead th:last-child,
+.admin-data-table.has-sticky-actions tbody td:last-child:not([colspan]) {
+    position: sticky;
+    right: 0;
+    width: 1%;
+    min-width: 7.5rem;
+    text-align: right;
+}
+
+.admin-data-table.has-sticky-actions thead th:last-child {
+    z-index: 12;
+    background: #f8fafc !important;
+    border-left: 1px solid rgba(203, 213, 225, 0.95);
+    box-shadow: -12px 0 20px -18px rgba(15, 23, 42, 0.95);
+}
+
+.admin-data-table.has-sticky-actions tbody td:last-child:not([colspan]) {
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.97) !important;
+    border-left: 1px solid rgba(226, 232, 240, 0.98);
+    box-shadow: -12px 0 20px -18px rgba(15, 23, 42, 0.95);
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
+}
+
+.admin-data-table.has-sticky-actions tbody tr:hover td:last-child:not([colspan]) {
+    background: rgba(239, 246, 255, 0.98) !important;
+}
+
+.admin-data-table.has-sticky-actions tbody td:last-child:not([colspan]) > form,
+.admin-data-table.has-sticky-actions tbody td:last-child:not([colspan]) > div,
+.admin-data-table.has-sticky-actions tbody td:last-child:not([colspan]) > a,
+.admin-data-table.has-sticky-actions tbody td:last-child:not([colspan]) > button {
+    position: relative;
+    z-index: 1;
+}
+
+.admin-data-table.has-sticky-actions tbody td:last-child:not([colspan]) form,
+.admin-data-table.has-sticky-actions tbody td:last-child:not([colspan]) .table-view-btn,
+.admin-data-table.has-sticky-actions tbody td:last-child:not([colspan]) .table-delete-btn,
+.admin-data-table.has-sticky-actions tbody td:last-child:not([colspan]) .table-toggle-btn,
+.admin-data-table.has-sticky-actions tbody td:last-child:not([colspan]) .btn {
+    white-space: nowrap;
+}
+
+/* Keep the row identity available on larger screens without crowding mobile tables. */
 @media (min-width: 768px) {
     .admin-data-table.has-sticky-edge-columns thead th:first-child,
-    .admin-data-table.has-sticky-edge-columns tbody td:first-child {
+    .admin-data-table.has-sticky-edge-columns tbody td:first-child:not([colspan]) {
         position: sticky;
         left: 0;
     }
 
-    .admin-data-table.has-sticky-edge-columns thead th:last-child,
-    .admin-data-table.has-sticky-edge-columns tbody td:last-child {
-        position: sticky;
-        right: 0;
-        min-width: 6.5rem;
-        text-align: right;
-    }
-
-    .admin-data-table.has-sticky-edge-columns thead th:first-child,
-    .admin-data-table.has-sticky-edge-columns thead th:last-child {
-        z-index: 4;
+    .admin-data-table.has-sticky-edge-columns thead th:first-child {
+        z-index: 11;
         background: #f8fafc !important;
     }
 
-    .admin-data-table.has-sticky-edge-columns tbody td:first-child,
-    .admin-data-table.has-sticky-edge-columns tbody td:last-child {
-        z-index: 3;
+    .admin-data-table.has-sticky-edge-columns tbody td:first-child:not([colspan]) {
+        z-index: 9;
         background: #ffffff !important;
     }
 
-    .admin-data-table.has-sticky-edge-columns tbody tr:hover td:first-child,
-    .admin-data-table.has-sticky-edge-columns tbody tr:hover td:last-child {
+    .admin-data-table.has-sticky-edge-columns tbody tr:hover td:first-child:not([colspan]) {
         background: #eff6ff !important;
     }
 
     .admin-data-table.has-sticky-edge-columns thead th:first-child,
-    .admin-data-table.has-sticky-edge-columns tbody td:first-child {
-        box-shadow: 8px 0 14px -14px rgba(15, 23, 42, 0.75);
+    .admin-data-table.has-sticky-edge-columns tbody td:first-child:not([colspan]) {
+        box-shadow: 10px 0 18px -18px rgba(15, 23, 42, 0.9);
     }
+}
 
-    .admin-data-table.has-sticky-edge-columns thead th:last-child,
-    .admin-data-table.has-sticky-edge-columns tbody td:last-child {
-        box-shadow: -8px 0 14px -14px rgba(15, 23, 42, 0.75);
-    }
-
-    .admin-data-table.has-sticky-edge-columns tbody td:last-child .table-view-btn,
-    .admin-data-table.has-sticky-edge-columns tbody td:last-child .btn {
-        white-space: nowrap;
+@media (max-width: 767px) {
+    .admin-data-table.has-sticky-actions thead th:last-child,
+    .admin-data-table.has-sticky-actions tbody td:last-child:not([colspan]) {
+        min-width: 6.75rem;
+        padding-left: 0.7rem;
+        padding-right: 0.7rem;
     }
 }
 
 @media print {
-    .admin-data-table.has-sticky-edge-columns :is(th, td) {
+    .admin-data-table.has-sticky-edge-columns :is(th, td),
+    .admin-data-table.has-sticky-actions :is(th, td) {
         position: static !important;
         box-shadow: none !important;
+        backdrop-filter: none !important;
     }
 }
