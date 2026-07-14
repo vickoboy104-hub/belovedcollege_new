@@ -10,7 +10,9 @@ use App\Models\User;
 use App\Services\TeacherAccessService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
 
 class TeacherAccessController extends Controller
@@ -62,38 +64,144 @@ class TeacherAccessController extends Controller
 
     public function store(Request $request, TeacherAccessService $teacherAccess): RedirectResponse
     {
+        $allTeachers = $request->boolean('all_teachers');
+
         $validated = $request->validate([
-            'teacher_id' => [
-                'required',
+            'all_teachers' => ['nullable', 'boolean'],
+            'teacher_ids' => [Rule::requiredIf(! $allTeachers), 'nullable', 'array', 'min:1', 'max:250'],
+            'teacher_ids.*' => [
+                'integer',
                 Rule::exists('users', 'id')->where(fn ($query) => $query
                     ->where('role', UserRole::Teacher->value)
                     ->where('status', 'active')),
             ],
-            'school_class_id' => ['required', 'exists:school_classes,id'],
-            'subject_id' => ['required', 'exists:subjects,id'],
+            'school_class_ids' => ['required', 'array', 'min:1', 'max:50'],
+            'school_class_ids.*' => ['integer', 'distinct', 'exists:school_classes,id'],
+            'subject_ids' => ['required', 'array', 'min:1', 'max:100'],
+            'subject_ids.*' => ['integer', 'distinct', 'exists:subjects,id'],
         ]);
 
-        $assignment = TeacherSubjectAssignment::query()->firstOrNew([
-            'teacher_id' => $validated['teacher_id'],
-            'school_class_id' => $validated['school_class_id'],
-            'subject_id' => $validated['subject_id'],
+        $teacherIds = $allTeachers
+            ? User::query()
+                ->where('role', UserRole::Teacher->value)
+                ->where('status', 'active')
+                ->pluck('id')
+            : collect($validated['teacher_ids'] ?? [])->map(fn ($id) => (int) $id)->unique()->values();
+
+        $classIds = collect($validated['school_class_ids'])->map(fn ($id) => (int) $id)->unique()->values();
+        $subjectIds = collect($validated['subject_ids'])->map(fn ($id) => (int) $id)->unique()->values();
+
+        if ($teacherIds->isEmpty()) {
+            throw ValidationException::withMessages([
+                'teacher_ids' => 'There are no active teachers available for this permission grant.',
+            ]);
+        }
+
+        $combinationCount = $teacherIds->count() * $classIds->count() * $subjectIds->count();
+        if ($combinationCount > 5000) {
+            throw ValidationException::withMessages([
+                'subject_ids' => 'This request would create more than 5,000 permissions. Select fewer teachers, classes, or subjects and try again.',
+            ]);
+        }
+
+        $granted = 0;
+        $alreadyActive = 0;
+
+        DB::transaction(function () use ($request, $teacherIds, $classIds, $subjectIds, &$granted, &$alreadyActive): void {
+            foreach ($teacherIds as $teacherId) {
+                foreach ($classIds as $classId) {
+                    foreach ($subjectIds as $subjectId) {
+                        $assignment = TeacherSubjectAssignment::query()->firstOrNew([
+                            'teacher_id' => $teacherId,
+                            'school_class_id' => $classId,
+                            'subject_id' => $subjectId,
+                        ]);
+
+                        if ($assignment->exists && $assignment->is_active) {
+                            $alreadyActive++;
+                            continue;
+                        }
+
+                        $assignment->fill([
+                            'is_active' => true,
+                            'assigned_by' => $request->user()->id,
+                            'assigned_at' => now(),
+                            'revoked_by' => null,
+                            'revoked_at' => null,
+                        ])->save();
+
+                        $granted++;
+                    }
+                }
+            }
+        });
+
+        $teacherIds->each(fn ($teacherId) => $teacherAccess->refresh(User::query()->findOrFail($teacherId)));
+
+        $message = $granted === 1
+            ? '1 teacher permission was granted successfully.'
+            : number_format($granted).' teacher permissions were granted successfully.';
+
+        if ($alreadyActive > 0) {
+            $message .= ' '.number_format($alreadyActive).' selected permission(s) were already active.';
+        }
+
+        return back()->with('status', $message);
+    }
+
+    public function bulkUpdate(Request $request, TeacherAccessService $teacherAccess): RedirectResponse
+    {
+        $validated = $request->validate([
+            'assignment_ids' => ['required', 'array', 'min:1', 'max:5000'],
+            'assignment_ids.*' => ['integer', 'distinct', 'exists:teacher_subject_assignments,id'],
+            'action' => ['required', Rule::in(['revoke', 'restore'])],
         ]);
 
-        $wasActive = $assignment->exists && $assignment->is_active;
+        $assignments = TeacherSubjectAssignment::query()
+            ->with('teacher')
+            ->whereIn('id', $validated['assignment_ids'])
+            ->get();
 
-        $assignment->fill([
-            'is_active' => true,
-            'assigned_by' => $request->user()->id,
-            'assigned_at' => now(),
-            'revoked_by' => null,
-            'revoked_at' => null,
-        ])->save();
+        $affected = 0;
+        $teacherIds = collect();
 
-        $teacherAccess->refresh(User::query()->findOrFail($validated['teacher_id']));
+        DB::transaction(function () use ($request, $assignments, $validated, &$affected, &$teacherIds): void {
+            foreach ($assignments as $assignment) {
+                $teacherIds->push($assignment->teacher_id);
 
-        return back()->with('status', $wasActive
-            ? 'That teacher already has this subject and class permission.'
-            : 'Teacher subject permission granted successfully.');
+                if ($validated['action'] === 'revoke') {
+                    if (! $assignment->is_active) {
+                        continue;
+                    }
+
+                    $assignment->update([
+                        'is_active' => false,
+                        'revoked_by' => $request->user()->id,
+                        'revoked_at' => now(),
+                    ]);
+                } else {
+                    if ($assignment->is_active) {
+                        continue;
+                    }
+
+                    $assignment->update([
+                        'is_active' => true,
+                        'assigned_by' => $request->user()->id,
+                        'assigned_at' => now(),
+                        'revoked_by' => null,
+                        'revoked_at' => null,
+                    ]);
+                }
+
+                $affected++;
+            }
+        });
+
+        $teacherIds->unique()->each(fn ($teacherId) => $teacherAccess->refresh(User::query()->findOrFail($teacherId)));
+
+        $verb = $validated['action'] === 'revoke' ? 'removed' : 'restored';
+
+        return back()->with('status', number_format($affected)." selected permission(s) were {$verb}.");
     }
 
     public function revoke(Request $request, TeacherSubjectAssignment $assignment, TeacherAccessService $teacherAccess): RedirectResponse
