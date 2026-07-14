@@ -1,5 +1,15 @@
+@php
+    $storedThemePreset = $schoolSettings['theme_preset'] ?? 'light-corporate';
+    $activeThemePreset = match ($storedThemePreset) {
+        'dark-corporate', 'midnight-cyber' => 'dark-corporate',
+        'colourful-professional' => 'colourful-professional',
+        'custom' => 'custom',
+        default => 'light-corporate',
+    };
+    $themeDocumentClass = 'theme-'.$activeThemePreset;
+@endphp
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="{{ $themeDocumentClass }}" data-theme-preset="{{ $activeThemePreset }}">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -10,6 +20,7 @@
     @include('partials.theme-overrides')
     <link rel="stylesheet" href="{{ asset('portal-refresh.css') }}?v=20260706-overflow-fix">
     <link rel="stylesheet" href="{{ asset('ui-stability.css') }}?v=20260710-ui-audit-1">
+    <link rel="stylesheet" href="{{ asset('theme-variants.css') }}?v=20260714-theme-variants-1">
 </head>
 <body class="antialiased">
     @php
