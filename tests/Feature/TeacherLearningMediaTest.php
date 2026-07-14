@@ -7,6 +7,7 @@ use App\Models\Assignment;
 use App\Models\Lesson;
 use App\Models\SchoolClass;
 use App\Models\Subject;
+use App\Models\TeacherSubjectAssignment;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
@@ -26,20 +27,7 @@ class TeacherLearningMediaTest extends TestCase
 
     public function test_teacher_can_publish_lesson_with_uploaded_video_and_note_images(): void
     {
-        $teacher = User::factory()->create([
-            'role' => UserRole::Teacher,
-        ]);
-
-        $class = SchoolClass::create([
-            'name' => 'SS 1',
-            'slug' => 'ss-1-general',
-            'section' => 'General',
-        ]);
-
-        $subject = Subject::create([
-            'name' => 'Biology',
-            'code' => 'BIO101',
-        ]);
+        [$teacher, $class, $subject] = $this->teacherAccessContext('SS 1', 'ss-1-general', 'Biology', 'BIO101');
 
         $response = $this->actingAs($teacher)->post(route('teacher.lessons.store'), [
             'subject_id' => $subject->id,
@@ -66,20 +54,7 @@ class TeacherLearningMediaTest extends TestCase
 
     public function test_teacher_can_create_assignment_with_uploaded_images(): void
     {
-        $teacher = User::factory()->create([
-            'role' => UserRole::Teacher,
-        ]);
-
-        $class = SchoolClass::create([
-            'name' => 'SS 2',
-            'slug' => 'ss-2-general',
-            'section' => 'General',
-        ]);
-
-        $subject = Subject::create([
-            'name' => 'Physics',
-            'code' => 'PHY101',
-        ]);
+        [$teacher, $class, $subject] = $this->teacherAccessContext('SS 2', 'ss-2-general', 'Physics', 'PHY101');
 
         $response = $this->actingAs($teacher)->post(route('teacher.assignments.store'), [
             'subject_id' => $subject->id,
@@ -100,5 +75,35 @@ class TeacherLearningMediaTest extends TestCase
         $this->assertNotNull($assignment);
         $this->assertCount(1, $assignment->attachment_images ?? []);
         $this->assertFileExists(public_path($assignment->attachment_images[0]));
+    }
+
+    protected function teacherAccessContext(string $className, string $classSlug, string $subjectName, string $subjectCode): array
+    {
+        $teacher = User::factory()->create([
+            'role' => UserRole::Teacher,
+        ]);
+        $admin = User::factory()->create([
+            'role' => UserRole::Admin,
+        ]);
+        $class = SchoolClass::create([
+            'name' => $className,
+            'slug' => $classSlug,
+            'section' => 'General',
+        ]);
+        $subject = Subject::create([
+            'name' => $subjectName,
+            'code' => $subjectCode,
+        ]);
+
+        TeacherSubjectAssignment::create([
+            'teacher_id' => $teacher->id,
+            'school_class_id' => $class->id,
+            'subject_id' => $subject->id,
+            'assigned_by' => $admin->id,
+            'is_active' => true,
+            'assigned_at' => now(),
+        ]);
+
+        return [$teacher, $class, $subject];
     }
 }
