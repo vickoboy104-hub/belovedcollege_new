@@ -5,9 +5,9 @@ namespace App\Http\Controllers;
 use App\Enums\UserRole;
 use App\Models\Assignment;
 use App\Models\AssignmentSubmission;
+use App\Models\Assessment;
 use App\Models\AssessmentResult;
 use App\Models\AttendanceRecord;
-use App\Models\Assessment;
 use App\Models\CbtAttempt;
 use App\Models\FeeInvoice;
 use App\Models\Lesson;
@@ -15,13 +15,15 @@ use App\Models\Payment;
 use App\Models\Setting;
 use App\Models\Student;
 use App\Models\StudentTermReport;
+use App\Services\Payments\PaymentGatewayManager;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\View as ViewFacade;
 use Illuminate\View\View;
 
 class StudentPortalController extends Controller
 {
-    public function index(Request $request): View
+    public function index(Request $request, PaymentGatewayManager $gateways): View
     {
         $user = $request->user();
         $children = collect();
@@ -120,6 +122,9 @@ class StudentPortalController extends Controller
                 ->get()
             : collect();
 
+        $paymentGateways = $gateways->catalog(onlyAvailable: true);
+        ViewFacade::share('paymentGatewayCatalog', $paymentGateways);
+
         return view('portal.student', compact(
             'user',
             'student',
@@ -136,6 +141,7 @@ class StudentPortalController extends Controller
             'cbtEnabled',
             'cbtAssessments',
             'cbtAttempts',
+            'paymentGateways',
         ));
     }
 
@@ -145,6 +151,12 @@ class StudentPortalController extends Controller
 
         abort_unless($student, 403);
         abort_unless($student->school_class_id === $assignment->school_class_id, 403);
+
+        if ($assignment->due_date && now()->isAfter($assignment->due_date)) {
+            return back()->withErrors([
+                'content' => 'The assignment submission deadline has passed. Contact the teacher if an extension is required.',
+            ]);
+        }
 
         $validated = $request->validate([
             'content' => ['required', 'string', 'max:10000'],

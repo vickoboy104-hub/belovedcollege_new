@@ -18,6 +18,11 @@ class Setting extends Model
         'paystack_webhook_secret',
         'palmpay_private_key',
         'palmpay_webhook_secret',
+        'flutterwave_secret_key',
+        'flutterwave_encryption_key',
+        'flutterwave_secret_hash',
+        'flutterwave_client_secret',
+        'monnify_secret_key',
     ];
 
     protected const ENCRYPTED_PREFIX = 'encrypted:';

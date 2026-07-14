@@ -5,6 +5,7 @@ use App\Http\Controllers\CbtController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FinanceController;
 use App\Http\Controllers\PaymentController;
+use App\Http\Controllers\PaymentGatewaySettingsController;
 use App\Http\Controllers\PrivateMediaController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
@@ -32,7 +33,7 @@ Route::post('/result-checker', [ReportController::class, 'checkerLookup'])
     ->name('reports.checker.lookup');
 
 Route::get('/payments/callback/{provider}', [PaymentController::class, 'callback'])
-    ->where('provider', 'paystack|palmpay')
+    ->where('provider', 'paystack|palmpay|flutterwave|monnify')
     ->middleware('throttle:30,1')
     ->name('payments.callback');
 Route::post('/webhooks/paystack', [WebhookController::class, 'paystack'])
@@ -41,6 +42,12 @@ Route::post('/webhooks/paystack', [WebhookController::class, 'paystack'])
 Route::post('/webhooks/palmpay', [WebhookController::class, 'palmpay'])
     ->middleware('throttle:120,1')
     ->name('webhooks.palmpay');
+Route::post('/webhooks/flutterwave', [WebhookController::class, 'flutterwave'])
+    ->middleware('throttle:120,1')
+    ->name('webhooks.flutterwave');
+Route::post('/webhooks/monnify', [WebhookController::class, 'monnify'])
+    ->middleware('throttle:120,1')
+    ->name('webhooks.monnify');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
@@ -56,6 +63,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->where('section', 'website-foundation|theme-colors|landing-builder|homepage-media|workspace-backgrounds|site-backgrounds|welcome-popup|gallery-uploader|homepage-text|box-backgrounds-a|box-backgrounds-b|payment-settings|contact-messages')
             ->name('admin.settings');
         Route::post('/admin/settings', [AdminController::class, 'updateSettings'])->name('admin.settings.update');
+        Route::get('/admin/payment-gateways', [PaymentGatewaySettingsController::class, 'index'])->name('admin.payment-gateways.index');
+        Route::put('/admin/payment-gateways', [PaymentGatewaySettingsController::class, 'update'])->name('admin.payment-gateways.update');
         Route::get('/admin/people', [AdminController::class, 'people'])->name('admin.people');
         Route::get('/admin/people/students/{classSlug?}', [StudentManagementController::class, 'index'])->name('admin.students.index');
         Route::get('/admin/people/parents', [AdminController::class, 'parents'])->name('admin.parents.index');
