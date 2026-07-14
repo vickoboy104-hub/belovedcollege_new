@@ -4,6 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    @if (request()->routeIs('teacher.*'))
+        <meta name="teacher-access-map-url" content="{{ route('teacher.access-map') }}">
+    @endif
     <title>{{ $schoolSettings['school_name'] ?? config('app.name', 'BELOVED SCHOOLS') }}</title>
     @include('partials.theme-head')
     @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/print.css'])
@@ -63,5 +66,8 @@
     </div>
     @vite(['resources/js/print-settings.js'])
     <script src="{{ asset('sidebar-scroll-persistence.js') }}?v=20260711-sidebar-scroll-1"></script>
+    @if (request()->routeIs('teacher.*'))
+        <script src="{{ asset('teacher-access-filter.js') }}?v=20260714-teacher-access-1"></script>
+    @endif
 </body>
 </html>
