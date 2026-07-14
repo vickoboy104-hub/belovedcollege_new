@@ -97,11 +97,19 @@ class WebhookController extends Controller
 
     public function monnify(Request $request): JsonResponse
     {
+        $environment = Setting::getValue('monnify_environment', 'sandbox');
         $secret = Setting::getValue('monnify_secret_key');
         $signature = (string) $request->header('monnify-signature');
         $expected = $secret ? hash_hmac('sha512', $request->getContent(), $secret) : null;
 
-        if (! $expected || ! $signature || ! hash_equals($expected, $signature)) {
+        // Monnify signs production webhooks but does not include the signature
+        // header on sandbox notifications. Sandbox notifications are still
+        // treated only as prompts to perform authoritative server verification.
+        if ($environment === 'live') {
+            if (! $expected || ! $signature || ! hash_equals($expected, $signature)) {
+                return response()->json(['message' => 'Invalid signature'], 401);
+            }
+        } elseif ($signature !== '' && (! $expected || ! hash_equals($expected, $signature))) {
             return response()->json(['message' => 'Invalid signature'], 401);
         }
 
