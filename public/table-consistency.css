@@ -1,0 +1,242 @@
+/* Final shared table layer: consistent pinned actions, stable widths, and compact entity directories. */
+.admin-table-card,
+.admin-table-wrap {
+    container-type: inline-size;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.admin-table-scroll {
+    position: relative !important;
+    isolation: isolate !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: auto !important;
+    overscroll-behavior-inline: contain;
+    scrollbar-gutter: stable;
+}
+
+.admin-data-table.is-table-consistency-ready,
+.admin-data-table.has-sticky-actions {
+    border-collapse: separate !important;
+    border-spacing: 0 !important;
+}
+
+.admin-data-table .table-action-column,
+.admin-data-table.has-sticky-actions thead th:last-child,
+.admin-data-table.has-sticky-actions tbody td:last-child:not([colspan]) {
+    position: sticky !important;
+    right: 0 !important;
+    width: 8.5rem !important;
+    min-width: 8.5rem !important;
+    max-width: 8.5rem !important;
+    padding-left: 0.7rem !important;
+    padding-right: 0.7rem !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+    background-clip: padding-box !important;
+    border-left: 1px solid var(--theme-border, rgba(203, 213, 225, 0.95)) !important;
+}
+
+.admin-data-table.has-multiple-row-actions .table-action-column {
+    width: 10.5rem !important;
+    min-width: 10.5rem !important;
+    max-width: 10.5rem !important;
+}
+
+.admin-data-table thead .table-action-column,
+.admin-data-table.has-sticky-actions thead th:last-child {
+    z-index: 45 !important;
+    background: var(--theme-surface-soft, #f8fafc) !important;
+    color: var(--theme-text, #0f172a) !important;
+    box-shadow: -14px 0 24px -20px rgba(15, 23, 42, 0.95) !important;
+}
+
+.admin-data-table tbody .table-action-column,
+.admin-data-table.has-sticky-actions tbody td:last-child:not([colspan]) {
+    z-index: 35 !important;
+    background: var(--theme-surface, rgba(255, 255, 255, 0.985)) !important;
+    color: var(--theme-text, #0f172a) !important;
+    box-shadow: -14px 0 24px -20px rgba(15, 23, 42, 0.92) !important;
+    backdrop-filter: blur(7px);
+    -webkit-backdrop-filter: blur(7px);
+}
+
+.admin-data-table tbody tr:nth-child(even) .table-action-column {
+    background: var(--theme-surface-soft, rgba(248, 250, 252, 0.99)) !important;
+}
+
+.admin-data-table tbody tr:hover .table-action-column,
+.admin-data-table tbody tr:focus-within .table-action-column {
+    background: #eff6ff !important;
+}
+
+html.theme-dark-corporate .admin-data-table thead .table-action-column,
+html.theme-dark-corporate .admin-data-table.has-sticky-actions thead th:last-child {
+    background: #172033 !important;
+    color: #ffffff !important;
+    border-left-color: #475569 !important;
+}
+
+html.theme-dark-corporate .admin-data-table tbody .table-action-column,
+html.theme-dark-corporate .admin-data-table.has-sticky-actions tbody td:last-child:not([colspan]) {
+    background: rgba(15, 23, 42, 0.99) !important;
+    color: #f8fafc !important;
+    border-left-color: #475569 !important;
+}
+
+html.theme-dark-corporate .admin-data-table tbody tr:nth-child(even) .table-action-column {
+    background: rgba(23, 32, 51, 0.99) !important;
+}
+
+html.theme-dark-corporate .admin-data-table tbody tr:hover .table-action-column,
+html.theme-dark-corporate .admin-data-table tbody tr:focus-within .table-action-column {
+    background: #1e3a5f !important;
+}
+
+.admin-data-table .table-action-column > form,
+.admin-data-table .table-action-column > div,
+.admin-data-table .table-action-column > a,
+.admin-data-table .table-action-column > button {
+    position: relative;
+    z-index: 1;
+}
+
+.admin-data-table .table-action-column .table-action-group {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.35rem !important;
+    width: 100% !important;
+}
+
+.admin-data-table .table-action-column :is(.table-view-btn, .table-delete-btn, .table-toggle-btn, .table-mini-link, .btn) {
+    max-width: 100%;
+    white-space: nowrap !important;
+}
+
+.admin-data-table .table-action-column .table-view-btn {
+    min-width: 5.75rem;
+    justify-content: center;
+    text-align: center;
+}
+
+@media (min-width: 768px) {
+    .admin-data-table .table-primary-column {
+        position: sticky !important;
+        left: 0 !important;
+        z-index: 30 !important;
+        background: var(--theme-surface, #ffffff) !important;
+        box-shadow: 12px 0 22px -22px rgba(15, 23, 42, 0.95) !important;
+    }
+
+    .admin-data-table thead .table-primary-column {
+        z-index: 40 !important;
+        background: var(--theme-surface-soft, #f8fafc) !important;
+    }
+
+    .admin-data-table tbody tr:nth-child(even) .table-primary-column {
+        background: var(--theme-surface-soft, #f8fafc) !important;
+    }
+
+    .admin-data-table tbody tr:hover .table-primary-column,
+    .admin-data-table tbody tr:focus-within .table-primary-column {
+        background: #eff6ff !important;
+    }
+
+    html.theme-dark-corporate .admin-data-table .table-primary-column {
+        background: #0f172a !important;
+    }
+
+    html.theme-dark-corporate .admin-data-table thead .table-primary-column,
+    html.theme-dark-corporate .admin-data-table tbody tr:nth-child(even) .table-primary-column {
+        background: #172033 !important;
+    }
+
+    html.theme-dark-corporate .admin-data-table tbody tr:hover .table-primary-column,
+    html.theme-dark-corporate .admin-data-table tbody tr:focus-within .table-primary-column {
+        background: #1e3a5f !important;
+    }
+}
+
+/* Entity directories deliberately expose only the information needed for scanning rows. */
+.admin-data-table.is-entity-directory-table {
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    table-layout: fixed !important;
+}
+
+.admin-data-table.is-entity-directory-table .table-secondary-column {
+    display: none !important;
+}
+
+.admin-data-table.is-entity-directory-table .table-person-text span {
+    display: none !important;
+}
+
+.admin-data-table.is-entity-directory-table :is(th, td) {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.admin-data-table.is-entity-directory-table .table-primary-column,
+.admin-data-table.is-entity-directory-table th:first-child,
+.admin-data-table.is-entity-directory-table td:first-child:not([colspan]) {
+    width: 34% !important;
+}
+
+.admin-data-table.is-entity-directory-table .table-action-column {
+    width: 8.5rem !important;
+    min-width: 8.5rem !important;
+    max-width: 8.5rem !important;
+}
+
+.admin-data-table.is-entity-directory-table.has-multiple-row-actions .table-action-column {
+    width: 10.5rem !important;
+    min-width: 10.5rem !important;
+    max-width: 10.5rem !important;
+}
+
+@container (max-width: 920px) {
+    .admin-data-table.is-entity-directory-table :is(th, td) {
+        padding-left: 0.7rem !important;
+        padding-right: 0.7rem !important;
+    }
+
+    .admin-data-table.is-entity-directory-table .table-primary-column,
+    .admin-data-table.is-entity-directory-table th:first-child,
+    .admin-data-table.is-entity-directory-table td:first-child:not([colspan]) {
+        width: 38% !important;
+    }
+}
+
+@media (max-width: 767px) {
+    .admin-data-table .table-action-column,
+    .admin-data-table.has-sticky-actions thead th:last-child,
+    .admin-data-table.has-sticky-actions tbody td:last-child:not([colspan]) {
+        width: 7rem !important;
+        min-width: 7rem !important;
+        max-width: 7rem !important;
+    }
+}
+
+@media print {
+    .admin-data-table .table-action-column,
+    .admin-data-table .table-primary-column,
+    .admin-data-table.has-sticky-actions :is(th, td):last-child {
+        position: static !important;
+        width: auto !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        border-left: 0 !important;
+        box-shadow: none !important;
+        backdrop-filter: none !important;
+    }
+
+    .admin-data-table.is-entity-directory-table .table-secondary-column {
+        display: table-cell !important;
+    }
+}

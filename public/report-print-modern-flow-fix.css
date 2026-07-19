@@ -1,12 +1,60 @@
 @media print {
-    /* Keep the lower report sections directly under the score table. */
+    /*
+     * True portrait document flow.
+     * The score table is followed by every supporting section vertically;
+     * no lower section is positioned beside another full report section.
+     */
+    html,
+    body.report-print-modern {
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+
+    body.report-print-modern .modern-report-page {
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+
     body.report-print-modern .modern-report-sheet {
-        justify-content: flex-start !important;
-        align-content: flex-start !important;
+        display: block !important;
+        width: 200mm !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        margin: 0 !important;
+        padding: 2mm !important;
+        overflow: visible !important;
+        break-inside: avoid-page !important;
+        page-break-inside: avoid !important;
+    }
+
+    body.report-print-modern .modern-report-header,
+    body.report-print-modern .modern-report-summary,
+    body.report-print-modern .modern-report-scores,
+    body.report-print-modern .modern-report-development,
+    body.report-print-modern .modern-report-remarks,
+    body.report-print-modern .modern-report-footer {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
     }
 
     body.report-print-modern .modern-report-scores {
+        display: block !important;
         flex: 0 0 auto !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        margin: 1.15mm 0 0 !important;
+        overflow: visible !important;
+    }
+
+    body.report-print-modern .modern-report-table-scroll {
+        display: block !important;
         width: 100% !important;
         height: auto !important;
         min-height: 0 !important;
@@ -14,20 +62,152 @@
         overflow: visible !important;
     }
 
-    body.report-print-modern .modern-report-table-scroll {
+    body.report-print-modern .modern-report-table {
+        width: 100% !important;
+        height: auto !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+    }
+
+    /* Character development first, then practical skills below it. */
+    body.report-print-modern .modern-report-development {
+        display: block !important;
+        grid-template-columns: none !important;
+        flex: 0 0 auto !important;
         height: auto !important;
         min-height: 0 !important;
         max-height: none !important;
+        margin: 1.15mm 0 0 !important;
         overflow: visible !important;
     }
 
-    body.report-print-modern .modern-report-table {
-        height: auto !important;
+    body.report-print-modern .modern-report-development-card {
+        display: block !important;
+        width: 100% !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        padding: 1mm 1.15mm !important;
+        overflow: visible !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
     }
 
-    body.report-print-modern .modern-report-development,
-    body.report-print-modern .modern-report-remarks,
+    body.report-print-modern .modern-report-development-card + .modern-report-development-card {
+        margin-top: 0.8mm !important;
+    }
+
+    body.report-print-modern .modern-report-development-card h2 {
+        margin: 0 !important;
+        font-size: 6.8pt !important;
+        line-height: 1.05 !important;
+    }
+
+    body.report-print-modern .modern-report-development-card > div {
+        display: grid !important;
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+        gap: 0.5mm !important;
+        margin-top: 0.55mm !important;
+    }
+
+    body.report-print-modern .modern-report-development-card:nth-child(2) > div {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+
+    body.report-print-modern .modern-report-development-card > div > div {
+        min-width: 0 !important;
+        min-height: 4.8mm !important;
+        padding: 0.45mm 0.6mm !important;
+        border-radius: 1mm !important;
+    }
+
+    body.report-print-modern .modern-report-development-card .text-sm {
+        font-size: 4.8pt !important;
+        line-height: 1.05 !important;
+    }
+
+    body.report-print-modern .modern-report-development-card .mt-1 {
+        margin-top: 0.18mm !important;
+    }
+
+    /* Every remarks card occupies the full portrait width, one after another. */
+    body.report-print-modern .modern-report-remarks {
+        display: block !important;
+        grid-template-columns: none !important;
+        flex: 0 0 auto !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        margin: 1.15mm 0 0 !important;
+        overflow: visible !important;
+    }
+
+    body.report-print-modern .modern-report-remarks > div {
+        width: 100% !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        margin: 0 !important;
+        padding: 0.9mm 1.1mm !important;
+        overflow: visible !important;
+        font-size: 4.9pt !important;
+        line-height: 1.08 !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+
+    body.report-print-modern .modern-report-remarks > div + div {
+        margin-top: 0.75mm !important;
+    }
+
+    body.report-print-modern .modern-report-remarks p {
+        margin-top: 0.22mm !important;
+    }
+
+    body.report-print-modern .modern-report-remarks .mt-4 {
+        margin-top: 0.55mm !important;
+    }
+
+    /* Approval, next-term information and signature are stacked at the bottom. */
     body.report-print-modern .modern-report-footer {
-        flex-shrink: 0 !important;
+        display: block !important;
+        grid-template-columns: none !important;
+        flex: 0 0 auto !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        margin: 1.15mm 0 0 !important;
+        overflow: visible !important;
+    }
+
+    body.report-print-modern .modern-report-footer > div {
+        width: 100% !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        padding: 0.85mm 1.1mm !important;
+        font-size: 4.9pt !important;
+        line-height: 1.08 !important;
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+
+    body.report-print-modern .modern-report-footer > div + div {
+        margin-top: 0.65mm !important;
+    }
+
+    body.report-print-modern .modern-report-footer .text-xs {
+        font-size: 4.5pt !important;
+        letter-spacing: 0.05em !important;
+    }
+
+    body.report-print-modern .modern-report-footer .mt-3 {
+        margin-top: 0.35mm !important;
+    }
+
+    body.report-print-modern .modern-report-footer .mt-1 {
+        margin-top: 0.18mm !important;
+    }
+
+    body.report-print-modern .modern-report-footer .mt-10 {
+        margin-top: 1.15mm !important;
+        padding-top: 0.4mm !important;
     }
 }
