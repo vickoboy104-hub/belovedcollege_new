@@ -31,6 +31,9 @@
     <link rel="stylesheet" href="{{ asset('report-search-controls.css') }}?v=20260719-report-search-optional-1">
     <link rel="stylesheet" href="{{ asset('theme-variants.css') }}?v=20260714-theme-variants-1">
     <link rel="stylesheet" href="{{ asset('theme-settings-presets.css') }}?v=20260714-theme-settings-presets-1">
+    @if (request()->routeIs('admin.reports.index'))
+        <script src="{{ asset('report-search-behavior.js') }}?v=20260719-report-search-optional-2"></script>
+    @endif
 </head>
 @php
     $routeCssClass = 'route-'.str_replace('.', '-', request()->route()?->getName() ?? 'unknown');
@@ -87,9 +90,6 @@
             data-teacher-access-url="{{ route('admin.teacher-access.index') }}"
             data-payment-gateways-url="{{ route('admin.payment-gateways.index') }}"
         ></script>
-    @endif
-    @if (request()->routeIs('admin.reports.index'))
-        <script src="{{ asset('report-search-behavior.js') }}?v=20260719-report-search-optional-1"></script>
     @endif
     @if (request()->routeIs('teacher.*'))
         <script src="{{ asset('teacher-access-filter.js') }}?v=20260714-teacher-access-1"></script>
