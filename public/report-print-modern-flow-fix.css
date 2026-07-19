@@ -1,0 +1,33 @@
+@media print {
+    /* Keep the lower report sections directly under the score table. */
+    body.report-print-modern .modern-report-sheet {
+        justify-content: flex-start !important;
+        align-content: flex-start !important;
+    }
+
+    body.report-print-modern .modern-report-scores {
+        flex: 0 0 auto !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+
+    body.report-print-modern .modern-report-table-scroll {
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+
+    body.report-print-modern .modern-report-table {
+        height: auto !important;
+    }
+
+    body.report-print-modern .modern-report-development,
+    body.report-print-modern .modern-report-remarks,
+    body.report-print-modern .modern-report-footer {
+        flex-shrink: 0 !important;
+    }
+}
