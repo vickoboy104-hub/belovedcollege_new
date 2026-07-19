@@ -1,0 +1,136 @@
+@page {
+    size: A4 portrait;
+    margin: 4mm;
+}
+
+@media print {
+    /*
+     * Print the approved website report design instead of redesigning it.
+     * The entire desktop preview is scaled uniformly to fit one A4 portrait page.
+     */
+    html,
+    body.report-print-modern {
+        width: auto !important;
+        height: auto !important;
+        min-width: 0 !important;
+        min-height: 0 !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        background: #ffffff !important;
+        color: #0f172a !important;
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+    }
+
+    body.report-print-modern .modern-report-actions {
+        display: none !important;
+    }
+
+    body.report-print-modern .modern-report-page {
+        width: 1120px !important;
+        max-width: none !important;
+        margin: 0 auto !important;
+        padding: 0 !important;
+        overflow: visible !important;
+        zoom: 0.62;
+    }
+
+    body.report-print-modern.report-density-compact .modern-report-page {
+        zoom: 0.56;
+    }
+
+    body.report-print-modern.report-density-tight .modern-report-page {
+        zoom: 0.50;
+    }
+
+    body.report-print-modern .modern-report-sheet {
+        width: 1120px !important;
+        max-width: none !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        margin: 0 !important;
+        overflow: visible !important;
+        box-shadow: none !important;
+        break-inside: avoid-page !important;
+        page-break-inside: avoid !important;
+    }
+
+    /* Force the same desktop arrangements visible in the website preview. */
+    body.report-print-modern .modern-report-header {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: flex-start !important;
+        justify-content: space-between !important;
+    }
+
+    body.report-print-modern .modern-report-brand {
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+    }
+
+    body.report-print-modern .modern-report-term {
+        width: 280px !important;
+        min-width: 280px !important;
+        max-width: 280px !important;
+        flex: 0 0 280px !important;
+    }
+
+    body.report-print-modern .modern-report-summary {
+        display: grid !important;
+        grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    }
+
+    body.report-print-modern .modern-report-scores,
+    body.report-print-modern .modern-report-table-scroll {
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
+        overflow: visible !important;
+    }
+
+    body.report-print-modern .modern-report-table {
+        width: 100% !important;
+        min-width: 800px !important;
+        max-width: none !important;
+        table-layout: auto !important;
+    }
+
+    body.report-print-modern .modern-report-development {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        align-items: stretch !important;
+    }
+
+    body.report-print-modern .modern-report-development-card > div {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    body.report-print-modern .modern-report-remarks {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        align-items: stretch !important;
+    }
+
+    body.report-print-modern .modern-report-footer {
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        align-items: stretch !important;
+    }
+
+    body.report-print-modern .modern-report-header,
+    body.report-print-modern .modern-report-summary,
+    body.report-print-modern .modern-report-scores,
+    body.report-print-modern .modern-report-development,
+    body.report-print-modern .modern-report-remarks,
+    body.report-print-modern .modern-report-footer,
+    body.report-print-modern .modern-report-development-card,
+    body.report-print-modern .modern-report-remarks > div,
+    body.report-print-modern .modern-report-footer > div {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+}
