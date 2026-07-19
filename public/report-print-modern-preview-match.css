@@ -28,24 +28,24 @@
     }
 
     body.report-print-modern .modern-report-page {
-        width: 1120px !important;
+        width: 1088px !important;
         max-width: none !important;
         margin: 0 auto !important;
         padding: 0 !important;
         overflow: visible !important;
-        zoom: 0.62;
+        zoom: 0.66;
     }
 
     body.report-print-modern.report-density-compact .modern-report-page {
-        zoom: 0.56;
+        zoom: 0.60;
     }
 
     body.report-print-modern.report-density-tight .modern-report-page {
-        zoom: 0.50;
+        zoom: 0.54;
     }
 
     body.report-print-modern .modern-report-sheet {
-        width: 1120px !important;
+        width: 1088px !important;
         max-width: none !important;
         height: auto !important;
         min-height: 0 !important;
