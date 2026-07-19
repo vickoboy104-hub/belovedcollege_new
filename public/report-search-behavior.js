@@ -1,12 +1,39 @@
 (() => {
+    const neutraliseForcedSearch = () => {
+        const originalInput = document.getElementById('report-student-search');
+        if (!originalInput || originalInput.dataset.optionalSearchReady === 'true') return originalInput;
+
+        const input = originalInput.cloneNode(true);
+        input.removeAttribute('list');
+        input.removeAttribute('autofocus');
+        input.removeAttribute('data-report-search-input');
+        input.dataset.optionalSearchReady = 'true';
+        originalInput.replaceWith(input);
+
+        return input;
+    };
+
+    if (document.readyState === 'loading') {
+        const observer = new MutationObserver(() => {
+            const input = neutraliseForcedSearch();
+            if (input) observer.disconnect();
+        });
+
+        observer.observe(document.documentElement, {
+            childList: true,
+            subtree: true,
+        });
+    }
+
     const initialiseReportSearch = () => {
         if (!document.body.classList.contains('route-admin-reports-index')) return;
 
-        const originalInput = document.getElementById('report-student-search');
+        const input = neutraliseForcedSearch();
         const form = document.getElementById('report-student-search-form');
         const dataElement = document.getElementById('report-student-search-data');
 
-        if (!originalInput || !form || !dataElement || originalInput.dataset.optionalSearchReady === 'true') return;
+        if (!input || !form || !dataElement || input.dataset.optionalSearchInitialised === 'true') return;
+        input.dataset.optionalSearchInitialised = 'true';
 
         let records = [];
         try {
@@ -15,21 +42,13 @@
             records = [];
         }
 
-        /* Replace the input so the earlier native datalist/auto-open listeners are removed. */
-        const input = originalInput.cloneNode(true);
-        input.removeAttribute('list');
-        input.removeAttribute('autofocus');
-        input.removeAttribute('data-report-search-input');
-        input.dataset.optionalSearchReady = 'true';
-        originalInput.replaceWith(input);
-
         document.getElementById('report-student-options')?.remove();
         document.querySelector('[data-report-open-link]')?.remove();
 
         const searchFieldWrapper = input.closest('div');
         const helperText = searchFieldWrapper?.querySelector('p');
         if (helperText) {
-            helperText.textContent = 'Type freely and click Search. Student suggestions are optional and will open only when you choose to browse them.';
+            helperText.textContent = 'Type freely and click Search. Student suggestions are optional and open only when you choose to browse them.';
         }
 
         const normalize = (value) => String(value || '')
@@ -42,7 +61,7 @@
             const query = normalize(input.value);
             const words = query.split(' ').filter(Boolean);
 
-            const matching = records.filter((record) => {
+            return records.filter((record) => {
                 if (words.length === 0) return true;
 
                 const haystack = normalize([
@@ -54,9 +73,7 @@
                 ].join(' '));
 
                 return words.every((word) => haystack.includes(word));
-            });
-
-            return matching.slice(0, 20);
+            }).slice(0, 20);
         };
 
         if (searchFieldWrapper && records.length > 0) {
