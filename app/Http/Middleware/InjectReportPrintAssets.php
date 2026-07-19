@@ -33,7 +33,7 @@ class InjectReportPrintAssets
         $bodyClass = $classic ? 'report-print-classic' : 'report-print-modern';
         $stylesheets = $classic
             ? ['report-print-classic.css']
-            : ['report-print-modern.css', 'report-print-modern-flow-fix.css'];
+            : ['report-print-modern-preview-match.css'];
 
         $html = preg_replace_callback('/<body\b[^>]*>/i', function (array $match) use ($bodyClass): string {
             $tag = $match[0];
@@ -55,8 +55,8 @@ class InjectReportPrintAssets
                 continue;
             }
 
-            $version = $stylesheet === 'report-print-modern-flow-fix.css'
-                ? '20260720-report-print-portrait-flow-2'
+            $version = $stylesheet === 'report-print-modern-preview-match.css'
+                ? '20260720-report-print-preview-match-1'
                 : '20260713-report-print-1';
             $link = '<link rel="stylesheet" href="'.e(asset($stylesheet)).'?v='.$version.'">';
             $html = preg_replace('/<\/head>/i', $link.'</head>', $html, 1) ?? $html;
