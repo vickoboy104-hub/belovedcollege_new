@@ -1,4 +1,4 @@
-/* Compact the report-directory lookup and prevent inherited form styles from stretching it. */
+/* Compact the report-directory lookup and keep student suggestions strictly optional. */
 .route-admin-reports-index #report-student-search-form {
     align-items: end !important;
     grid-auto-rows: min-content !important;
@@ -54,6 +54,90 @@
     align-items: end !important;
 }
 
+.route-admin-reports-index .report-suggestion-picker {
+    position: relative;
+    width: 100%;
+    margin-top: 0.45rem;
+}
+
+.route-admin-reports-index .report-suggestion-picker > summary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 2rem;
+    padding: 0.42rem 0.7rem;
+    border: 1px solid var(--theme-border, #cbd5e1);
+    border-radius: 0.65rem;
+    background: var(--theme-surface-soft, #f8fafc);
+    color: var(--theme-text, #0f172a);
+    cursor: pointer;
+    list-style: none;
+    font-size: 0.72rem;
+    font-weight: 800;
+}
+
+.route-admin-reports-index .report-suggestion-picker > summary::-webkit-details-marker {
+    display: none;
+}
+
+.route-admin-reports-index .report-suggestion-picker[open] > summary {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+}
+
+.route-admin-reports-index .report-suggestion-panel {
+    position: absolute;
+    z-index: 80;
+    top: calc(100% + 0.4rem);
+    left: 0;
+    right: 0;
+    max-height: 18rem;
+    overflow-y: auto;
+    padding: 0.45rem;
+    border: 1px solid var(--theme-border, #cbd5e1);
+    border-radius: 0.85rem;
+    background: var(--theme-surface, #ffffff);
+    box-shadow: 0 18px 45px rgba(15, 23, 42, 0.18);
+}
+
+.route-admin-reports-index .report-suggestion-option {
+    display: flex;
+    width: 100%;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 0.65rem 0.75rem;
+    border: 0;
+    border-radius: 0.65rem;
+    background: transparent;
+    color: var(--theme-text, #0f172a);
+    text-align: left;
+    cursor: pointer;
+}
+
+.route-admin-reports-index .report-suggestion-option:hover,
+.route-admin-reports-index .report-suggestion-option:focus-visible {
+    background: var(--theme-surface-soft, #eff6ff);
+    outline: none;
+}
+
+.route-admin-reports-index .report-suggestion-option strong {
+    font-size: 0.78rem;
+    line-height: 1.25;
+}
+
+.route-admin-reports-index .report-suggestion-option span,
+.route-admin-reports-index .report-suggestion-empty {
+    color: var(--theme-muted, #64748b);
+    font-size: 0.68rem;
+    font-weight: 650;
+    line-height: 1.35;
+}
+
+.route-admin-reports-index .report-suggestion-empty {
+    margin: 0;
+    padding: 0.75rem;
+}
+
 @media (min-width: 1024px) {
     .route-admin-reports-index #report-student-search-form {
         grid-template-columns: minmax(18rem, 1fr) 13.25rem minmax(17rem, auto) !important;
@@ -72,5 +156,11 @@
         min-height: 2.75rem !important;
         max-height: 2.75rem !important;
         flex-basis: 2.75rem !important;
+    }
+
+    .route-admin-reports-index .report-suggestion-panel {
+        position: static;
+        margin-top: 0.4rem;
+        max-height: 15rem;
     }
 }
