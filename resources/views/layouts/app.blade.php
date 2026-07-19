@@ -27,10 +27,13 @@
     <link rel="stylesheet" href="{{ asset('interface-corrections.css') }}?v=20260712-dashboard-table-1">
     <link rel="stylesheet" href="{{ asset('mobile-interface.css') }}?v=20260713-mobile-audit-1">
     <link rel="stylesheet" href="{{ asset('mobile-interface-fixes.css') }}?v=20260713-mobile-audit-2">
-    <link rel="stylesheet" href="{{ asset('student-actions-overlay.css') }}?v=20260713-student-actions-overlay-1">
-    <link rel="stylesheet" href="{{ asset('report-search-controls.css') }}?v=20260714-report-search-2">
+    <link rel="stylesheet" href="{{ asset('student-actions-overlay.css') }}?v=20260719-student-directory-essential-columns-1">
+    <link rel="stylesheet" href="{{ asset('report-search-controls.css') }}?v=20260719-report-search-optional-1">
     <link rel="stylesheet" href="{{ asset('theme-variants.css') }}?v=20260714-theme-variants-1">
     <link rel="stylesheet" href="{{ asset('theme-settings-presets.css') }}?v=20260714-theme-settings-presets-1">
+    @if (request()->routeIs('admin.reports.index'))
+        <script src="{{ asset('report-search-behavior.js') }}?v=20260719-report-search-optional-2"></script>
+    @endif
 </head>
 @php
     $routeCssClass = 'route-'.str_replace('.', '-', request()->route()?->getName() ?? 'unknown');

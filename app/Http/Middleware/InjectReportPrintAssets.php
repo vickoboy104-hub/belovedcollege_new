@@ -31,7 +31,9 @@ class InjectReportPrintAssets
 
         $classic = $request->string('layout')->toString() === 'classic';
         $bodyClass = $classic ? 'report-print-classic' : 'report-print-modern';
-        $stylesheet = $classic ? 'report-print-classic.css' : 'report-print-modern.css';
+        $stylesheets = $classic
+            ? ['report-print-classic.css']
+            : ['report-print-modern.css', 'report-print-modern-flow-fix.css'];
 
         $html = preg_replace_callback('/<body\b[^>]*>/i', function (array $match) use ($bodyClass): string {
             $tag = $match[0];
@@ -48,8 +50,15 @@ class InjectReportPrintAssets
             return preg_replace('/>$/', ' class="'.$bodyClass.'">', $tag) ?? $tag;
         }, $html, 1) ?? $html;
 
-        if (! str_contains($html, $stylesheet)) {
-            $link = '<link rel="stylesheet" href="'.e(asset($stylesheet)).'?v=20260713-report-print-1">';
+        foreach ($stylesheets as $stylesheet) {
+            if (str_contains($html, $stylesheet)) {
+                continue;
+            }
+
+            $version = $stylesheet === 'report-print-modern-flow-fix.css'
+                ? '20260719-report-print-flow-1'
+                : '20260713-report-print-1';
+            $link = '<link rel="stylesheet" href="'.e(asset($stylesheet)).'?v='.$version.'">';
             $html = preg_replace('/<\/head>/i', $link.'</head>', $html, 1) ?? $html;
         }
 

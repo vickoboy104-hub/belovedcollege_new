@@ -1,26 +1,71 @@
-/* Student directory: keep every row's View action visible while the table scrolls horizontally. */
+/* Student directory: keep the View action visible and show only the essential columns. */
 @media (min-width: 768px) {
     .route-admin-students-index .desktop-only-table .admin-table-scroll {
         position: relative;
         isolation: isolate;
-        overflow-x: auto;
-        overflow-y: visible;
+        overflow-x: clip !important;
+        overflow-y: auto;
         overscroll-behavior-inline: contain;
         scrollbar-gutter: stable;
     }
 
     .route-admin-students-index .desktop-only-table .admin-data-table {
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        table-layout: fixed !important;
         border-collapse: separate !important;
         border-spacing: 0 !important;
+    }
+
+    /* Keep only Name, Student ID, Class, Status and Actions in the directory table. */
+    .route-admin-students-index .desktop-only-table .admin-data-table :is(th, td):nth-child(2),
+    .route-admin-students-index .desktop-only-table .admin-data-table :is(th, td):nth-child(5),
+    .route-admin-students-index .desktop-only-table .admin-data-table :is(th, td):nth-child(6) {
+        display: none !important;
+    }
+
+    .route-admin-students-index .desktop-only-table .admin-data-table :is(th, td):nth-child(1) {
+        width: 38% !important;
+    }
+
+    .route-admin-students-index .desktop-only-table .admin-data-table :is(th, td):nth-child(3) {
+        width: 18% !important;
+    }
+
+    .route-admin-students-index .desktop-only-table .admin-data-table :is(th, td):nth-child(4) {
+        width: 20% !important;
+    }
+
+    .route-admin-students-index .desktop-only-table .admin-data-table :is(th, td):nth-child(7) {
+        width: 12% !important;
+        text-align: center !important;
+    }
+
+    .route-admin-students-index .desktop-only-table .table-person-text span {
+        display: none !important;
+    }
+
+    .route-admin-students-index .desktop-only-table .table-person,
+    .route-admin-students-index .desktop-only-table .table-person-text,
+    .route-admin-students-index .desktop-only-table .table-person-text strong {
+        min-width: 0 !important;
+    }
+
+    .route-admin-students-index .desktop-only-table .table-person-text strong {
+        display: block;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
     }
 
     .route-admin-students-index .desktop-only-table .admin-data-table thead th:last-child,
     .route-admin-students-index .desktop-only-table .admin-data-table tbody td:last-child {
         position: sticky !important;
         right: 0 !important;
-        width: 7.5rem;
-        min-width: 7.5rem !important;
-        max-width: 7.5rem;
+        width: 8rem !important;
+        min-width: 8rem !important;
+        max-width: 8rem !important;
         text-align: center !important;
         border-left: 1px solid rgba(148, 163, 184, 0.45) !important;
         background-clip: padding-box !important;
@@ -58,6 +103,10 @@
 }
 
 @media print {
+    .route-admin-students-index .desktop-only-table .admin-data-table :is(th, td) {
+        display: table-cell !important;
+    }
+
     .route-admin-students-index .desktop-only-table .admin-data-table :is(th, td):last-child {
         position: static !important;
         width: auto !important;
