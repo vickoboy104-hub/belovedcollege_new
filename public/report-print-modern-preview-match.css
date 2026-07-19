@@ -36,12 +36,22 @@
         zoom: 0.66;
     }
 
+    /* Fallback density classes for browsers without relational selector support. */
     body.report-print-modern.report-density-compact .modern-report-page {
-        zoom: 0.60;
+        zoom: 0.52;
     }
 
     body.report-print-modern.report-density-tight .modern-report-page {
-        zoom: 0.54;
+        zoom: 0.46;
+    }
+
+    /* Use the real subject-row count so longer reports still remain one A4 page. */
+    body.report-print-modern:has(.modern-report-table tbody tr:nth-child(8)) .modern-report-page {
+        zoom: 0.52;
+    }
+
+    body.report-print-modern:has(.modern-report-table tbody tr:nth-child(13)) .modern-report-page {
+        zoom: 0.46;
     }
 
     body.report-print-modern .modern-report-sheet {
@@ -52,7 +62,6 @@
         max-height: none !important;
         margin: 0 !important;
         overflow: visible !important;
-        box-shadow: none !important;
         break-inside: avoid-page !important;
         page-break-inside: avoid !important;
     }
