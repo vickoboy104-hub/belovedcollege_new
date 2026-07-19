@@ -27,8 +27,8 @@
     <link rel="stylesheet" href="{{ asset('interface-corrections.css') }}?v=20260712-dashboard-table-1">
     <link rel="stylesheet" href="{{ asset('mobile-interface.css') }}?v=20260713-mobile-audit-1">
     <link rel="stylesheet" href="{{ asset('mobile-interface-fixes.css') }}?v=20260713-mobile-audit-2">
-    <link rel="stylesheet" href="{{ asset('student-actions-overlay.css') }}?v=20260713-student-actions-overlay-1">
-    <link rel="stylesheet" href="{{ asset('report-search-controls.css') }}?v=20260714-report-search-2">
+    <link rel="stylesheet" href="{{ asset('student-actions-overlay.css') }}?v=20260719-student-directory-essential-columns-1">
+    <link rel="stylesheet" href="{{ asset('report-search-controls.css') }}?v=20260719-report-search-optional-1">
     <link rel="stylesheet" href="{{ asset('theme-variants.css') }}?v=20260714-theme-variants-1">
     <link rel="stylesheet" href="{{ asset('theme-settings-presets.css') }}?v=20260714-theme-settings-presets-1">
 </head>
@@ -87,6 +87,9 @@
             data-teacher-access-url="{{ route('admin.teacher-access.index') }}"
             data-payment-gateways-url="{{ route('admin.payment-gateways.index') }}"
         ></script>
+    @endif
+    @if (request()->routeIs('admin.reports.index'))
+        <script src="{{ asset('report-search-behavior.js') }}?v=20260719-report-search-optional-1"></script>
     @endif
     @if (request()->routeIs('teacher.*'))
         <script src="{{ asset('teacher-access-filter.js') }}?v=20260714-teacher-access-1"></script>
