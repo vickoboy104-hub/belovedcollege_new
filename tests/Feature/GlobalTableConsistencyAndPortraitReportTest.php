@@ -48,7 +48,8 @@ class GlobalTableConsistencyAndPortraitReportTest extends TestCase
         $this->assertIsString($middleware);
 
         $this->assertStringContainsString('Print the approved website report design', $stylesheet);
-        $this->assertStringContainsString('zoom: 0.62', $stylesheet);
+        $this->assertStringContainsString('width: 1088px !important', $stylesheet);
+        $this->assertStringContainsString('zoom: 0.66', $stylesheet);
         $this->assertStringContainsString('body.report-print-modern .modern-report-summary', $stylesheet);
         $this->assertStringContainsString('body.report-print-modern .modern-report-development', $stylesheet);
         $this->assertStringContainsString('body.report-print-modern .modern-report-remarks', $stylesheet);
