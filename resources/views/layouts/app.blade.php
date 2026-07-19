@@ -31,6 +31,7 @@
     <link rel="stylesheet" href="{{ asset('report-search-controls.css') }}?v=20260719-report-search-optional-1">
     <link rel="stylesheet" href="{{ asset('theme-variants.css') }}?v=20260714-theme-variants-1">
     <link rel="stylesheet" href="{{ asset('theme-settings-presets.css') }}?v=20260714-theme-settings-presets-1">
+    <link rel="stylesheet" href="{{ asset('table-consistency.css') }}?v=20260720-global-table-consistency-1">
     @if (request()->routeIs('admin.reports.index'))
         <script src="{{ asset('report-search-behavior.js') }}?v=20260719-report-search-optional-2"></script>
     @endif
@@ -84,6 +85,7 @@
     @endisset
     @vite(['resources/js/print-settings.js'])
     <script src="{{ asset('sidebar-scroll-persistence.js') }}?v=20260711-sidebar-scroll-1"></script>
+    <script src="{{ asset('table-consistency.js') }}?v=20260720-global-table-consistency-1"></script>
     @if (auth()->user()?->hasAnyRole(['admin', 'principal']))
         <script
             src="{{ asset('admin-navigation-shortcuts.js') }}?v=20260714-admin-shortcuts-1"
