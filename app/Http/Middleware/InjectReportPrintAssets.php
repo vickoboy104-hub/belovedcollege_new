@@ -56,7 +56,7 @@ class InjectReportPrintAssets
             }
 
             $version = $stylesheet === 'report-print-modern-flow-fix.css'
-                ? '20260719-report-print-flow-1'
+                ? '20260720-report-print-portrait-flow-2'
                 : '20260713-report-print-1';
             $link = '<link rel="stylesheet" href="'.e(asset($stylesheet)).'?v='.$version.'">';
             $html = preg_replace('/<\/head>/i', $link.'</head>', $html, 1) ?? $html;
