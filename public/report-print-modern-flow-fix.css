@@ -45,7 +45,7 @@
 
     body.report-print-modern .modern-report-scores {
         display: block !important;
-        flex: none !important;
+        flex: 0 0 auto !important;
         height: auto !important;
         min-height: 0 !important;
         max-height: none !important;
@@ -73,7 +73,7 @@
     body.report-print-modern .modern-report-development {
         display: block !important;
         grid-template-columns: none !important;
-        flex: none !important;
+        flex: 0 0 auto !important;
         height: auto !important;
         min-height: 0 !important;
         max-height: none !important;
@@ -133,7 +133,7 @@
     body.report-print-modern .modern-report-remarks {
         display: block !important;
         grid-template-columns: none !important;
-        flex: none !important;
+        flex: 0 0 auto !important;
         height: auto !important;
         min-height: 0 !important;
         max-height: none !important;
@@ -170,7 +170,7 @@
     body.report-print-modern .modern-report-footer {
         display: block !important;
         grid-template-columns: none !important;
-        flex: none !important;
+        flex: 0 0 auto !important;
         height: auto !important;
         min-height: 0 !important;
         max-height: none !important;
