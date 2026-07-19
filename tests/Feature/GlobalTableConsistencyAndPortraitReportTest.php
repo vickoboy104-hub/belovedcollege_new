@@ -39,24 +39,27 @@ class GlobalTableConsistencyAndPortraitReportTest extends TestCase
         $this->assertStringContainsString('display: none !important', $stylesheet);
     }
 
-    public function test_modern_report_print_uses_vertical_portrait_flow_without_stretched_sections(): void
+    public function test_modern_report_print_matches_the_website_preview_layout(): void
     {
-        $stylesheet = file_get_contents(public_path('report-print-modern-flow-fix.css'));
+        $stylesheet = file_get_contents(public_path('report-print-modern-preview-match.css'));
         $middleware = file_get_contents(app_path('Http/Middleware/InjectReportPrintAssets.php'));
 
         $this->assertIsString($stylesheet);
         $this->assertIsString($middleware);
 
-        $this->assertStringContainsString('True portrait document flow', $stylesheet);
+        $this->assertStringContainsString('Print the approved website report design', $stylesheet);
+        $this->assertStringContainsString('zoom: 0.62', $stylesheet);
+        $this->assertStringContainsString('body.report-print-modern .modern-report-summary', $stylesheet);
         $this->assertStringContainsString('body.report-print-modern .modern-report-development', $stylesheet);
         $this->assertStringContainsString('body.report-print-modern .modern-report-remarks', $stylesheet);
         $this->assertStringContainsString('body.report-print-modern .modern-report-footer', $stylesheet);
-        $this->assertStringContainsString('grid-template-columns: none !important', $stylesheet);
-        $this->assertStringContainsString('height: auto !important', $stylesheet);
-        $this->assertStringNotContainsString('flex: 1 1 auto', $stylesheet);
-        $this->assertStringNotContainsString('grid-template-columns: repeat(2, minmax(0, 1fr))', $stylesheet);
+        $this->assertStringContainsString('grid-template-columns: repeat(4, minmax(0, 1fr))', $stylesheet);
+        $this->assertStringContainsString('grid-template-columns: repeat(2, minmax(0, 1fr))', $stylesheet);
+        $this->assertStringContainsString('grid-template-columns: repeat(3, minmax(0, 1fr))', $stylesheet);
+        $this->assertStringNotContainsString('grid-template-columns: none !important', $stylesheet);
 
-        $this->assertStringContainsString('report-print-modern-flow-fix.css', $middleware);
-        $this->assertStringContainsString('20260720-report-print-portrait-flow-2', $middleware);
+        $this->assertStringContainsString('report-print-modern-preview-match.css', $middleware);
+        $this->assertStringContainsString('20260720-report-print-preview-match-1', $middleware);
+        $this->assertStringNotContainsString("['report-print-modern.css', 'report-print-modern-flow-fix.css']", $middleware);
     }
 }
