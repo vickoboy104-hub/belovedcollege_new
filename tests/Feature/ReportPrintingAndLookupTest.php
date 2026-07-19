@@ -46,17 +46,20 @@ class ReportPrintingAndLookupTest extends TestCase
 
         $modern->assertOk();
         $modern->assertSee('report-print-modern', false);
-        $modern->assertSee('report-print-modern.css', false);
+        $modern->assertSee('report-print-modern-preview-match.css', false);
         $modern->assertSee('modern-report-sheet', false);
         $modern->assertSee('modern-report-scores', false);
         $modern->assertSee('modern-report-development', false);
         $modern->assertSee('report-density-normal', false);
 
-        $modernPrintCss = file_get_contents(public_path('report-print-modern.css'));
+        $modernPrintCss = file_get_contents(public_path('report-print-modern-preview-match.css'));
         $this->assertIsString($modernPrintCss);
         $this->assertStringContainsString('size: A4 portrait', $modernPrintCss);
-        $this->assertStringContainsString('height: 287mm', $modernPrintCss);
-        $this->assertStringContainsString('flex-direction: column', $modernPrintCss);
+        $this->assertStringContainsString('width: 1088px !important', $modernPrintCss);
+        $this->assertStringContainsString('zoom: 0.66', $modernPrintCss);
+        $this->assertStringContainsString('grid-template-columns: repeat(4, minmax(0, 1fr))', $modernPrintCss);
+        $this->assertStringContainsString('grid-template-columns: repeat(2, minmax(0, 1fr))', $modernPrintCss);
+        $this->assertStringContainsString('grid-template-columns: repeat(3, minmax(0, 1fr))', $modernPrintCss);
         $this->assertStringNotContainsString('size: A4 landscape', $modernPrintCss);
         $this->assertStringNotContainsString('page-break-after: always', $modernPrintCss);
         $this->assertStringNotContainsString('page-break-before: always', $modernPrintCss);
