@@ -35,16 +35,17 @@ class DirectoryReportWorkflowCorrectionsTest extends TestCase
         $this->assertStringContainsString("url.searchParams.delete('search')", $script);
     }
 
-    public function test_modern_print_flow_correction_is_injected_after_the_base_stylesheet(): void
+    public function test_modern_print_uses_the_screen_faithful_preview_match_stylesheet(): void
     {
         $middleware = file_get_contents(app_path('Http/Middleware/InjectReportPrintAssets.php'));
-        $css = file_get_contents(public_path('report-print-modern-flow-fix.css'));
+        $css = file_get_contents(public_path('report-print-modern-preview-match.css'));
 
         $this->assertIsString($middleware);
         $this->assertIsString($css);
-        $this->assertStringContainsString("['report-print-modern.css', 'report-print-modern-flow-fix.css']", $middleware);
+        $this->assertStringContainsString("['report-print-modern-preview-match.css']", $middleware);
         $this->assertStringContainsString('modern-report-scores', $css);
-        $this->assertStringContainsString('flex: 0 0 auto !important', $css);
-        $this->assertStringContainsString('height: auto !important', $css);
+        $this->assertStringContainsString('zoom: 0.66', $css);
+        $this->assertStringContainsString('grid-template-columns: repeat(2, minmax(0, 1fr))', $css);
+        $this->assertStringNotContainsString("['report-print-modern.css', 'report-print-modern-flow-fix.css']", $middleware);
     }
 }
