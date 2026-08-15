@@ -7,6 +7,27 @@
         default => 'light-corporate',
     };
     $themeDocumentClass = 'theme-'.$activeThemePreset;
+    $siteName = $schoolSettings['school_name'] ?? config('app.name', 'BELOVED SCHOOLS');
+    $pageLabel = match (true) {
+        request()->routeIs('about') => 'About Us',
+        request()->routeIs('admissions') => 'Admissions',
+        request()->routeIs('contact') => 'Contact Us',
+        request()->routeIs('reports.checker') => 'Result Checker',
+        default => null,
+    };
+    $pageTitle = $pageLabel
+        ? $pageLabel.' | '.$siteName
+        : $siteName.' | '.($schoolSettings['site_subtitle'] ?? 'Secondary School Website');
+    $pageDescription = match (true) {
+        request()->routeIs('about') => 'Learn about '.$siteName.', its values, leadership, and approach to education.',
+        request()->routeIs('admissions') => 'Explore admission opportunities, academic programmes, and enrolment support at '.$siteName.'.',
+        request()->routeIs('contact') => 'Contact '.$siteName.' for admissions, parent support, and general enquiries.',
+        request()->routeIs('reports.checker') => 'Securely check published student results from '.$siteName.'.',
+        default => $schoolSettings['hero_blurb'] ?? 'A disciplined learning community focused on knowledge, character, responsibility, and Godliness.',
+    };
+    $faviconUrl = ! empty($schoolSettings['favicon_path'])
+        ? asset($schoolSettings['favicon_path'])
+        : (! empty($schoolSettings['logo_path']) ? asset($schoolSettings['logo_path']) : asset('favicon.svg'));
 @endphp
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="{{ $themeDocumentClass }}" data-theme-preset="{{ $activeThemePreset }}">
@@ -14,7 +35,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $schoolSettings['school_name'] ?? config('app.name', 'BELOVED SCHOOLS') }} | {{ $schoolSettings['site_subtitle'] ?? 'Secondary School Website' }}</title>
+    <title>{{ $pageTitle }}</title>
+    <meta name="description" content="{{ $pageDescription }}">
+    <link rel="canonical" href="{{ url()->current() }}">
+    <link rel="icon" href="{{ $faviconUrl }}" type="image/svg+xml">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="{{ $pageTitle }}">
+    <meta property="og:description" content="{{ $pageDescription }}">
+    <meta property="og:url" content="{{ url()->current() }}">
     @include('partials.theme-head')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @include('partials.theme-overrides')
