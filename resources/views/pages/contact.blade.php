@@ -31,17 +31,30 @@
                 <form method="POST" action="{{ route('contact.store') }}" class="mt-6 space-y-4">
                     @csrf
                     <div class="grid gap-4 md:grid-cols-2">
-                        <input name="name" value="{{ old('name') }}" placeholder="Full name" class="theme-input" required />
-                        <input name="email" value="{{ old('email') }}" type="email" placeholder="Email address" class="theme-input" required />
+                        <div>
+                            <label for="contact-name" class="sr-only">Full name</label>
+                            <input id="contact-name" name="name" value="{{ old('name') }}" autocomplete="name" placeholder="Full name" class="theme-input w-full" required />
+                        </div>
+                        <div>
+                            <label for="contact-email" class="sr-only">Email address</label>
+                            <input id="contact-email" name="email" value="{{ old('email') }}" type="email" autocomplete="email" placeholder="Email address" class="theme-input w-full" required />
+                        </div>
                     </div>
                     <div class="grid gap-4 md:grid-cols-2">
                         <div class="phone-field">
+                            <label for="contact-phone" class="sr-only">Phone number</label>
                             <input id="contact-phone" name="phone" type="tel" inputmode="tel" autocomplete="tel-national" value="{{ old('phone') }}" placeholder="Phone number" class="theme-input" />
                             <button type="button" class="contact-picker-button" x-data="contactField({ target: 'contact-phone' })" x-show="supported" x-cloak @click="pick()">Pick</button>
                         </div>
-                        <input name="subject" value="{{ old('subject') }}" placeholder="Subject" class="theme-input" required />
+                        <div>
+                            <label for="contact-subject" class="sr-only">Subject</label>
+                            <input id="contact-subject" name="subject" value="{{ old('subject') }}" placeholder="Subject" class="theme-input w-full" required />
+                        </div>
                     </div>
-                    <textarea name="message" rows="6" placeholder="How can the school help?" class="theme-input w-full" required>{{ old('message') }}</textarea>
+                    <div>
+                        <label for="contact-message" class="sr-only">Message</label>
+                        <textarea id="contact-message" name="message" rows="6" placeholder="How can the school help?" class="theme-input w-full" required>{{ old('message') }}</textarea>
+                    </div>
                     <button type="submit" class="theme-button">Send message</button>
                 </form>
             </div>
