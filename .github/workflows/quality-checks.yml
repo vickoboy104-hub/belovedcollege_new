@@ -26,6 +26,13 @@ jobs:
           coverage: none
           tools: composer:v2
 
+      - name: Reject tracked credential exports
+        run: |
+          if git ls-files 'storage/exports/*.csv' | grep -q .; then
+            echo "Credential export CSV files must never be committed."
+            exit 1
+          fi
+
       - name: Prepare environment files
         run: |
           cp .env.example .env
