@@ -12,6 +12,12 @@ Alpine.data('heroExperience', (config = {}) => ({
     slideCount: Number(config.slideCount || 0),
     slideDuration: Number(config.slideDuration || 6000),
     init() {
+        if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) {
+            this.activeMode = this.hasSlides ? 'slides' : 'video';
+            this.slide = 0;
+            return;
+        }
+
         if (this.hasVideo) {
             this.playVideo();
             return;
@@ -216,6 +222,7 @@ Alpine.data('globalSearch', (items = []) => ({
     query: '',
     items: items,
     selectedIndex: 0,
+    boundKeydownHandler: null,
     get filteredItems() {
         if (this.query.trim() === '') {
             return [];
@@ -275,11 +282,14 @@ Alpine.data('globalSearch', (items = []) => ({
             this.selectedIndex = 0;
         });
         
-        // Listen to global keydown events
-        window.addEventListener('keydown', this.onKeydown.bind(this));
+        this.boundKeydownHandler = this.onKeydown.bind(this);
+        window.addEventListener('keydown', this.boundKeydownHandler);
     },
     destroy() {
-        window.removeEventListener('keydown', this.onKeydown.bind(this));
+        if (this.boundKeydownHandler) {
+            window.removeEventListener('keydown', this.boundKeydownHandler);
+            this.boundKeydownHandler = null;
+        }
     }
 }));
 
@@ -321,10 +331,13 @@ Alpine.data('belovedLanding', (config = {}) => ({
     paused: false,
     progressRunning: false,
     backVisible: false,
+    prefersReducedMotion: false,
     timer: null,
     slideCount: Number(config.slideCount || 0),
     duration: Number(config.duration || 9000),
     init() {
+        this.prefersReducedMotion = window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+        this.paused = this.prefersReducedMotion;
         this.observeReveals();
         this.onScroll();
         window.addEventListener('scroll', () => this.onScroll(), { passive: true });
@@ -418,7 +431,7 @@ Alpine.data('belovedLanding', (config = {}) => ({
         this.backVisible = window.scrollY > 480;
     },
     scrollTop() {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        window.scrollTo({ top: 0, behavior: this.prefersReducedMotion ? 'auto' : 'smooth' });
     },
 }));
 
