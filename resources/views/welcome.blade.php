@@ -207,11 +207,12 @@
                 </article>
             @endforeach
 
-            <div class="beloved-slide-thumbs" aria-hidden="true">
+            <div class="beloved-slide-thumbs" aria-label="Slide previews">
                 @foreach ($homeSlides as $index => $slide)
                     <button
                         type="button"
                         class="beloved-slide-thumb"
+                        aria-label="Show {{ $slide['label'] }} slide"
                         :class="{ 'is-active': current === {{ $index }} }"
                         @click="goTo({{ $index }})"
                         style="{{ $imageStyle($slide['image']) }}"
@@ -235,7 +236,7 @@
                     <span :class="{ 'is-running': progressRunning }"></span>
                 </div>
                 <div class="beloved-slider-bar">
-                    <div class="beloved-slider-dots" role="tablist" aria-label="Go to slide">
+                    <div class="beloved-slider-dots" role="group" aria-label="Go to slide">
                         @foreach ($homeSlides as $index => $slide)
                             <button
                                 type="button"
@@ -247,7 +248,7 @@
                         @endforeach
                     </div>
 
-                    <div class="beloved-slider-labels" aria-hidden="true">
+                    <div class="beloved-slider-labels" aria-label="Choose a slide">
                         @foreach ($homeSlides as $index => $slide)
                             <button type="button" :class="{ 'is-active': current === {{ $index }} }" @click="goTo({{ $index }})">{{ $slide['label'] }}</button>
                         @endforeach
