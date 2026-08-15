@@ -38,7 +38,7 @@
     <title>{{ $pageTitle }}</title>
     <meta name="description" content="{{ $pageDescription }}">
     <link rel="canonical" href="{{ url()->current() }}">
-    <link rel="icon" href="{{ $faviconUrl }}" type="image/svg+xml">
+    <link rel="icon" href="{{ $faviconUrl }}">
     <meta property="og:type" content="website">
     <meta property="og:title" content="{{ $pageTitle }}">
     <meta property="og:description" content="{{ $pageDescription }}">
