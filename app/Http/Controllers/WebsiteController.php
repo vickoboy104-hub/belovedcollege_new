@@ -87,7 +87,7 @@ class WebsiteController extends Controller
         $activeMailer = (string) config('mail.default', 'log');
 
         if (in_array($activeMailer, ['log', 'array'], true)) {
-            return back()->with('status', 'Your message has been saved. Configure SMTP in Admin Settings to send it to a real email address.');
+            return back()->with('status', 'Thank you. Your message has been received by the school.');
         }
 
         try {
@@ -100,7 +100,7 @@ class WebsiteController extends Controller
             report($exception);
 
             return back()->withInput()->withErrors([
-                'mail' => 'Your message was saved, but email delivery failed. Check the SMTP settings in admin.',
+                'mail' => 'Your message was received, but email delivery is temporarily unavailable. The school can still view it in the portal.',
             ]);
         }
 
