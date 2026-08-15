@@ -1,6 +1,9 @@
 name: Quality checks
 
 on:
+  push:
+    branches:
+      - main
   pull_request:
   workflow_dispatch:
 
@@ -22,6 +25,13 @@ jobs:
           extensions: bcmath, ctype, curl, dom, fileinfo, filter, gd, iconv, intl, json, libxml, mbstring, openssl, pcre, pdo, pdo_sqlite, session, simplexml, sodium, sqlite3, tokenizer, xml, xmlwriter, zip
           coverage: none
           tools: composer:v2
+
+      - name: Reject tracked credential exports
+        run: |
+          if git ls-files 'storage/exports/*.csv' | grep -q .; then
+            echo "Credential export CSV files must never be committed."
+            exit 1
+          fi
 
       - name: Prepare environment files
         run: |

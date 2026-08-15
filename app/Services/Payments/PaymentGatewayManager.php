@@ -53,7 +53,7 @@ class PaymentGatewayManager
     /** @return array<int, string> */
     public function enabledValues(): array
     {
-        $raw = Setting::getValue('enabled_payment_gateways', 'paystack,palmpay');
+        $raw = Setting::getValue('enabled_payment_gateways', 'paystack');
         $values = is_array($raw) ? $raw : explode(',', (string) $raw);
 
         return collect($values)

@@ -17,9 +17,9 @@ class PalmPayGateway implements PaymentGateway
 
     public function isConfigured(): bool
     {
-        return filled(Setting::getValue('palmpay_checkout_url'))
-            && filled(Setting::getValue('palmpay_merchant_id'))
-            && filled(Setting::getValue('palmpay_private_key'));
+        // PalmPay merchant APIs are contract-specific. Keep checkout unavailable
+        // until the school receives and implements authoritative verification.
+        return false;
     }
 
     public function initialize(object $invoice, Payment $payment): array

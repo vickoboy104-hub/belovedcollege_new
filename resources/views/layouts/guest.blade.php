@@ -29,9 +29,8 @@
             $schoolSettings['hero_intro_background_image'] ?? null,
             $schoolSettings['section_background_1'] ?? null,
         ])->filter()->first();
-        $authShellStyle = $authImage ? "style=\"--auth-bg-image: url('" . asset($authImage) . "');\"" : '';
     @endphp
-    <div class="auth-shell" {!! $authShellStyle !!}>
+    <div class="auth-shell" @if ($authImage) style="--auth-bg-image: url('{{ asset($authImage) }}');" @endif>
         <div class="auth-layout">
             <section class="auth-copy-panel">
                 <a href="{{ route('home') }}" class="auth-brand">
