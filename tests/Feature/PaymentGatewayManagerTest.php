@@ -76,7 +76,7 @@ class PaymentGatewayManagerTest extends TestCase
         $page->assertSee(route('webhooks.monnify'));
     }
 
-    public function test_gateway_catalog_defaults_to_paystack_and_palmpay_but_only_configured_methods_are_available(): void
+    public function test_gateway_catalog_defaults_to_paystack_and_keeps_unverified_palmpay_unavailable(): void
     {
         Setting::setMany([
             'paystack_secret_key' => 'sk_test_available',
@@ -88,7 +88,7 @@ class PaymentGatewayManagerTest extends TestCase
         $this->assertTrue($catalog['paystack']['enabled']);
         $this->assertTrue($catalog['paystack']['configured']);
         $this->assertTrue($catalog['paystack']['available']);
-        $this->assertTrue($catalog['palmpay']['enabled']);
+        $this->assertFalse($catalog['palmpay']['enabled']);
         $this->assertFalse($catalog['palmpay']['configured']);
         $this->assertFalse($catalog['palmpay']['available']);
         $this->assertFalse($catalog['flutterwave']['enabled']);
