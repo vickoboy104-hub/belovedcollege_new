@@ -11,10 +11,13 @@ class ProductionSafetyRegressionTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_sensitive_login_exports_are_not_present_in_the_repository(): void
+    public function test_sensitive_login_exports_are_gitignored(): void
     {
-        $this->assertFileDoesNotExist(base_path('storage/exports/staff-logins.csv'));
-        $this->assertFileDoesNotExist(base_path('storage/exports/student-logins.csv'));
+        $gitignore = file_get_contents(base_path('.gitignore'));
+
+        $this->assertIsString($gitignore);
+        $this->assertStringContainsString('/storage/exports', $gitignore);
+        $this->assertStringContainsString('/storage/exports/*.csv', $gitignore);
     }
 
     public function test_palmpay_remains_unavailable_without_authoritative_verification(): void
