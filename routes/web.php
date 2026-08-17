@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdminAccountStatusController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CbtController;
 use App\Http\Controllers\DashboardController;
@@ -77,8 +78,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/admin/staff/{staffProfile}/temporary-password', [AdminController::class, 'resetStaffTemporaryPassword'])->name('admin.staff.password.reset');
         Route::patch('/admin/students/{student}', [AdminController::class, 'updateStudent'])->name('admin.students.update');
         Route::patch('/admin/staff/{staffProfile}', [AdminController::class, 'updateStaff'])->name('admin.staff.update');
-        Route::patch('/admin/students/{student}/deactivate', [AdminController::class, 'deactivateStudent'])->name('admin.students.deactivate');
-        Route::patch('/admin/staff/{staffProfile}/deactivate', [AdminController::class, 'deactivateStaff'])->name('admin.staff.deactivate');
+        Route::patch('/admin/students/{student}/deactivate', [AdminAccountStatusController::class, 'toggleStudent'])->name('admin.students.deactivate');
+        Route::patch('/admin/staff/{staffProfile}/deactivate', [AdminAccountStatusController::class, 'toggleStaff'])->name('admin.staff.deactivate');
         Route::delete('/admin/students/{student}', [AdminController::class, 'destroyStudent'])->name('admin.students.destroy');
         Route::delete('/admin/staff/{staffProfile}', [AdminController::class, 'destroyStaff'])->name('admin.staff.destroy');
         Route::get('/admin/teacher-access', [TeacherAccessController::class, 'index'])->name('admin.teacher-access.index');
