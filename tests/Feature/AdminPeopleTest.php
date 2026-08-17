@@ -169,6 +169,45 @@ class AdminPeopleTest extends TestCase
         ]);
     }
 
+    public function test_admin_student_profile_renders_user_avatar_url(): void
+    {
+        $admin = User::factory()->create(['role' => UserRole::Admin]);
+        $class = SchoolClass::create(['name' => 'JSS 1', 'slug' => 'jss-1-general', 'section' => 'General']);
+        $studentUser = User::factory()->create([
+            'first_name' => 'Amina', 'last_name' => 'Yusuf', 'name' => 'Amina Yusuf',
+            'email' => 'amina@example.test', 'role' => UserRole::Student,
+        ]);
+        $studentUser->update(['avatar_url' => '/private-media/users/'.$studentUser->id.'/avatar']);
+        $student = Student::create([
+            'user_id' => $studentUser->id, 'admission_no' => 'ADM-001',
+            'student_id_no' => 'STD-001', 'school_class_id' => $class->id,
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('admin.students.show', $student));
+
+        $response->assertOk();
+        $response->assertSee('/private-media/users/'.$studentUser->id.'/avatar', false);
+    }
+
+    public function test_admin_staff_profile_renders_user_avatar_url(): void
+    {
+        $admin = User::factory()->create(['role' => UserRole::Admin]);
+        $staffUser = User::factory()->create([
+            'first_name' => 'Daniel', 'last_name' => 'Adeyemi', 'name' => 'Daniel Adeyemi',
+            'email' => 'daniel@example.test', 'role' => UserRole::Teacher,
+        ]);
+        $staffUser->update(['avatar_url' => '/private-media/users/'.$staffUser->id.'/avatar']);
+        $profile = StaffProfile::create([
+            'user_id' => $staffUser->id, 'employee_no' => 'STF-001',
+            'department' => 'Sciences', 'designation' => 'Physics Teacher',
+        ]);
+
+        $response = $this->actingAs($admin)->get(route('admin.staff.show', $profile));
+
+        $response->assertOk();
+        $response->assertSee('/private-media/users/'.$staffUser->id.'/avatar', false);
+    }
+
     public function test_admin_can_deactivate_student_and_delete_staff_records(): void
     {
         $admin = User::factory()->create(['role' => UserRole::Admin]);

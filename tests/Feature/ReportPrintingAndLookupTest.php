@@ -81,6 +81,22 @@ class ReportPrintingAndLookupTest extends TestCase
         $this->assertStringContainsString('height: 287mm', $classicPrintCss);
     }
 
+    public function test_public_result_checker_renders_accessible_form_labels(): void
+    {
+        $response = $this->get(route('reports.checker'));
+
+        $response->assertOk();
+        $response->assertSee('for="checker-admission-no"', false);
+        $response->assertSee('Admission number', false);
+        $response->assertSee('id="checker-admission-no"', false);
+        $response->assertSee('for="checker-term"', false);
+        $response->assertSee('Academic term', false);
+        $response->assertSee('id="checker-term"', false);
+        $response->assertSee('for="checker-pin"', false);
+        $response->assertSee('Checker PIN', false);
+        $response->assertSee('id="checker-pin"', false);
+    }
+
     protected function seedReportStudent(): array
     {
         $admin = User::factory()->create([

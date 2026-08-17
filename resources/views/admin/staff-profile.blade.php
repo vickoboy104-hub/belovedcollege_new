@@ -35,7 +35,7 @@
             :name="$staffProfile->user->fullName()" 
             role="{{ strtoupper($staffProfile->user->roleLabel()) }}" 
             :id="$staffProfile->employee_no"
-            :avatar="$staffProfile->passport_photo ? asset('storage/' . $staffProfile->passport_photo) : null" 
+            :avatar="$staffProfile->user->avatar_url"
             :classDetails="$staffProfile->department ?: 'General Department'" 
             :status="ucfirst($staffProfile->status ?? $staffProfile->user->status ?? 'active')"
         />
@@ -188,8 +188,8 @@
                     <div class="flex flex-col gap-1.5 md:col-span-2">
                         <label class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Passport Photo</label>
                         <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 flex items-center gap-4">
-                            @if($staffProfile->passport_photo)
-                                <img src="{{ asset('storage/' . $staffProfile->passport_photo) }}" class="w-12 h-12 rounded-lg object-cover border" />
+                            @if($staffProfile->user->avatar_url)
+                                <img src="{{ $staffProfile->user->avatar_url }}" class="w-12 h-12 rounded-lg object-cover border" />
                             @endif
                             <div class="flex-1">
                                 <input type="file" name="passport_photo" accept="image/*" class="block w-full text-xs font-semibold text-slate-500 file:mr-4 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-extrabold file:bg-slate-200 file:text-slate-800 hover:file:bg-slate-300" />
