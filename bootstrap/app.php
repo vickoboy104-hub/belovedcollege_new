@@ -7,6 +7,7 @@ use App\Http\Middleware\EnsureAccountIsActive;
 use App\Http\Middleware\EnsureUserHasRole;
 use App\Http\Middleware\InjectReportPrintAssets;
 use App\Http\Middleware\OptimizeUploadedMedia;
+use App\Http\Middleware\ProtectStaffAdministration;
 use App\Http\Middleware\RequirePasswordChange;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -40,6 +41,7 @@ return Application::configure(basePath: dirname(__DIR__))
             ApplySecurityHeaders::class,
             EnsureAccountIsActive::class,
             RequirePasswordChange::class,
+            ProtectStaffAdministration::class,
             AuditUserActions::class,
         ]);
 
