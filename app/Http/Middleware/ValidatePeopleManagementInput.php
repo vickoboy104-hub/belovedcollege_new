@@ -21,6 +21,14 @@ class ValidatePeopleManagementInput
     {
         $routeName = $request->route()?->getName();
 
+        if ($routeName === 'admin.students.store' && ! $request->exists('admission_no')) {
+            // Student registration supports automatic admission-number generation.
+            // Normalize an omitted optional field so the existing controller can
+            // safely distinguish it from a supplied value without indexing a
+            // missing validated-data key.
+            $request->merge(['admission_no' => null]);
+        }
+
         if (in_array($routeName, self::STUDENT_ROUTES, true)) {
             $this->validateStudentInput($request, $routeName);
         }
