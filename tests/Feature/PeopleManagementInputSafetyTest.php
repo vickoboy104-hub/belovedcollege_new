@@ -137,6 +137,35 @@ class PeopleManagementInputSafetyTest extends TestCase
         $this->assertDatabaseHas('students', ['id' => $student->id, 'status' => 'active']);
     }
 
+    public function test_student_update_without_status_preserves_inactive_state(): void
+    {
+        $admin = User::factory()->create(['role' => UserRole::Admin]);
+        $studentUser = User::factory()->create([
+            'first_name' => 'Amina',
+            'last_name' => 'Yusuf',
+            'name' => 'Amina Yusuf',
+            'email' => 'amina@example.test',
+            'role' => UserRole::Student,
+            'status' => 'inactive',
+        ]);
+        $student = Student::create([
+            'user_id' => $studentUser->id,
+            'admission_no' => 'ADM-101',
+            'status' => 'inactive',
+        ]);
+
+        $response = $this->actingAs($admin)->patch(route('admin.students.update', $student), [
+            'first_name' => 'Amina',
+            'last_name' => 'Bello',
+            'email' => 'amina@example.test',
+            'admission_no' => 'ADM-101',
+        ]);
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('users', ['id' => $studentUser->id, 'status' => 'inactive']);
+        $this->assertDatabaseHas('students', ['id' => $student->id, 'status' => 'inactive']);
+    }
+
     public function test_staff_update_rejects_unknown_account_status(): void
     {
         $admin = User::factory()->create(['role' => UserRole::Admin]);
@@ -157,5 +186,35 @@ class PeopleManagementInputSafetyTest extends TestCase
         $response->assertSessionHasErrors('status');
         $this->assertDatabaseHas('users', ['id' => $staffUser->id, 'status' => 'active']);
         $this->assertDatabaseHas('staff_profiles', ['id' => $staffProfile->id, 'status' => 'active']);
+    }
+
+    public function test_staff_update_without_status_preserves_inactive_state(): void
+    {
+        $admin = User::factory()->create(['role' => UserRole::Admin]);
+        $staffUser = User::factory()->create([
+            'first_name' => 'Daniel',
+            'last_name' => 'Adeyemi',
+            'name' => 'Daniel Adeyemi',
+            'email' => 'daniel@example.test',
+            'role' => UserRole::Teacher,
+            'status' => 'inactive',
+        ]);
+        $staffProfile = StaffProfile::create([
+            'user_id' => $staffUser->id,
+            'employee_no' => 'STF-101',
+            'status' => 'inactive',
+        ]);
+
+        $response = $this->actingAs($admin)->patch(route('admin.staff.update', $staffProfile), [
+            'first_name' => 'Daniel',
+            'last_name' => 'Adebayo',
+            'email' => 'daniel@example.test',
+            'role' => 'teacher',
+            'employee_no' => 'STF-101',
+        ]);
+
+        $response->assertRedirect();
+        $this->assertDatabaseHas('users', ['id' => $staffUser->id, 'status' => 'inactive']);
+        $this->assertDatabaseHas('staff_profiles', ['id' => $staffProfile->id, 'status' => 'inactive']);
     }
 }
