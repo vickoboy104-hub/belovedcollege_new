@@ -123,8 +123,8 @@ jobs:
         run: |
           php artisan tinker --execute="\App\Models\User::query()->whereIn('email', ['student.jss-1-general.1@belovedschool.test', 'parent.jss-1-general.1@belovedschool.test'])->update(['must_change_password' => false]);"
 
-      - name: Install Chromium
-        run: npx playwright install --with-deps chromium
+      - name: Verify system Chrome
+        run: google-chrome --version
 
       - name: Start Laravel application
         run: |
