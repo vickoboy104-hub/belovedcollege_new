@@ -19,8 +19,12 @@ class ValidateAcademicSetupInput
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $previousCurrentSessionId = null;
         $creatingCurrentSession = $request->routeIs('admin.sessions.store') && $request->boolean('is_current');
+        $previousCurrentSessionId = null;
+
+        if ($request->routeIs('admin.sessions.store')) {
+            $this->validateSession($request);
+        }
 
         if ($creatingCurrentSession) {
             $previousCurrentSessionId = AcademicSession::query()
@@ -56,6 +60,24 @@ class ValidateAcademicSetupInput
         }
 
         return $response;
+    }
+
+    protected function validateSession(Request $request): void
+    {
+        if (! $request->boolean('is_current')) {
+            return;
+        }
+
+        $openCurrentSession = AcademicSession::query()
+            ->where('is_current', true)
+            ->whereNull('closed_at')
+            ->first();
+
+        if ($openCurrentSession) {
+            throw ValidationException::withMessages([
+                'is_current' => 'Close the current academic session before activating a new one.',
+            ]);
+        }
     }
 
     protected function validateTerm(Request $request): void
