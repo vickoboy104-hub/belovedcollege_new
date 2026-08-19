@@ -55,6 +55,36 @@ class PeopleManagementInputSafetyTest extends TestCase
         $this->assertDatabaseCount('students', 0);
     }
 
+    public function test_new_student_parent_details_require_a_parent_email(): void
+    {
+        $admin = User::factory()->create(['role' => UserRole::Admin]);
+
+        $response = $this->actingAs($admin)->post(route('admin.students.store'), [
+            'first_name' => 'Amina',
+            'last_name' => 'Yusuf',
+            'parent_name' => 'Mrs Yusuf',
+            'parent_phone' => '08030000000',
+        ]);
+
+        $response->assertSessionHasErrors('parent_email');
+        $this->assertDatabaseCount('students', 0);
+    }
+
+    public function test_new_parent_account_requires_a_parent_name(): void
+    {
+        $admin = User::factory()->create(['role' => UserRole::Admin]);
+
+        $response = $this->actingAs($admin)->post(route('admin.students.store'), [
+            'first_name' => 'Amina',
+            'last_name' => 'Yusuf',
+            'parent_email' => 'parent@example.test',
+        ]);
+
+        $response->assertSessionHasErrors('parent_name');
+        $this->assertDatabaseMissing('users', ['email' => 'parent@example.test']);
+        $this->assertDatabaseCount('students', 0);
+    }
+
     public function test_existing_parent_account_can_be_safely_linked_to_a_student(): void
     {
         $admin = User::factory()->create(['role' => UserRole::Admin]);
