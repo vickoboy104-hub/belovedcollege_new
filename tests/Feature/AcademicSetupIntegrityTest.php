@@ -117,6 +117,23 @@ class AcademicSetupIntegrityTest extends TestCase
         ]);
     }
 
+    public function test_new_current_session_is_rejected_until_existing_current_session_is_closed(): void
+    {
+        $admin = User::factory()->create(['role' => UserRole::Admin]);
+        $this->createSession();
+
+        $response = $this->actingAs($admin)->post(route('admin.sessions.store'), [
+            'name' => '2027/2028',
+            'start_date' => '2027-09-01',
+            'end_date' => '2028-07-31',
+            'promotion_pass_mark' => 50,
+            'is_current' => true,
+        ]);
+
+        $response->assertSessionHasErrors('is_current');
+        $this->assertDatabaseMissing('academic_sessions', ['name' => '2027/2028']);
+    }
+
     public function test_creating_new_current_session_clears_old_current_term(): void
     {
         $admin = User::factory()->create(['role' => UserRole::Admin]);
@@ -125,6 +142,8 @@ class AcademicSetupIntegrityTest extends TestCase
             'start_date' => '2025-09-01',
             'end_date' => '2026-07-31',
             'is_current' => true,
+            'closed_at' => now(),
+            'closed_by' => $admin->id,
         ]);
         $oldTerm = Term::create([
             'academic_session_id' => $oldSession->id,
