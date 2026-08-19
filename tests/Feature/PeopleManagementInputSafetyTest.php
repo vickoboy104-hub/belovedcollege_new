@@ -112,6 +112,35 @@ class PeopleManagementInputSafetyTest extends TestCase
         ]);
     }
 
+    public function test_linking_child_does_not_reactivate_an_inactive_parent_account(): void
+    {
+        $admin = User::factory()->create(['role' => UserRole::Admin]);
+        $parent = User::factory()->create([
+            'name' => 'Mrs Yusuf',
+            'email' => 'inactive-parent@example.test',
+            'role' => UserRole::Parent,
+            'status' => 'inactive',
+        ]);
+
+        $response = $this->actingAs($admin)->post(route('admin.students.store'), [
+            'first_name' => 'Amina',
+            'last_name' => 'Yusuf',
+            'email' => 'amina@example.test',
+            'parent_name' => 'Mrs Yusuf',
+            'parent_email' => 'inactive-parent@example.test',
+        ]);
+
+        $response->assertRedirect(route('admin.students.index'));
+        $student = Student::query()->whereHas('user', fn ($query) => $query->where('email', 'amina@example.test'))->firstOrFail();
+
+        $this->assertSame($parent->id, $student->parent_user_id);
+        $this->assertDatabaseHas('users', [
+            'id' => $parent->id,
+            'role' => UserRole::Parent->value,
+            'status' => 'inactive',
+        ]);
+    }
+
     public function test_student_update_rejects_unknown_account_status(): void
     {
         $admin = User::factory()->create(['role' => UserRole::Admin]);
