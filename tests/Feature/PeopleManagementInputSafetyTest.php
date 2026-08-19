@@ -141,6 +141,26 @@ class PeopleManagementInputSafetyTest extends TestCase
         ]);
     }
 
+    public function test_staff_registration_without_employee_number_generates_one(): void
+    {
+        $admin = User::factory()->create(['role' => UserRole::Admin]);
+
+        $response = $this->actingAs($admin)->post(route('admin.staff.store'), [
+            'first_name' => 'Daniel',
+            'last_name' => 'Adeyemi',
+            'email' => 'daniel.generated@example.test',
+            'role' => 'teacher',
+        ]);
+
+        $response->assertRedirect(route('admin.staff.index'));
+        $profile = StaffProfile::query()
+            ->whereHas('user', fn ($query) => $query->where('email', 'daniel.generated@example.test'))
+            ->firstOrFail();
+
+        $this->assertNotEmpty($profile->employee_no);
+        $this->assertStringStartsWith('STF-', $profile->employee_no);
+    }
+
     public function test_student_update_rejects_unknown_account_status(): void
     {
         $admin = User::factory()->create(['role' => UserRole::Admin]);
