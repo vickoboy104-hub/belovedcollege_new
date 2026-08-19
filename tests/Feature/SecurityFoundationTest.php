@@ -93,6 +93,33 @@ class SecurityFoundationTest extends TestCase
             ->assertForbidden();
     }
 
+    public function test_replacing_passport_deletes_previous_private_avatar(): void
+    {
+        Storage::fake('local');
+        $user = User::factory()->create([
+            'role' => UserRole::Student,
+            'avatar_path' => 'avatars/old-avatar.jpg',
+            'avatar_url' => '/private-media/users/1/avatar',
+        ]);
+        Storage::disk('local')->put('avatars/old-avatar.jpg', 'old-private-image');
+
+        $publicDirectory = public_path('uploads/settings');
+        File::ensureDirectoryExists($publicDirectory);
+        $publicFile = $publicDirectory.'/student-passport-replacement-test.jpg';
+        File::put($publicFile, 'new-private-image');
+
+        $user->update([
+            'avatar_url' => 'uploads/settings/student-passport-replacement-test.jpg',
+        ]);
+
+        $user->refresh();
+
+        Storage::disk('local')->assertMissing('avatars/old-avatar.jpg');
+        $this->assertNotSame('avatars/old-avatar.jpg', $user->avatar_path);
+        Storage::disk('local')->assertExists($user->avatar_path);
+        $this->assertFileDoesNotExist($publicFile);
+    }
+
     public function test_authenticated_pages_receive_security_headers(): void
     {
         $user = User::factory()->create(['role' => UserRole::Admin]);

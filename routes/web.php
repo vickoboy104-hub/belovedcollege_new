@@ -1,9 +1,11 @@
 <?php
 
+use App\Http\Controllers\AdminAccountStatusController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CbtController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FinanceController;
+use App\Http\Controllers\ParentAccountController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PaymentGatewaySettingsController;
 use App\Http\Controllers\PrivateMediaController;
@@ -68,6 +70,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/admin/people', [AdminController::class, 'people'])->name('admin.people');
         Route::get('/admin/people/students/{classSlug?}', [StudentManagementController::class, 'index'])->name('admin.students.index');
         Route::get('/admin/people/parents', [AdminController::class, 'parents'])->name('admin.parents.index');
+        Route::post('/admin/people/parents/{parent}/temporary-password', [ParentAccountController::class, 'resetTemporaryPassword'])->name('admin.parents.password.reset');
         Route::get('/admin/people/staff', [AdminController::class, 'staff'])->name('admin.staff.index');
         Route::get('/admin/students/{student}', [AdminController::class, 'showStudent'])->name('admin.students.show');
         Route::get('/admin/staff/{staffProfile}', [AdminController::class, 'showStaff'])->name('admin.staff.show');
@@ -77,8 +80,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/admin/staff/{staffProfile}/temporary-password', [AdminController::class, 'resetStaffTemporaryPassword'])->name('admin.staff.password.reset');
         Route::patch('/admin/students/{student}', [AdminController::class, 'updateStudent'])->name('admin.students.update');
         Route::patch('/admin/staff/{staffProfile}', [AdminController::class, 'updateStaff'])->name('admin.staff.update');
-        Route::patch('/admin/students/{student}/deactivate', [AdminController::class, 'deactivateStudent'])->name('admin.students.deactivate');
-        Route::patch('/admin/staff/{staffProfile}/deactivate', [AdminController::class, 'deactivateStaff'])->name('admin.staff.deactivate');
+        Route::patch('/admin/students/{student}/deactivate', [AdminAccountStatusController::class, 'toggleStudent'])->name('admin.students.deactivate');
+        Route::patch('/admin/staff/{staffProfile}/deactivate', [AdminAccountStatusController::class, 'toggleStaff'])->name('admin.staff.deactivate');
         Route::delete('/admin/students/{student}', [AdminController::class, 'destroyStudent'])->name('admin.students.destroy');
         Route::delete('/admin/staff/{staffProfile}', [AdminController::class, 'destroyStaff'])->name('admin.staff.destroy');
         Route::get('/admin/teacher-access', [TeacherAccessController::class, 'index'])->name('admin.teacher-access.index');

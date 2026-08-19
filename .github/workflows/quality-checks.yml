@@ -83,3 +83,72 @@ jobs:
 
       - name: Build frontend
         run: npm run build
+
+  mobile-portal:
+    name: Mobile portal smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: bcmath, ctype, curl, dom, fileinfo, filter, gd, iconv, intl, json, libxml, mbstring, openssl, pcre, pdo, pdo_sqlite, session, simplexml, sodium, sqlite3, tokenizer, xml, xmlwriter, zip
+          coverage: none
+          tools: composer:v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Prepare application
+        run: |
+          cp .env.example .env
+          mkdir -p database
+          touch database/database.sqlite
+          composer config --global github-oauth.github.com "${{ github.token }}"
+          composer install --no-interaction --prefer-dist --no-progress --optimize-autoloader --quiet
+          npm ci --no-audit --no-fund
+          php artisan key:generate --quiet
+          php artisan migrate:fresh --seed --force --quiet
+          npm run build
+
+      - name: Make seeded portal accounts browser-test ready
+        run: |
+          php artisan tinker --execute="\App\Models\User::query()->whereIn('email', ['student.jss-1-general.1@belovedschool.test', 'parent.jss-1-general.1@belovedschool.test'])->update(['must_change_password' => false]);"
+
+      - name: Verify system Chrome
+        run: google-chrome --version
+
+      - name: Start Laravel application
+        run: |
+          php artisan serve --host=127.0.0.1 --port=8000 > /tmp/beloved-laravel.log 2>&1 &
+          echo $! > /tmp/beloved-laravel.pid
+          for attempt in {1..30}; do
+            if curl --fail --silent http://127.0.0.1:8000/up > /dev/null; then
+              exit 0
+            fi
+            sleep 1
+          done
+          cat /tmp/beloved-laravel.log
+          exit 1
+
+      - name: Run 390x844 student and parent portal smoke test
+        env:
+          APP_URL: http://127.0.0.1:8000
+        run: node tools/mobile-portal-smoke.mjs
+
+      - name: Upload Laravel log on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: mobile-portal-laravel-log
+          path: /tmp/beloved-laravel.log
+          if-no-files-found: ignore
+          retention-days: 3

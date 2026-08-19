@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Enums\UserRole;
 use App\Models\AssessmentResult;
 use App\Models\SchoolClass;
 use App\Models\Student;
@@ -125,8 +126,18 @@ class StudentReportService
             ->get()
             ->reject(fn ($payment) => data_get($payment->payload, 'source') === 'bundle_allocation')
             ->values();
-        $reports = $student->termReports()
-            ->with('term.academicSession')
+
+        $reportsQuery = $student->termReports()
+            ->with('term.academicSession');
+        $viewer = auth()->user();
+
+        if (! $viewer || ! $viewer->hasAnyRole(UserRole::Admin, UserRole::Principal)) {
+            $reportsQuery
+                ->where('portal_enabled', true)
+                ->whereNotNull('published_at');
+        }
+
+        $reports = $reportsQuery
             ->latest('published_at')
             ->get();
         $attendanceCount = $student->attendanceRecords()->count();

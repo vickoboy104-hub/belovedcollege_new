@@ -75,6 +75,7 @@ class User extends Authenticatable
         $extension = strtolower((string) pathinfo($source, PATHINFO_EXTENSION));
         $extension = preg_match('/^[a-z0-9]{2,5}$/', $extension) ? $extension : 'jpg';
         $privatePath = 'avatars/'.Str::uuid().'.'.$extension;
+        $previousPrivatePath = trim((string) $user->getOriginal('avatar_path'));
         $stream = fopen($source, 'rb');
 
         if ($stream === false) {
@@ -89,6 +90,10 @@ class User extends Authenticatable
 
         if (! $stored) {
             return;
+        }
+
+        if ($previousPrivatePath !== '' && $previousPrivatePath !== $privatePath) {
+            Storage::disk('local')->delete($previousPrivatePath);
         }
 
         File::delete($source);

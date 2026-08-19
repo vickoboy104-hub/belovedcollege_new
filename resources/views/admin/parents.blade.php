@@ -3,6 +3,24 @@
         <x-page-header title="Guardian and family records" eyebrow="Parents management" description="Manage parent contacts, linked children, billing follow-up, and family portal records." />
     </x-slot>
 
+    @if (session('generated_parent_credentials'))
+        @php
+            $credentials = session('generated_parent_credentials');
+        @endphp
+        <div class="mb-8 rounded-[18px] border border-emerald-200 bg-emerald-50 px-6 py-5 text-sm text-emerald-900 shadow-sm">
+            <div class="font-bold flex items-center gap-2 text-emerald-800">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                Temporary parent portal credentials
+            </div>
+            <div class="mt-2.5 font-mono bg-white/70 border border-emerald-100 rounded-xl p-3 text-xs leading-relaxed flex flex-wrap gap-x-5 gap-y-2">
+                <span><strong class="text-slate-600">Parent:</strong> {{ $credentials['name'] }}</span>
+                <span><strong class="text-slate-600">Login email:</strong> {{ $credentials['email'] }}</span>
+                <span><strong class="text-slate-600">Temporary password:</strong> <span class="bg-amber-100 px-1.5 py-0.5 rounded font-extrabold">{{ $credentials['password'] }}</span></span>
+            </div>
+            <p class="mt-2 text-xs font-semibold text-emerald-700">Share this password securely now. It is shown only in this response and the parent will be required to replace it after login.</p>
+        </div>
+    @endif
+
     <!-- Parents Workspace Stats Grid -->
     <div class="metrics-grid metrics-grid-4 mb-8">
         <x-stat-card label="Linked parents" :value="$summary['linkedParents']" accent="blue" icon="parents" />
@@ -31,6 +49,7 @@
                 @forelse ($parentRows as $row)
                     @php
                         $parent = $row['parent'];
+                        $parentStatus = ucfirst((string) ($parent->status ?: 'inactive'));
                         $firstChild = $row['children']->first();
                         $childrenNames = $row['children']->map(fn ($child) => $child->user->fullName())->join(', ');
                         $parentInitials = collect(explode(' ', $parent->fullName() ?: $parent->name ?: 'Parent'))
@@ -41,7 +60,7 @@
                         $parentPreview = [
                             'type' => 'parent',
                             'title' => $parent->fullName(),
-                            'subtitle' => 'Active Parent - '.$row['child_count'].' child'.($row['child_count'] === 1 ? '' : 'ren'),
+                            'subtitle' => $parentStatus.' Parent - '.$row['child_count'].' child'.($row['child_count'] === 1 ? '' : 'ren'),
                             'avatar' => $parentInitials ?: 'PA',
                             'profileUrl' => $firstChild ? route('admin.students.show', $firstChild) : route('admin.students.index'),
                             'ctaLabel' => 'View Full Profile',
@@ -54,6 +73,7 @@
                             ],
                         ];
                         $contactUrl = $parent->phone ? 'tel:'.$parent->phone : ($parent->email ? 'mailto:'.$parent->email : '#');
+                        $canResetPassword = filled($parent->email);
                     @endphp
                     <tr>
                         <td>
@@ -68,12 +88,17 @@
                         <td><span class="table-text-clip">{{ $childrenNames ?: 'No children linked' }}</span></td>
                         <td><span class="table-text-clip">{{ $row['class_names']->implode(', ') ?: 'No class assigned' }}</span></td>
                         <td>{{ $parent->phone ?: 'No phone registered' }}</td>
-                        <td><x-status-badge status="Active" /></td>
+                        <td><x-status-badge :status="$parentStatus" /></td>
                         <td>
                             <div class="table-action-group">
                                 <button type="button" class="table-view-btn" data-preview='@json($parentPreview, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_TAG)'>View</button>
                                 <a class="table-mini-link" href="{{ route('admin.students.index', ['search' => $parent->email ?: $parent->fullName()]) }}">Link Child</a>
                                 <a class="table-mini-link" href="{{ route('admin.finance.records', ['section' => 'student-balances', 'search' => $parent->email ?: $parent->fullName()]) }}">Billing</a>
+                                <form method="POST" action="{{ route('admin.parents.password.reset', $parent) }}" class="inline">
+                                    @csrf
+                                    <input type="hidden" name="redirect_search" value="{{ $search }}" />
+                                    <button type="submit" class="table-mini-link disabled:opacity-40 disabled:cursor-not-allowed" @disabled(! $canResetPassword) onclick="return confirm('Generate a new temporary password for this parent? The old password will stop working.')">Reset Password</button>
+                                </form>
                                 <a class="table-mini-link" href="{{ $contactUrl }}">Contact</a>
                             </div>
                         </td>
@@ -93,6 +118,7 @@
             @forelse ($parentRows as $row)
                 @php
                     $parent = $row['parent'];
+                    $parentStatus = ucfirst((string) ($parent->status ?: 'inactive'));
                     $firstChild = $row['children']->first();
                     $childrenNames = $row['children']->map(fn ($child) => $child->user->fullName())->join(', ');
                     $parentInitials = collect(explode(' ', $parent->fullName() ?: $parent->name ?: 'Parent'))
@@ -103,7 +129,7 @@
                     $parentPreview = [
                         'type' => 'parent',
                         'title' => $parent->fullName(),
-                        'subtitle' => 'Active Parent - '.$row['child_count'].' child'.($row['child_count'] === 1 ? '' : 'ren'),
+                        'subtitle' => $parentStatus.' Parent - '.$row['child_count'].' child'.($row['child_count'] === 1 ? '' : 'ren'),
                         'avatar' => $parentInitials ?: 'PA',
                         'profileUrl' => $firstChild ? route('admin.students.show', $firstChild) : route('admin.students.index'),
                         'ctaLabel' => 'View Full Profile',
@@ -116,6 +142,7 @@
                         ],
                     ];
                     $contactUrl = $parent->phone ? 'tel:'.$parent->phone : ($parent->email ? 'mailto:'.$parent->email : '#');
+                    $canResetPassword = filled($parent->email);
                 @endphp
                 <article class="mobile-record-card">
                     <div class="flex items-start justify-between border-b border-slate-100 pb-3 mb-4">
@@ -128,7 +155,7 @@
                                 <div class="text-[10px] text-slate-500 font-semibold mt-0.5">{{ $parent->email ?: 'No email address registered' }}</div>
                             </div>
                         </div>
-                        <x-status-badge status="Active" class="scale-90 origin-right" />
+                        <x-status-badge :status="$parentStatus" class="scale-90 origin-right" />
                     </div>
 
                     <div class="mobile-record-grid">
@@ -150,10 +177,15 @@
                         >
                             Quick View
                         </button>
-                        <div class="flex w-full gap-2 mt-1">
-                            <a href="{{ route('admin.students.index', ['search' => $parent->email ?: $parent->fullName()]) }}" class="theme-button-secondary w-full text-center py-2 px-3 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700">Link Child</a>
-                            <a href="{{ route('admin.finance.records', ['section' => 'student-balances', 'search' => $parent->email ?: $parent->fullName()]) }}" class="theme-button-secondary w-full text-center py-2 px-3 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700">Billing</a>
-                            <a href="{{ $contactUrl }}" class="theme-button-secondary w-full text-center py-2 px-3 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700">Contact</a>
+                        <div class="grid grid-cols-2 gap-2 mt-1">
+                            <a href="{{ route('admin.students.index', ['search' => $parent->email ?: $parent->fullName()]) }}" class="theme-button-secondary text-center py-2 px-3 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700">Link Child</a>
+                            <a href="{{ route('admin.finance.records', ['section' => 'student-balances', 'search' => $parent->email ?: $parent->fullName()]) }}" class="theme-button-secondary text-center py-2 px-3 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700">Billing</a>
+                            <form method="POST" action="{{ route('admin.parents.password.reset', $parent) }}">
+                                @csrf
+                                <input type="hidden" name="redirect_search" value="{{ $search }}" />
+                                <button type="submit" class="theme-button-secondary w-full text-center py-2 px-3 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed" @disabled(! $canResetPassword) onclick="return confirm('Generate a new temporary password for this parent? The old password will stop working.')">Reset Password</button>
+                            </form>
+                            <a href="{{ $contactUrl }}" class="theme-button-secondary text-center py-2 px-3 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700">Contact</a>
                         </div>
                     </div>
                 </article>

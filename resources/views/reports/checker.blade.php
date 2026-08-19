@@ -30,15 +30,24 @@
 
             <form method="POST" action="{{ route('reports.checker.lookup') }}" class="mt-6 grid gap-4 md:grid-cols-[1fr,1fr,1fr,auto]">
                 @csrf
-                <input name="admission_no" value="{{ old('admission_no') }}" placeholder="Admission number" class="theme-input" required />
-                <select name="term_id" class="theme-input" required>
-                    <option value="">Select term</option>
-                    @foreach ($terms as $term)
-                        <option value="{{ $term->id }}" @selected((string) old('term_id') === (string) $term->id)>{{ $term->name }} - {{ $term->academicSession->name ?? 'No session' }}</option>
-                    @endforeach
-                </select>
-                <input name="pin" value="{{ old('pin') }}" placeholder="Checker PIN" class="theme-input" required />
-                <button type="submit" class="theme-button">Check result</button>
+                <div class="flex flex-col gap-1.5">
+                    <label for="checker-admission-no" class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Admission number</label>
+                    <input id="checker-admission-no" name="admission_no" value="{{ old('admission_no') }}" placeholder="Admission number" class="theme-input" required />
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <label for="checker-term" class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Academic term</label>
+                    <select id="checker-term" name="term_id" class="theme-input" required>
+                        <option value="">Select term</option>
+                        @foreach ($terms as $term)
+                            <option value="{{ $term->id }}" @selected((string) old('term_id') === (string) $term->id)>{{ $term->name }} - {{ $term->academicSession->name ?? 'No session' }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="flex flex-col gap-1.5">
+                    <label for="checker-pin" class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Checker PIN</label>
+                    <input id="checker-pin" name="pin" value="{{ old('pin') }}" placeholder="Checker PIN" class="theme-input" required />
+                </div>
+                <button type="submit" class="theme-button md:self-end">Check result</button>
             </form>
         </div>
 
