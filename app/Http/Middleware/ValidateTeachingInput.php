@@ -2,6 +2,7 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\Assessment;
 use Carbon\CarbonImmutable;
 use Closure;
 use Illuminate\Http\Request;
@@ -30,6 +31,18 @@ class ValidateTeachingInput
                 throw ValidationException::withMessages([
                     'attendance_date' => 'Attendance cannot be recorded for a future date.',
                 ]);
+            }
+        }
+
+        if ($request->routeIs('admin.cbt.assessments.toggle')) {
+            $assessment = $request->route('assessment');
+
+            if ($assessment instanceof Assessment && ! $assessment->cbt_is_active) {
+                if (! $assessment->cbtQuestions()->exists() || (float) $assessment->total_score <= 0) {
+                    throw ValidationException::withMessages([
+                        'assessment' => 'Add at least one scored question before activating this CBT for students.',
+                    ]);
+                }
             }
         }
 
