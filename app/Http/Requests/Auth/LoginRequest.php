@@ -109,10 +109,9 @@ class LoginRequest extends FormRequest
         $identifier = trim((string) $this->string('login'));
         $audience = (string) $this->string('audience', 'generic');
 
-        $user = User::query()
-            ->where('email', $identifier)
-            ->orWhere('name', $identifier)
-            ->first();
+        // Human names are not unique portal identifiers. Resolve direct user
+        // accounts only by email; student/staff IDs are handled below.
+        $user = User::query()->where('email', $identifier)->first();
 
         if (! $user && in_array($audience, ['student', 'generic'], true)) {
             $student = Student::query()
