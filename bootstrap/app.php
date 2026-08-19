@@ -10,6 +10,7 @@ use App\Http\Middleware\OptimizeUploadedMedia;
 use App\Http\Middleware\ProtectStaffAdministration;
 use App\Http\Middleware\RequirePasswordChange;
 use App\Http\Middleware\ValidateAcademicSetupInput;
+use App\Http\Middleware\ValidateFinanceInput;
 use App\Http\Middleware\ValidatePeopleManagementInput;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -45,6 +46,7 @@ return Application::configure(basePath: dirname(__DIR__))
             RequirePasswordChange::class,
             ValidatePeopleManagementInput::class,
             ValidateAcademicSetupInput::class,
+            ValidateFinanceInput::class,
             ProtectStaffAdministration::class,
             AuditUserActions::class,
         ]);
