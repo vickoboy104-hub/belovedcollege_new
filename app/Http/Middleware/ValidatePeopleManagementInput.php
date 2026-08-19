@@ -33,6 +33,13 @@ class ValidatePeopleManagementInput
             $request->merge(['admission_no' => null]);
         }
 
+        if ($routeName === 'admin.staff.store' && ! $request->exists('employee_no')) {
+            // Staff registration also supports automatic ID generation. Normalize
+            // the omitted optional field so the controller can safely fall back to
+            // generateEmployeeNumber().
+            $request->merge(['employee_no' => null]);
+        }
+
         if ($routeName === 'admin.students.update' && ! $request->exists('status')) {
             $student = $request->route('student');
 
