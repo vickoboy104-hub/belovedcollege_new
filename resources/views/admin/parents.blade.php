@@ -4,7 +4,9 @@
     </x-slot>
 
     @if (session('generated_parent_credentials'))
-        @php($credentials = session('generated_parent_credentials'))
+        @php
+            $credentials = session('generated_parent_credentials');
+        @endphp
         <div class="mb-8 rounded-[18px] border border-emerald-200 bg-emerald-50 px-6 py-5 text-sm text-emerald-900 shadow-sm">
             <div class="font-bold flex items-center gap-2 text-emerald-800">
                 <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -71,6 +73,7 @@
                             ],
                         ];
                         $contactUrl = $parent->phone ? 'tel:'.$parent->phone : ($parent->email ? 'mailto:'.$parent->email : '#');
+                        $canResetPassword = filled($parent->email);
                     @endphp
                     <tr>
                         <td>
@@ -91,13 +94,11 @@
                                 <button type="button" class="table-view-btn" data-preview='@json($parentPreview, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_TAG)'>View</button>
                                 <a class="table-mini-link" href="{{ route('admin.students.index', ['search' => $parent->email ?: $parent->fullName()]) }}">Link Child</a>
                                 <a class="table-mini-link" href="{{ route('admin.finance.records', ['section' => 'student-balances', 'search' => $parent->email ?: $parent->fullName()]) }}">Billing</a>
-                                @if ($parent->email)
-                                    <form method="POST" action="{{ route('admin.parents.password.reset', $parent) }}" class="inline">
-                                        @csrf
-                                        <input type="hidden" name="redirect_search" value="{{ $search }}" />
-                                        <button type="submit" class="table-mini-link" onclick="return confirm('Generate a new temporary password for this parent? The old password will stop working.')">Reset Password</button>
-                                    </form>
-                                @endif
+                                <form method="POST" action="{{ route('admin.parents.password.reset', $parent) }}" class="inline">
+                                    @csrf
+                                    <input type="hidden" name="redirect_search" value="{{ $search }}" />
+                                    <button type="submit" class="table-mini-link disabled:opacity-40 disabled:cursor-not-allowed" @disabled(! $canResetPassword) onclick="return confirm('Generate a new temporary password for this parent? The old password will stop working.')">Reset Password</button>
+                                </form>
                                 <a class="table-mini-link" href="{{ $contactUrl }}">Contact</a>
                             </div>
                         </td>
@@ -141,6 +142,7 @@
                         ],
                     ];
                     $contactUrl = $parent->phone ? 'tel:'.$parent->phone : ($parent->email ? 'mailto:'.$parent->email : '#');
+                    $canResetPassword = filled($parent->email);
                 @endphp
                 <article class="mobile-record-card">
                     <div class="flex items-start justify-between border-b border-slate-100 pb-3 mb-4">
@@ -178,13 +180,11 @@
                         <div class="grid grid-cols-2 gap-2 mt-1">
                             <a href="{{ route('admin.students.index', ['search' => $parent->email ?: $parent->fullName()]) }}" class="theme-button-secondary text-center py-2 px-3 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700">Link Child</a>
                             <a href="{{ route('admin.finance.records', ['section' => 'student-balances', 'search' => $parent->email ?: $parent->fullName()]) }}" class="theme-button-secondary text-center py-2 px-3 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700">Billing</a>
-                            @if ($parent->email)
-                                <form method="POST" action="{{ route('admin.parents.password.reset', $parent) }}">
-                                    @csrf
-                                    <input type="hidden" name="redirect_search" value="{{ $search }}" />
-                                    <button type="submit" class="theme-button-secondary w-full text-center py-2 px-3 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700" onclick="return confirm('Generate a new temporary password for this parent? The old password will stop working.')">Reset Password</button>
-                                </form>
-                            @endif
+                            <form method="POST" action="{{ route('admin.parents.password.reset', $parent) }}">
+                                @csrf
+                                <input type="hidden" name="redirect_search" value="{{ $search }}" />
+                                <button type="submit" class="theme-button-secondary w-full text-center py-2 px-3 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed" @disabled(! $canResetPassword) onclick="return confirm('Generate a new temporary password for this parent? The old password will stop working.')">Reset Password</button>
+                            </form>
                             <a href="{{ $contactUrl }}" class="theme-button-secondary text-center py-2 px-3 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700">Contact</a>
                         </div>
                     </div>
