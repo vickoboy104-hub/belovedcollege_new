@@ -89,7 +89,7 @@ async function runParent(browser) {
   await context.close();
 }
 
-const browser = await chromium.launch({ headless: true });
+const browser = await chromium.launch({ headless: true, channel: 'chrome' });
 try {
   await runStudent(browser);
   await runParent(browser);
