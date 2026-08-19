@@ -19,6 +19,15 @@ class ValidateAcademicSetupInput
 {
     public function handle(Request $request, Closure $next): Response
     {
+        $previousCurrentSessionId = null;
+        $creatingCurrentSession = $request->routeIs('admin.sessions.store') && $request->boolean('is_current');
+
+        if ($creatingCurrentSession) {
+            $previousCurrentSessionId = AcademicSession::query()
+                ->where('is_current', true)
+                ->value('id');
+        }
+
         if ($request->routeIs('admin.terms.store')) {
             $this->validateTerm($request);
         }
@@ -31,7 +40,22 @@ class ValidateAcademicSetupInput
             $this->validateSubject($request);
         }
 
-        return $next($request);
+        $response = $next($request);
+
+        if ($creatingCurrentSession) {
+            $currentSessionId = AcademicSession::query()
+                ->where('is_current', true)
+                ->value('id');
+
+            if ($currentSessionId && (int) $currentSessionId !== (int) $previousCurrentSessionId) {
+                Term::query()
+                    ->where('is_current', true)
+                    ->where('academic_session_id', '!=', $currentSessionId)
+                    ->update(['is_current' => false]);
+            }
+        }
+
+        return $response;
     }
 
     protected function validateTerm(Request $request): void
@@ -103,7 +127,7 @@ class ValidateAcademicSetupInput
 
             $currentClass = $request->route('schoolClass');
             if ($currentClass instanceof SchoolClass) {
-                $duplicate->whereKeyNot($currentClass->getKey());
+                $duplicate->where('id', '!=', $currentClass->getKey());
             }
 
             if ($duplicate->exists()) {
