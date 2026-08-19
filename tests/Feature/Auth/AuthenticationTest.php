@@ -66,6 +66,32 @@ class AuthenticationTest extends TestCase
         $this->assertAuthenticatedAs($targetUser);
     }
 
+    public function test_full_name_is_not_accepted_as_an_ambiguous_portal_identifier(): void
+    {
+        User::factory()->create([
+            'name' => 'John Adeyemi',
+            'first_name' => 'John',
+            'last_name' => 'Adeyemi',
+            'password' => 'shared-password',
+            'status' => 'active',
+        ]);
+        User::factory()->create([
+            'name' => 'John Adeyemi',
+            'first_name' => 'John',
+            'last_name' => 'Adeyemi',
+            'password' => 'shared-password',
+            'status' => 'active',
+        ]);
+
+        $response = $this->post('/login', [
+            'login' => 'John Adeyemi',
+            'password' => 'shared-password',
+        ]);
+
+        $response->assertSessionHasErrors('login');
+        $this->assertGuest();
+    }
+
     public function test_users_can_not_authenticate_with_invalid_password(): void
     {
         $user = User::factory()->create();
