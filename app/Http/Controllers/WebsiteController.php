@@ -83,10 +83,14 @@ class WebsiteController extends Controller
 
         ContactMessage::create($validated);
 
-        $recipient = Setting::getValue('contact_email_recipient', 'vickoboy104@gmail.com');
+        $recipient = trim((string) Setting::getValue('contact_email_recipient', ''));
+        if ($recipient === '') {
+            $recipient = trim((string) (Setting::getValue('school_email') ?: config('mail.from.address', '')));
+        }
+
         $activeMailer = (string) config('mail.default', 'log');
 
-        if (in_array($activeMailer, ['log', 'array'], true)) {
+        if (in_array($activeMailer, ['log', 'array'], true) || ! filter_var($recipient, FILTER_VALIDATE_EMAIL)) {
             return back()->with('status', 'Thank you. Your message has been received by the school.');
         }
 
