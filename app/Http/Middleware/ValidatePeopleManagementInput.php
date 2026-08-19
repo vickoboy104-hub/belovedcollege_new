@@ -3,6 +3,8 @@
 namespace App\Http\Middleware;
 
 use App\Enums\UserRole;
+use App\Models\StaffProfile;
+use App\Models\Student;
 use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
@@ -27,6 +29,28 @@ class ValidatePeopleManagementInput
             // safely distinguish it from a supplied value without indexing a
             // missing validated-data key.
             $request->merge(['admission_no' => null]);
+        }
+
+        if ($routeName === 'admin.students.update' && ! $request->exists('status')) {
+            $student = $request->route('student');
+
+            if ($student instanceof Student) {
+                $student->loadMissing('user');
+                $request->merge([
+                    'status' => $student->status ?? $student->user?->status ?? 'active',
+                ]);
+            }
+        }
+
+        if ($routeName === 'admin.staff.update' && ! $request->exists('status')) {
+            $staffProfile = $request->route('staffProfile');
+
+            if ($staffProfile instanceof StaffProfile) {
+                $staffProfile->loadMissing('user');
+                $request->merge([
+                    'status' => $staffProfile->status ?? $staffProfile->user?->status ?? 'active',
+                ]);
+            }
         }
 
         if (in_array($routeName, self::STUDENT_ROUTES, true)) {
