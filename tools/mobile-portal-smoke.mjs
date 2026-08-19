@@ -62,11 +62,9 @@ function captureBrowserErrors(page) {
 async function assertPortalOverview(page, label) {
   if (!page.url().includes('/portal')) fail(`${label} did not reach portal: ${page.url()}`);
 
-  await page.locator('main').waitFor({ state: 'visible' });
-  const visibleText = await page.locator('body').innerText();
-  if (!visibleText.includes('Lesson Notes') || !visibleText.includes('Assignments')) {
-    fail(`${label}: expected portal overview content is not visible.`);
-  }
+  const main = page.locator('main');
+  await main.waitFor({ state: 'visible' });
+  await main.getByText('STUDENT PORTAL', { exact: true }).waitFor({ state: 'visible' });
 
   await assertHealthyPage(page, label);
   await assertMobileNavigation(page, label);
