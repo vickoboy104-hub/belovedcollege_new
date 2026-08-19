@@ -4,6 +4,8 @@ namespace Tests\Feature;
 
 use App\Enums\UserRole;
 use App\Models\AcademicSession;
+use App\Models\SchoolClass;
+use App\Models\Subject;
 use App\Models\Term;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -113,6 +115,74 @@ class AcademicSetupIntegrityTest extends TestCase
             'name' => 'First Term',
             'is_current' => 1,
         ]);
+    }
+
+    public function test_duplicate_class_and_section_combination_is_rejected(): void
+    {
+        $admin = User::factory()->create(['role' => UserRole::Admin]);
+        SchoolClass::create([
+            'name' => 'JSS 1',
+            'section' => 'A',
+            'slug' => 'jss-1-a-existing',
+        ]);
+
+        $response = $this->actingAs($admin)->post(route('admin.classes.store'), [
+            'name' => 'jss 1',
+            'section' => 'a',
+        ]);
+
+        $response->assertSessionHasErrors('name');
+        $this->assertDatabaseCount('school_classes', 1);
+    }
+
+    public function test_same_class_name_can_be_used_for_a_different_section(): void
+    {
+        $admin = User::factory()->create(['role' => UserRole::Admin]);
+        SchoolClass::create([
+            'name' => 'JSS 1',
+            'section' => 'A',
+            'slug' => 'jss-1-a-existing',
+        ]);
+
+        $response = $this->actingAs($admin)->post(route('admin.classes.store'), [
+            'name' => 'JSS 1',
+            'section' => 'B',
+        ]);
+
+        $response->assertRedirect();
+        $this->assertDatabaseCount('school_classes', 2);
+    }
+
+    public function test_inactive_staff_cannot_be_assigned_as_class_teacher(): void
+    {
+        $admin = User::factory()->create(['role' => UserRole::Admin]);
+        $teacher = User::factory()->create([
+            'role' => UserRole::Teacher,
+            'status' => 'inactive',
+        ]);
+
+        $response = $this->actingAs($admin)->post(route('admin.classes.store'), [
+            'name' => 'JSS 2',
+            'section' => 'A',
+            'class_teacher_id' => $teacher->id,
+        ]);
+
+        $response->assertSessionHasErrors('class_teacher_id');
+        $this->assertDatabaseCount('school_classes', 0);
+    }
+
+    public function test_duplicate_subject_name_is_rejected_case_insensitively(): void
+    {
+        $admin = User::factory()->create(['role' => UserRole::Admin]);
+        Subject::create(['name' => 'Mathematics', 'code' => 'MTH']);
+
+        $response = $this->actingAs($admin)->post(route('admin.subjects.store'), [
+            'name' => 'mathematics',
+            'code' => 'MATH',
+        ]);
+
+        $response->assertSessionHasErrors('name');
+        $this->assertDatabaseCount('subjects', 1);
     }
 
     protected function createSession(bool $isCurrent = true): AcademicSession
