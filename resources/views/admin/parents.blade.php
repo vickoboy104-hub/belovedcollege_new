@@ -31,6 +31,7 @@
                 @forelse ($parentRows as $row)
                     @php
                         $parent = $row['parent'];
+                        $parentStatus = ucfirst((string) ($parent->status ?: 'inactive'));
                         $firstChild = $row['children']->first();
                         $childrenNames = $row['children']->map(fn ($child) => $child->user->fullName())->join(', ');
                         $parentInitials = collect(explode(' ', $parent->fullName() ?: $parent->name ?: 'Parent'))
@@ -41,7 +42,7 @@
                         $parentPreview = [
                             'type' => 'parent',
                             'title' => $parent->fullName(),
-                            'subtitle' => 'Active Parent - '.$row['child_count'].' child'.($row['child_count'] === 1 ? '' : 'ren'),
+                            'subtitle' => $parentStatus.' Parent - '.$row['child_count'].' child'.($row['child_count'] === 1 ? '' : 'ren'),
                             'avatar' => $parentInitials ?: 'PA',
                             'profileUrl' => $firstChild ? route('admin.students.show', $firstChild) : route('admin.students.index'),
                             'ctaLabel' => 'View Full Profile',
@@ -68,7 +69,7 @@
                         <td><span class="table-text-clip">{{ $childrenNames ?: 'No children linked' }}</span></td>
                         <td><span class="table-text-clip">{{ $row['class_names']->implode(', ') ?: 'No class assigned' }}</span></td>
                         <td>{{ $parent->phone ?: 'No phone registered' }}</td>
-                        <td><x-status-badge status="Active" /></td>
+                        <td><x-status-badge :status="$parentStatus" /></td>
                         <td>
                             <div class="table-action-group">
                                 <button type="button" class="table-view-btn" data-preview='@json($parentPreview, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_TAG)'>View</button>
@@ -93,6 +94,7 @@
             @forelse ($parentRows as $row)
                 @php
                     $parent = $row['parent'];
+                    $parentStatus = ucfirst((string) ($parent->status ?: 'inactive'));
                     $firstChild = $row['children']->first();
                     $childrenNames = $row['children']->map(fn ($child) => $child->user->fullName())->join(', ');
                     $parentInitials = collect(explode(' ', $parent->fullName() ?: $parent->name ?: 'Parent'))
@@ -103,7 +105,7 @@
                     $parentPreview = [
                         'type' => 'parent',
                         'title' => $parent->fullName(),
-                        'subtitle' => 'Active Parent - '.$row['child_count'].' child'.($row['child_count'] === 1 ? '' : 'ren'),
+                        'subtitle' => $parentStatus.' Parent - '.$row['child_count'].' child'.($row['child_count'] === 1 ? '' : 'ren'),
                         'avatar' => $parentInitials ?: 'PA',
                         'profileUrl' => $firstChild ? route('admin.students.show', $firstChild) : route('admin.students.index'),
                         'ctaLabel' => 'View Full Profile',
@@ -128,7 +130,7 @@
                                 <div class="text-[10px] text-slate-500 font-semibold mt-0.5">{{ $parent->email ?: 'No email address registered' }}</div>
                             </div>
                         </div>
-                        <x-status-badge status="Active" class="scale-90 origin-right" />
+                        <x-status-badge :status="$parentStatus" class="scale-90 origin-right" />
                     </div>
 
                     <div class="mobile-record-grid">
