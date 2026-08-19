@@ -24,15 +24,10 @@ async function assertHealthyPage(page, label) {
 
 async function login(page, path, identifier, password) {
   await page.goto(`${baseURL}${path}`, { waitUntil: 'networkidle' });
-
-  const identifierInput = page.locator('input[name="identifier"], input[name="email"]').first();
-  await identifierInput.fill(identifier);
+  await page.locator('input[name="login"]').fill(identifier);
   await page.locator('input[name="password"]').fill(password);
-
-  await Promise.all([
-    page.waitForLoadState('networkidle'),
-    page.locator('button[type="submit"]').first().click(),
-  ]);
+  await page.locator('button[type="submit"]').first().click();
+  await page.waitForLoadState('networkidle');
 }
 
 async function runStudent(browser) {
