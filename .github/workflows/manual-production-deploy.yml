@@ -1,0 +1,93 @@
+name: Manual production FTP deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Preview FTP changes only (recommended first run)'
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: production-ftp-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Build and sync production files
+    runs-on: ubuntu-latest
+    environment: production
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          extensions: bcmath, ctype, curl, dom, fileinfo, filter, gd, iconv, intl, json, libxml, mbstring, openssl, pcre, pdo, session, simplexml, sodium, tokenizer, xml, xmlwriter, zip
+          coverage: none
+          tools: composer:v2
+
+      - name: Install production PHP dependencies
+        run: |
+          composer config --global github-oauth.github.com "${{ github.token }}"
+          composer validate --no-check-publish --quiet
+          composer install --no-dev --no-interaction --prefer-dist --no-progress --optimize-autoloader
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - name: Build production frontend assets
+        run: |
+          npm ci --no-audit --no-fund
+          npm run build
+
+      - name: Verify deployment secrets
+        env:
+          FTP_SERVER: ${{ secrets.FTP_SERVER }}
+          FTP_USERNAME: ${{ secrets.FTP_USERNAME }}
+          FTP_PASSWORD: ${{ secrets.FTP_PASSWORD }}
+          FTP_SERVER_DIR: ${{ secrets.FTP_SERVER_DIR }}
+        run: |
+          test -n "$FTP_SERVER" || { echo "Missing FTP_SERVER secret"; exit 1; }
+          test -n "$FTP_USERNAME" || { echo "Missing FTP_USERNAME secret"; exit 1; }
+          test -n "$FTP_PASSWORD" || { echo "Missing FTP_PASSWORD secret"; exit 1; }
+          test -n "$FTP_SERVER_DIR" || { echo "Missing FTP_SERVER_DIR secret"; exit 1; }
+
+      - name: Sync files to production hosting
+        uses: SamKirkland/FTP-Deploy-Action@v4.4.0
+        with:
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          server-dir: ${{ secrets.FTP_SERVER_DIR }}
+          protocol: ${{ vars.FTP_PROTOCOL || 'ftp' }}
+          port: ${{ vars.FTP_PORT || '21' }}
+          dry-run: ${{ inputs.dry_run }}
+          dangerous-clean-slate: false
+          log-level: standard
+          exclude: |
+            **/.git*
+            **/.git*/**
+            **/node_modules/**
+            .env
+            .env.*
+            .github/**
+            tests/**
+            storage/logs/**
+            storage/framework/cache/**
+            storage/framework/sessions/**
+            storage/framework/views/**
+            storage/exports/**
+            database/database.sqlite
+            test-output.txt
