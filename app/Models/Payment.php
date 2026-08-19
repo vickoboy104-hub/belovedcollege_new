@@ -4,11 +4,11 @@ namespace App\Models;
 
 use App\Enums\PaymentProvider;
 use App\Enums\PaymentStatus;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Str;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class Payment extends Model
 {
@@ -59,29 +59,37 @@ class Payment extends Model
 
     public function allocateBundleInvoices(): void
     {
-        $payload = $this->payload ?? [];
-        $invoiceIds = collect(data_get($payload, 'invoice_ids', []))
-            ->filter()
-            ->map(fn (mixed $id) => (int) $id)
-            ->unique()
-            ->values();
+        DB::transaction(function (): void {
+            /** @var self|null $lockedPayment */
+            $lockedPayment = static::query()->lockForUpdate()->find($this->id);
 
-        if ($invoiceIds->isEmpty() || data_get($payload, 'bundle_allocated')) {
-            return;
-        }
+            if (! $lockedPayment) {
+                return;
+            }
 
-        $invoices = FeeInvoice::query()
-            ->with('feeItem')
-            ->where('student_id', $this->student_id)
-            ->whereIn('id', $invoiceIds)
-            ->get()
-            ->sortBy(fn (FeeInvoice $invoice) => sprintf('%s-%010d', optional($invoice->due_date)->format('Ymd') ?: '99999999', $invoice->id))
-            ->values();
+            $payload = $lockedPayment->payload ?? [];
+            $invoiceIds = collect(data_get($payload, 'invoice_ids', []))
+                ->filter()
+                ->map(fn (mixed $id) => (int) $id)
+                ->unique()
+                ->values();
 
-        $remaining = (float) $this->amount;
-        $allocations = [];
+            if ($invoiceIds->isEmpty() || data_get($payload, 'bundle_allocated')) {
+                return;
+            }
 
-        DB::transaction(function () use (&$remaining, &$allocations, $invoices): void {
+            $invoices = FeeInvoice::query()
+                ->with('feeItem')
+                ->where('student_id', $lockedPayment->student_id)
+                ->whereIn('id', $invoiceIds)
+                ->lockForUpdate()
+                ->get()
+                ->sortBy(fn (FeeInvoice $invoice) => sprintf('%s-%010d', optional($invoice->due_date)->format('Ymd') ?: '99999999', $invoice->id))
+                ->values();
+
+            $remaining = (float) $lockedPayment->amount;
+            $allocations = [];
+
             foreach ($invoices as $index => $invoice) {
                 $invoice->refresh();
 
@@ -94,18 +102,18 @@ class Payment extends Model
                 static::create([
                     'fee_invoice_id' => $invoice->id,
                     'student_id' => $invoice->student_id,
-                    'provider' => $this->provider,
-                    'reference' => $this->reference.'-'.($index + 1).'-'.Str::upper(Str::random(4)),
-                    'receipt_no' => $this->receipt_no,
-                    'gateway_reference' => $this->gateway_reference,
+                    'provider' => $lockedPayment->provider,
+                    'reference' => $lockedPayment->reference.'-'.($index + 1).'-'.Str::upper(Str::random(4)),
+                    'receipt_no' => $lockedPayment->receipt_no,
+                    'gateway_reference' => $lockedPayment->gateway_reference,
                     'amount' => $applied,
-                    'currency' => $this->currency,
+                    'currency' => $lockedPayment->currency,
                     'status' => PaymentStatus::Paid,
-                    'channel' => $this->channel,
-                    'paid_at' => $this->paid_at ?? now(),
-                    'recorded_by' => $this->recorded_by,
-                    'note' => 'Allocated from grouped payment '.$this->reference,
-                    'payload' => ['source' => 'bundle_allocation', 'parent_payment_id' => $this->id],
+                    'channel' => $lockedPayment->channel,
+                    'paid_at' => $lockedPayment->paid_at ?? now(),
+                    'recorded_by' => $lockedPayment->recorded_by,
+                    'note' => 'Allocated from grouped payment '.$lockedPayment->reference,
+                    'payload' => ['source' => 'bundle_allocation', 'parent_payment_id' => $lockedPayment->id],
                 ]);
 
                 $invoice->refresh()->syncBalance();
@@ -124,11 +132,13 @@ class Payment extends Model
 
                 $remaining -= $applied;
             }
+
+            $payload['bundle_allocated'] = true;
+            $payload['allocated_invoices'] = $allocations;
+
+            $lockedPayment->forceFill(['payload' => $payload])->save();
         });
 
-        $payload['bundle_allocated'] = true;
-        $payload['allocated_invoices'] = $allocations;
-
-        $this->forceFill(['payload' => $payload])->save();
+        $this->refresh();
     }
 }
