@@ -2,49 +2,53 @@
 
 @php
     $resolvedUrl = $route ? route($route) : $href;
-    
-    // Dark-panel-friendly tones — use CSS variable-controlled gradients with white text
+
+    // Keep each action visually distinct while the overall card surface remains
+    // controlled by the active admin theme (primary/surface/border/text settings).
     $toneMap = [
-        'blue'   => ['grad' => 'var(--theme-card-reg-student, linear-gradient(135deg,rgba(37,99,235,0.18) 0%,rgba(29,78,216,0.10) 100%))', 'border' => 'var(--theme-primary-soft, rgba(96,165,250,0.3))',  'iconBg' => 'var(--theme-primary-soft, rgba(96,165,250,0.2))',  'iconFg' => 'var(--theme-primary-light, #93c5fd)'],
-        'green'  => ['grad' => 'var(--theme-card-add-parent,  linear-gradient(135deg,rgba(16,185,129,0.18) 0%,rgba(4,120,87,0.10) 100%))',  'border' => 'var(--theme-success-soft, rgba(52,211,153,0.3))',  'iconBg' => 'var(--theme-success-soft, rgba(52,211,153,0.2))',  'iconFg' => 'var(--theme-success-light, #6ee7b7)'],
-        'purple' => ['grad' => 'linear-gradient(135deg,rgba(139,92,246,0.18) 0%,rgba(109,40,217,0.10) 100%)', 'border' => 'var(--theme-purple-soft, rgba(167,139,250,0.3))', 'iconBg' => 'var(--theme-purple-soft, rgba(167,139,250,0.2))', 'iconFg' => 'var(--theme-purple-light, #c4b5fd)'],
-        'gold'   => ['grad' => 'linear-gradient(135deg,rgba(217,119,6,0.18)  0%,rgba(180,83,9,0.10) 100%)',  'border' => 'var(--theme-accent-soft, rgba(252,211,77,0.3))',  'iconBg' => 'var(--theme-accent-soft, rgba(252,211,77,0.2))',  'iconFg' => 'var(--theme-accent-light, #fcd34d)'],
-        'orange' => ['grad' => 'linear-gradient(135deg,rgba(234,88,12,0.18)  0%,rgba(194,65,12,0.10) 100%)',  'border' => 'var(--theme-warning-soft, rgba(253,186,116,0.3))', 'iconBg' => 'var(--theme-warning-soft, rgba(253,186,116,0.2))', 'iconFg' => 'var(--theme-warning-light, #fdba74)'],
-        'red'    => ['grad' => 'linear-gradient(135deg,rgba(220,38,38,0.18)  0%,rgba(185,28,28,0.10) 100%)',  'border' => 'var(--theme-danger-soft, rgba(252,165,165,0.3))', 'iconBg' => 'var(--theme-danger-soft, rgba(252,165,165,0.2))', 'iconFg' => 'var(--theme-danger-light, #fca5a5)'],
-        'gray'   => ['grad' => 'linear-gradient(135deg,rgba(100,116,139,0.18) 0%,rgba(71,85,105,0.10) 100%)', 'border' => 'var(--theme-muted-soft, rgba(148,163,184,0.3))', 'iconBg' => 'var(--theme-muted-soft, rgba(148,163,184,0.2))', 'iconFg' => 'var(--theme-muted-light, #94a3b8)'],
+        'blue'   => ['accent' => 'var(--theme-primary)', 'soft' => 'var(--theme-primary-soft, rgba(37,99,235,0.18))'],
+        'green'  => ['accent' => 'var(--theme-success)', 'soft' => 'var(--theme-success-soft, rgba(5,150,105,0.18))'],
+        'purple' => ['accent' => 'var(--theme-purple, #7C3AED)', 'soft' => 'var(--theme-purple-soft, rgba(124,58,237,0.18))'],
+        'gold'   => ['accent' => 'var(--theme-accent)', 'soft' => 'var(--theme-accent-soft, rgba(251,191,36,0.18))'],
+        'orange' => ['accent' => 'var(--theme-warning)', 'soft' => 'var(--theme-warning-soft, rgba(217,119,6,0.18))'],
+        'red'    => ['accent' => 'var(--theme-danger)', 'soft' => 'var(--theme-danger-soft, rgba(225,29,72,0.18))'],
+        'gray'   => ['accent' => 'var(--theme-muted)', 'soft' => 'var(--theme-muted-soft, rgba(148,163,184,0.18))'],
     ];
     $tc = $toneMap[$tone] ?? $toneMap['blue'];
 @endphp
 
 <a href="{{ $resolvedUrl }}"
+   aria-label="Open {{ $title }}"
    data-tone="{{ $tone }}"
-   {{ $attributes->merge(['class' => 'quick-action-card flex flex-col justify-between gap-5 rounded-[18px] p-5 transition-all duration-200 hover:-translate-y-0.5']) }}
-   style="background: {{ $tc['grad'] }} !important; border: 1px solid {{ $tc['border'] }} !important; box-shadow: 0 8px 20px rgba(0,0,0,0.14);">
+   {{ $attributes->merge(['class' => 'quick-action-card group relative flex flex-col justify-between gap-5 overflow-hidden rounded-[18px] p-5 shadow-[0_12px_28px_rgba(15,23,42,0.12)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_18px_38px_rgba(15,23,42,0.18)] hover:ring-2 hover:ring-[color:var(--theme-primary-soft)] focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[color:var(--theme-primary-soft)]']) }}
+   style="--qa-accent: {{ $tc['accent'] }}; --qa-accent-soft: {{ $tc['soft'] }}; background-color: var(--theme-card-soft) !important; background-image: linear-gradient(145deg, color-mix(in srgb, var(--theme-primary) 18%, var(--theme-card)) 0%, color-mix(in srgb, var(--theme-primary) 7%, var(--theme-card)) 100%) !important; border: 1.5px solid color-mix(in srgb, var(--theme-primary) 48%, var(--theme-border)) !important;">
+
+    {{-- Strong top accent makes the entire surface read as an interactive control. --}}
+    <span aria-hidden="true" class="absolute inset-x-0 top-0 h-1 transition-all duration-200 group-hover:h-1.5" style="background: var(--qa-accent);"></span>
 
     <div class="space-y-4">
-        {{-- Icon --}}
-        <div class="quick-action-card-icon" style="width:2.4rem; height:2.4rem; border-radius:0.75rem; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:{{ $tc['iconBg'] }}; color:{{ $tc['iconFg'] }}; border:1px solid rgba(255,255,255,0.14);">
+        <div class="quick-action-card-icon"
+             style="width:2.55rem; height:2.55rem; border-radius:0.8rem; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:color-mix(in srgb, var(--qa-accent) 16%, var(--theme-card)); color:var(--qa-accent); border:1.5px solid color-mix(in srgb, var(--qa-accent) 48%, var(--theme-border)); box-shadow:0 5px 14px color-mix(in srgb, var(--qa-accent) 13%, transparent);">
             <x-app-icon :name="$icon" class="h-5 w-5" />
         </div>
 
-        <div class="space-y-1">
+        <div class="space-y-1.5">
             <h3 class="display-font text-base font-extrabold tracking-tight leading-snug quick-action-card-title"
-                style="color: var(--dashboard-quick-action-text, var(--dashboard-card-text, var(--theme-text-dark-card, #ffffff)));">
+                style="color: var(--theme-text) !important;">
                 {{ $title }}
             </h3>
             <p class="text-xs font-semibold leading-relaxed quick-action-card-desc"
-               style="color: var(--dashboard-quick-action-text-muted, var(--dashboard-card-text-muted, rgba(255,255,255,0.72)));">
+               style="color: var(--theme-muted) !important;">
                 {{ $description }}
             </p>
         </div>
     </div>
 
-    {{-- Arrow pointer --}}
-    <div class="text-right">
-        <span class="text-xs font-bold inline-flex items-center gap-1 quick-action-card-link"
-              style="color: {{ $tc['iconFg'] }};">
+    <div class="flex justify-end">
+        <span class="quick-action-card-link inline-flex min-h-8 items-center gap-1.5 rounded-lg px-3 py-1.5 text-[11px] font-extrabold tracking-wide transition-transform duration-150 group-hover:translate-x-0.5"
+              style="background: var(--theme-button-bg); color: var(--theme-button-text); border: 1px solid color-mix(in srgb, var(--theme-button-bg) 72%, var(--theme-border)); box-shadow: 0 5px 12px color-mix(in srgb, var(--theme-button-bg) 18%, transparent);">
             <span>Explore</span>
-            <span class="transform transition-transform duration-150">→</span>
+            <span aria-hidden="true" class="transition-transform duration-150 group-hover:translate-x-0.5">→</span>
         </span>
     </div>
 </a>
