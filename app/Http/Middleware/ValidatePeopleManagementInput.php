@@ -47,6 +47,14 @@ class ValidatePeopleManagementInput
         }
 
         $parentEmail = trim((string) $request->input('parent_email', ''));
+        $parentName = trim((string) $request->input('parent_name', ''));
+        $parentPhone = trim((string) $request->input('parent_phone', ''));
+
+        if ($routeName === 'admin.students.store' && $parentEmail === '' && ($parentName !== '' || $parentPhone !== '')) {
+            throw ValidationException::withMessages([
+                'parent_email' => 'A parent email is required to create and link a parent portal account.',
+            ]);
+        }
 
         if ($parentEmail === '') {
             return;
@@ -65,6 +73,12 @@ class ValidatePeopleManagementInput
         if ($existingUser && ! $existingUser->hasAnyRole(UserRole::Parent)) {
             throw ValidationException::withMessages([
                 'parent_email' => 'That email already belongs to a non-parent portal account. Use a different parent email.',
+            ]);
+        }
+
+        if (! $existingUser && $parentName === '') {
+            throw ValidationException::withMessages([
+                'parent_name' => 'Enter the parent or guardian name when creating a new parent portal account.',
             ]);
         }
     }
