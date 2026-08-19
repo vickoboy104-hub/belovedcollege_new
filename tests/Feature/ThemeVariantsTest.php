@@ -6,6 +6,7 @@ use App\Enums\UserRole;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\View;
 use Tests\TestCase;
 
@@ -71,6 +72,22 @@ class ThemeVariantsTest extends TestCase
         $this->assertStringContainsString('radial-gradient', $variants);
         $this->assertStringContainsString('html.theme-dark-corporate .public-shell', $publicVariants);
         $this->assertStringContainsString('html.theme-colourful-professional .public-shell', $publicVariants);
+    }
+
+    public function test_quick_action_cards_keep_contrast_and_interaction_theme_controlled(): void
+    {
+        $html = Blade::render(
+            '<x-quick-action-card title="Register Student" description="Create login details." href="/students" icon="student" tone="blue" />'
+        );
+
+        $this->assertStringContainsString('aria-label="Open Register Student"', $html);
+        $this->assertStringContainsString('background-color: var(--theme-card-soft)', $html);
+        $this->assertStringContainsString('var(--theme-primary)', $html);
+        $this->assertStringContainsString('var(--theme-border)', $html);
+        $this->assertStringContainsString('color: var(--theme-text)', $html);
+        $this->assertStringContainsString('color: var(--theme-muted)', $html);
+        $this->assertStringContainsString('background: var(--theme-button-bg)', $html);
+        $this->assertStringContainsString('hover:-translate-y-1', $html);
     }
 
     protected function admin(): User
