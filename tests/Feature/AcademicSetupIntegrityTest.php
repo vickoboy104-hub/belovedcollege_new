@@ -117,6 +117,40 @@ class AcademicSetupIntegrityTest extends TestCase
         ]);
     }
 
+    public function test_creating_new_current_session_clears_old_current_term(): void
+    {
+        $admin = User::factory()->create(['role' => UserRole::Admin]);
+        $oldSession = AcademicSession::create([
+            'name' => '2025/2026',
+            'start_date' => '2025-09-01',
+            'end_date' => '2026-07-31',
+            'is_current' => true,
+        ]);
+        $oldTerm = Term::create([
+            'academic_session_id' => $oldSession->id,
+            'name' => 'Third Term',
+            'slug' => 'third-term-2025-2026',
+            'start_date' => '2026-04-20',
+            'end_date' => '2026-07-31',
+            'is_current' => true,
+        ]);
+
+        $response = $this->actingAs($admin)->post(route('admin.sessions.store'), [
+            'name' => '2026/2027',
+            'start_date' => '2026-09-01',
+            'end_date' => '2027-07-31',
+            'promotion_pass_mark' => 50,
+            'is_current' => true,
+        ]);
+
+        $response->assertRedirect();
+        $newSession = AcademicSession::query()->where('name', '2026/2027')->firstOrFail();
+
+        $this->assertTrue($newSession->is_current);
+        $this->assertFalse($oldSession->fresh()->is_current);
+        $this->assertFalse($oldTerm->fresh()->is_current);
+    }
+
     public function test_duplicate_class_and_section_combination_is_rejected(): void
     {
         $admin = User::factory()->create(['role' => UserRole::Admin]);
