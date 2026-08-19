@@ -22,6 +22,8 @@ class ValidatePeopleManagementInput
     public function handle(Request $request, Closure $next): Response
     {
         $routeName = $request->route()?->getName();
+        $existingParent = null;
+        $existingParentStatus = null;
 
         if ($routeName === 'admin.students.store' && ! $request->exists('admission_no')) {
             // Student registration supports automatic admission-number generation.
@@ -55,13 +57,34 @@ class ValidatePeopleManagementInput
 
         if (in_array($routeName, self::STUDENT_ROUTES, true)) {
             $this->validateStudentInput($request, $routeName);
+
+            $parentEmail = trim((string) $request->input('parent_email', ''));
+            if ($parentEmail !== '') {
+                $candidate = User::query()->where('email', $parentEmail)->first();
+                if ($candidate?->hasAnyRole(UserRole::Parent)) {
+                    $existingParent = $candidate;
+                    $existingParentStatus = (string) $candidate->status;
+                }
+            }
         }
 
         if ($routeName === 'admin.staff.update') {
             $this->validateStatus($request);
         }
 
-        return $next($request);
+        $response = $next($request);
+
+        // Linking or editing a child must not silently reactivate an existing
+        // parent portal account. Parent access has its own lifecycle and the
+        // student form does not expose a parent-status control.
+        if ($existingParent && $existingParentStatus !== null) {
+            $freshParent = $existingParent->fresh();
+            if ($freshParent && (string) $freshParent->status !== $existingParentStatus) {
+                $freshParent->updateQuietly(['status' => $existingParentStatus]);
+            }
+        }
+
+        return $response;
     }
 
     protected function validateStudentInput(Request $request, ?string $routeName): void
