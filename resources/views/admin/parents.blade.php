@@ -3,6 +3,22 @@
         <x-page-header title="Guardian and family records" eyebrow="Parents management" description="Manage parent contacts, linked children, billing follow-up, and family portal records." />
     </x-slot>
 
+    @if (session('generated_parent_credentials'))
+        @php($credentials = session('generated_parent_credentials'))
+        <div class="mb-8 rounded-[18px] border border-emerald-200 bg-emerald-50 px-6 py-5 text-sm text-emerald-900 shadow-sm">
+            <div class="font-bold flex items-center gap-2 text-emerald-800">
+                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                Temporary parent portal credentials
+            </div>
+            <div class="mt-2.5 font-mono bg-white/70 border border-emerald-100 rounded-xl p-3 text-xs leading-relaxed flex flex-wrap gap-x-5 gap-y-2">
+                <span><strong class="text-slate-600">Parent:</strong> {{ $credentials['name'] }}</span>
+                <span><strong class="text-slate-600">Login email:</strong> {{ $credentials['email'] }}</span>
+                <span><strong class="text-slate-600">Temporary password:</strong> <span class="bg-amber-100 px-1.5 py-0.5 rounded font-extrabold">{{ $credentials['password'] }}</span></span>
+            </div>
+            <p class="mt-2 text-xs font-semibold text-emerald-700">Share this password securely now. It is shown only in this response and the parent will be required to replace it after login.</p>
+        </div>
+    @endif
+
     <!-- Parents Workspace Stats Grid -->
     <div class="metrics-grid metrics-grid-4 mb-8">
         <x-stat-card label="Linked parents" :value="$summary['linkedParents']" accent="blue" icon="parents" />
@@ -75,6 +91,13 @@
                                 <button type="button" class="table-view-btn" data-preview='@json($parentPreview, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_TAG)'>View</button>
                                 <a class="table-mini-link" href="{{ route('admin.students.index', ['search' => $parent->email ?: $parent->fullName()]) }}">Link Child</a>
                                 <a class="table-mini-link" href="{{ route('admin.finance.records', ['section' => 'student-balances', 'search' => $parent->email ?: $parent->fullName()]) }}">Billing</a>
+                                @if ($parent->email)
+                                    <form method="POST" action="{{ route('admin.parents.password.reset', $parent) }}" class="inline">
+                                        @csrf
+                                        <input type="hidden" name="redirect_search" value="{{ $search }}" />
+                                        <button type="submit" class="table-mini-link" onclick="return confirm('Generate a new temporary password for this parent? The old password will stop working.')">Reset Password</button>
+                                    </form>
+                                @endif
                                 <a class="table-mini-link" href="{{ $contactUrl }}">Contact</a>
                             </div>
                         </td>
@@ -152,10 +175,17 @@
                         >
                             Quick View
                         </button>
-                        <div class="flex w-full gap-2 mt-1">
-                            <a href="{{ route('admin.students.index', ['search' => $parent->email ?: $parent->fullName()]) }}" class="theme-button-secondary w-full text-center py-2 px-3 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700">Link Child</a>
-                            <a href="{{ route('admin.finance.records', ['section' => 'student-balances', 'search' => $parent->email ?: $parent->fullName()]) }}" class="theme-button-secondary w-full text-center py-2 px-3 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700">Billing</a>
-                            <a href="{{ $contactUrl }}" class="theme-button-secondary w-full text-center py-2 px-3 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700">Contact</a>
+                        <div class="grid grid-cols-2 gap-2 mt-1">
+                            <a href="{{ route('admin.students.index', ['search' => $parent->email ?: $parent->fullName()]) }}" class="theme-button-secondary text-center py-2 px-3 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700">Link Child</a>
+                            <a href="{{ route('admin.finance.records', ['section' => 'student-balances', 'search' => $parent->email ?: $parent->fullName()]) }}" class="theme-button-secondary text-center py-2 px-3 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700">Billing</a>
+                            @if ($parent->email)
+                                <form method="POST" action="{{ route('admin.parents.password.reset', $parent) }}">
+                                    @csrf
+                                    <input type="hidden" name="redirect_search" value="{{ $search }}" />
+                                    <button type="submit" class="theme-button-secondary w-full text-center py-2 px-3 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700" onclick="return confirm('Generate a new temporary password for this parent? The old password will stop working.')">Reset Password</button>
+                                </form>
+                            @endif
+                            <a href="{{ $contactUrl }}" class="theme-button-secondary text-center py-2 px-3 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700">Contact</a>
                         </div>
                     </div>
                 </article>
