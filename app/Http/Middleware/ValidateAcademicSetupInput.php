@@ -3,9 +3,13 @@
 namespace App\Http\Middleware;
 
 use App\Models\AcademicSession;
+use App\Models\SchoolClass;
+use App\Models\Subject;
 use App\Models\Term;
+use App\Models\User;
 use Carbon\CarbonImmutable;
 use Closure;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,18 +19,31 @@ class ValidateAcademicSetupInput
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if (! $request->routeIs('admin.terms.store')) {
-            return $next($request);
+        if ($request->routeIs('admin.terms.store')) {
+            $this->validateTerm($request);
         }
 
+        if ($request->routeIs('admin.classes.store', 'admin.classes.update')) {
+            $this->validateClass($request);
+        }
+
+        if ($request->routeIs('admin.subjects.store')) {
+            $this->validateSubject($request);
+        }
+
+        return $next($request);
+    }
+
+    protected function validateTerm(Request $request): void
+    {
         $sessionId = $request->input('academic_session_id');
         if (! $sessionId) {
-            return $next($request);
+            return;
         }
 
         $session = AcademicSession::query()->find($sessionId);
         if (! $session) {
-            return $next($request);
+            return;
         }
 
         if ($session->closed_at !== null) {
@@ -65,8 +82,60 @@ class ValidateAcademicSetupInput
                 'academic_session_id' => 'A current term must belong to the current academic session.',
             ]);
         }
+    }
 
-        return $next($request);
+    protected function validateClass(Request $request): void
+    {
+        $name = trim((string) $request->input('name', ''));
+        $section = trim((string) $request->input('section', ''));
+
+        if ($name !== '') {
+            $duplicate = SchoolClass::query()
+                ->whereRaw('LOWER(name) = ?', [mb_strtolower($name)])
+                ->where(function (Builder $query) use ($section): void {
+                    if ($section === '') {
+                        $query->whereNull('section')->orWhere('section', '');
+                        return;
+                    }
+
+                    $query->whereRaw('LOWER(section) = ?', [mb_strtolower($section)]);
+                });
+
+            $currentClass = $request->route('schoolClass');
+            if ($currentClass instanceof SchoolClass) {
+                $duplicate->whereKeyNot($currentClass->getKey());
+            }
+
+            if ($duplicate->exists()) {
+                throw ValidationException::withMessages([
+                    'name' => 'This class and section combination already exists.',
+                ]);
+            }
+        }
+
+        $teacherId = $request->input('class_teacher_id');
+        if ($teacherId) {
+            $teacher = User::query()->find($teacherId);
+            if ($teacher && strtolower((string) $teacher->status) !== 'active') {
+                throw ValidationException::withMessages([
+                    'class_teacher_id' => 'Only an active staff account can be assigned as a class teacher.',
+                ]);
+            }
+        }
+    }
+
+    protected function validateSubject(Request $request): void
+    {
+        $name = trim((string) $request->input('name', ''));
+        if ($name === '') {
+            return;
+        }
+
+        if (Subject::query()->whereRaw('LOWER(name) = ?', [mb_strtolower($name)])->exists()) {
+            throw ValidationException::withMessages([
+                'name' => 'A subject with this name already exists.',
+            ]);
+        }
     }
 
     protected function parseDate(mixed $value): ?CarbonImmutable
