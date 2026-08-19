@@ -70,4 +70,32 @@ class PasswordResetTest extends TestCase
             return true;
         });
     }
+
+    public function test_email_password_reset_clears_temporary_password_requirement(): void
+    {
+        Notification::fake();
+
+        $user = User::factory()->create([
+            'must_change_password' => true,
+        ]);
+
+        $this->post('/forgot-password', ['email' => $user->email]);
+
+        Notification::assertSentTo($user, ResetPassword::class, function ($notification) use ($user) {
+            $response = $this->post('/reset-password', [
+                'token' => $notification->token,
+                'email' => $user->email,
+                'password' => 'new-secure-password',
+                'password_confirmation' => 'new-secure-password',
+            ]);
+
+            $response
+                ->assertSessionHasNoErrors()
+                ->assertRedirect(route('login'));
+
+            $this->assertFalse($user->fresh()->must_change_password);
+
+            return true;
+        });
+    }
 }
