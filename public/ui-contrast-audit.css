@@ -52,8 +52,13 @@ html.theme-dark-corporate .beloved-home .beloved-school-card__img > .beloved-bad
     color: color-mix(in srgb, var(--theme-text, #0f172a) 62%, var(--theme-surface, #ffffff)) !important;
 }
 
+.app-shell .text-slate-450,
 .app-shell .text-slate-550 {
     color: var(--theme-muted, #475569) !important;
+}
+
+.app-shell .text-slate-705 {
+    color: var(--theme-text, #0f172a) !important;
 }
 
 .app-shell .border-slate-150 {
