@@ -1,6 +1,5 @@
 import defaultTheme from 'tailwindcss/defaultTheme';
 import forms from '@tailwindcss/forms';
-import plugin from 'tailwindcss/plugin';
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -18,15 +17,5 @@ export default {
         },
     },
 
-    plugins: [
-        forms,
-        plugin(({ addComponents }) => {
-            addComponents({
-                '.app-topbar-user > span:last-child > span:last-child': {
-                    color: 'inherit',
-                    opacity: '0.78',
-                },
-            });
-        }),
-    ],
+    plugins: [forms],
 };
