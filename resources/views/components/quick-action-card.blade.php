@@ -23,7 +23,7 @@
 
     <div class="space-y-4">
         {{-- Icon --}}
-        <div class="quick-action-card-icon" style="width:2.4rem; height:2.4rem; border-radius:0.75rem; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:{{ $tc['iconBg'] }}; color:{{ $tc['iconFg'] }}; border:1px solid rgba(255,255,255,0.14);">
+        <div class="quick-action-card-icon" style="width:2.4rem; height:2.4rem; border-radius:0.75rem; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:{{ $tc['iconBg'] }}; color:{{ $tc['iconFg'] }}; border:1px solid {{ $tc['border'] }};">
             <x-app-icon :name="$icon" class="h-5 w-5" />
         </div>
 
