@@ -26,6 +26,44 @@ html.theme-dark-corporate .beloved-home .beloved-school-card__img > .beloved-bad
     color: #f8fafc !important;
 }
 
+/* Small neutral metadata was repeatedly using slate-400 on white cards. Use the
+   configured muted text colour instead so dates, helper labels, and secondary
+   metadata remain legible across the portal themes. */
+.app-shell main :is(.text-slate-400, .text-gray-400) {
+    color: var(--theme-muted, #475569) !important;
+}
+
+/* Dark dashboard panels deliberately sit on brand-dark surfaces. */
+.app-shell main :is(
+    .dashboard-dark-panel,
+    .dashboard-finance-panel,
+    .dashboard-quick-actions-panel,
+    .dashboard-announcements-panel,
+    .stat-gradient-card,
+    .profile-hero
+) :is(.text-slate-400, .text-gray-400) {
+    color: rgba(255, 255, 255, 0.82) !important;
+}
+
+/* A few legacy templates use intermediate slate utility names that are not part
+   of Tailwind's default scale. Give those existing tokens deterministic,
+   theme-aware values so they never silently inherit an unsuitable colour. */
+.app-shell .text-slate-350 {
+    color: color-mix(in srgb, var(--theme-text, #0f172a) 62%, var(--theme-surface, #ffffff)) !important;
+}
+
+.app-shell .text-slate-550 {
+    color: var(--theme-muted, #475569) !important;
+}
+
+.app-shell .border-slate-150 {
+    border-color: color-mix(in srgb, var(--theme-border, #cbd5e1) 68%, transparent) !important;
+}
+
+.app-shell .border-slate-350 {
+    border-color: color-mix(in srgb, var(--theme-border, #cbd5e1) 78%, var(--theme-text, #0f172a) 22%) !important;
+}
+
 /* Keyboard focus should remain obvious without changing normal-state styling. */
 .app-shell :is(a, button, input, select, textarea):focus-visible,
 .public-shell :is(a, button, input, select, textarea):focus-visible,
