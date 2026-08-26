@@ -69,6 +69,17 @@ html.theme-dark-corporate .beloved-home .beloved-school-card__img > .beloved-bad
     border-color: color-mix(in srgb, var(--theme-border, #cbd5e1) 78%, var(--theme-text, #0f172a) 22%) !important;
 }
 
+/* Legacy templates also contain a small number of non-default Tailwind spacing
+   and border-width tokens. Defining them here restores the intended geometry
+   without changing any standard utility or global component rule. */
+.app-shell .p-4\.5 {
+    padding: 1.125rem !important;
+}
+
+.app-shell .border-3 {
+    border-width: 3px !important;
+}
+
 /* Keyboard focus should remain obvious without changing normal-state styling. */
 .app-shell :is(a, button, input, select, textarea):focus-visible,
 .public-shell :is(a, button, input, select, textarea):focus-visible,
