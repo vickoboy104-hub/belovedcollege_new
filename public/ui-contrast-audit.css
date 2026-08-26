@@ -54,7 +54,9 @@ html.theme-dark-corporate .beloved-home .beloved-school-card__img > .beloved-bad
 }
 
 .app-shell .text-slate-450,
-.app-shell .text-slate-550 {
+.app-shell .text-slate-550,
+.app-shell .text-slate-650,
+.app-shell .text-slate-655 {
     color: var(--theme-muted, #475569) !important;
 }
 
@@ -68,6 +70,10 @@ html.theme-dark-corporate .beloved-home .beloved-school-card__img > .beloved-bad
 
 .app-shell .border-slate-350 {
     border-color: color-mix(in srgb, var(--theme-border, #cbd5e1) 78%, var(--theme-text, #0f172a) 22%) !important;
+}
+
+.app-shell .border-rose-205 {
+    border-color: #fecdd3 !important;
 }
 
 /* Legacy templates also contain a small number of non-default Tailwind spacing
