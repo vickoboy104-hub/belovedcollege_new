@@ -1,0 +1,47 @@
+/*
+ * Beloved Schools UI contrast audit guardrails.
+ *
+ * Loaded after the existing theme/portal styles. Keep selectors intentionally
+ * narrow so fixes do not alter unrelated buttons, badges, cards, or text.
+ */
+
+/* Authenticated topbar: the role label must follow the selected topbar theme.
+   Light Corporate uses a light user pill with dark text; dark presets provide
+   a light --theme-topbar-subtext value. This replaces the hard-coded white
+   utility on only the role label beneath the authenticated user's name. */
+.app-shell .app-topbar-user > span:last-child > span:last-child {
+    color: var(--theme-topbar-subtext, #475569) !important;
+    opacity: 1 !important;
+}
+
+/* Public home program/department image labels: the pill is a light surface,
+   so use the theme's readable dark-side colour without changing its geometry,
+   background, border, spacing, or hover behaviour. */
+html:not(.theme-dark-corporate) .beloved-home .beloved-school-card__img > .beloved-badge {
+    color: var(--theme-secondary, #071833) !important;
+}
+
+/* Dark theme cards use dark surfaces; retain a readable light label there. */
+html.theme-dark-corporate .beloved-home .beloved-school-card__img > .beloved-badge {
+    color: #f8fafc !important;
+}
+
+/* Keyboard focus should remain obvious without changing normal-state styling. */
+.app-shell :is(a, button, input, select, textarea):focus-visible,
+.public-shell :is(a, button, input, select, textarea):focus-visible,
+.auth-shell :is(a, button, input, select, textarea):focus-visible {
+    outline: 3px solid color-mix(in srgb, var(--theme-primary, #2563eb) 52%, transparent) !important;
+    outline-offset: 2px !important;
+}
+
+/* Respect reduced-motion preferences while preserving all normal animations. */
+@media (prefers-reduced-motion: reduce) {
+    .app-shell *,
+    .public-shell *,
+    .auth-shell * {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+    }
+}
