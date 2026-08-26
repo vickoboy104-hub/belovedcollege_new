@@ -21,11 +21,11 @@
 <div {{ $attributes->merge(['class' => 'admin-panel section-card-panel p-6 transition-all duration-200']) }}>
     @if($title || isset($header) || $icon)
         <div class="section-header pb-5 mb-6 flex items-center justify-between gap-4"
-             style="border-bottom: 1px solid rgba(255,255,255,0.1);">
+             style="border-bottom: 1px solid var(--theme-border-soft, rgba(148,163,184,0.28));">
             <div class="flex items-center gap-3.5 min-w-0">
                 @if($icon)
                     <div class="icon-box w-11 h-11 rounded-[14px] flex items-center justify-center shadow-md shrink-0"
-                         style="background: {{ $iconStyle['bg'] }}; color: {{ $iconStyle['color'] }}; border: 1px solid rgba(255,255,255,0.14);">
+                         style="background: {{ $iconStyle['bg'] }}; color: {{ $iconStyle['color'] }}; border: 1px solid var(--theme-border-soft, rgba(148,163,184,0.28));">
                         <x-app-icon :name="$icon" class="h-6 w-6" />
                     </div>
                 @endif
