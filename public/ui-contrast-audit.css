@@ -29,7 +29,8 @@ html.theme-dark-corporate .beloved-home .beloved-school-card__img > .beloved-bad
 /* Small neutral metadata was repeatedly using slate-400 on white cards. Use the
    configured muted text colour instead so dates, helper labels, and secondary
    metadata remain legible across the portal themes. */
-.app-shell main :is(.text-slate-400, .text-gray-400) {
+.app-shell main :is(.text-slate-400, .text-gray-400),
+.result-checker-page main :is(.text-slate-400, .text-gray-400) {
     color: var(--theme-muted, #475569) !important;
 }
 
@@ -83,7 +84,8 @@ html.theme-dark-corporate .beloved-home .beloved-school-card__img > .beloved-bad
 /* Keyboard focus should remain obvious without changing normal-state styling. */
 .app-shell :is(a, button, input, select, textarea):focus-visible,
 .public-shell :is(a, button, input, select, textarea):focus-visible,
-.auth-shell :is(a, button, input, select, textarea):focus-visible {
+.auth-shell :is(a, button, input, select, textarea):focus-visible,
+.result-checker-page :is(a, button, input, select, textarea):focus-visible {
     outline: 3px solid color-mix(in srgb, var(--theme-primary, #2563eb) 52%, transparent) !important;
     outline-offset: 2px !important;
 }
@@ -92,7 +94,8 @@ html.theme-dark-corporate .beloved-home .beloved-school-card__img > .beloved-bad
 @media (prefers-reduced-motion: reduce) {
     .app-shell *,
     .public-shell *,
-    .auth-shell * {
+    .auth-shell *,
+    .result-checker-page * {
         scroll-behavior: auto !important;
         transition-duration: 0.01ms !important;
         animation-duration: 0.01ms !important;
