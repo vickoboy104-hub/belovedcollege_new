@@ -32,6 +32,7 @@
     <link rel="stylesheet" href="{{ asset('theme-variants.css') }}?v=20260714-theme-variants-1">
     <link rel="stylesheet" href="{{ asset('theme-settings-presets.css') }}?v=20260714-theme-settings-presets-1">
     <link rel="stylesheet" href="{{ asset('table-consistency.css') }}?v=20260720-global-table-consistency-1">
+    <link rel="stylesheet" href="{{ asset('ui-contrast-audit.css') }}?v=20260827-ui-contrast-audit-1">
     @if (request()->routeIs('admin.reports.index'))
         <script src="{{ asset('report-search-behavior.js') }}?v=20260719-report-search-optional-2"></script>
     @endif
