@@ -1,6 +1,6 @@
 @props(['name', 'role', 'id', 'avatar' => null, 'classDetails' => null, 'status' => 'Active'])
 
-<div {{ $attributes->merge(['class' => 'relative overflow-hidden bg-gradient-to-r from-[#071833] via-[#0b1f3a] to-[#0f2c52] border border-[#c8d6ea] rounded-[24px] p-6 sm:p-8 shadow-[0_10px_30px_rgba(15,23,42,0.15)] text-white']) }}>
+<div {{ $attributes->merge(['class' => 'profile-hero relative overflow-hidden bg-gradient-to-r from-[#071833] via-[#0b1f3a] to-[#0f2c52] border border-[#c8d6ea] rounded-[24px] p-6 sm:p-8 shadow-[0_10px_30px_rgba(15,23,42,0.15)] text-white']) }}>
     <!-- Left top brand colored thin accent strip -->
     <div class="absolute top-0 inset-x-0 h-1.5 bg-gradient-to-r from-blue-600 to-[#fbbf24]"></div>
     
@@ -32,11 +32,11 @@
                 @endif
             </div>
 
-            <h2 class="display-font text-2xl sm:text-3xl font-extrabold tracking-tight text-white">
+            <h2 class="profile-hero-name display-font text-2xl sm:text-3xl font-extrabold tracking-tight" style="color: #fbbf24 !important;">
                 {{ $name }}
             </h2>
 
-            <div class="flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-semibold text-slate-300">
+            <div class="profile-hero-meta flex flex-wrap items-center gap-x-6 gap-y-2 text-xs font-semibold text-slate-300">
                 <div class="flex items-center gap-2">
                     <x-app-icon name="profile" class="h-4 w-4 text-[#fbbf24]" />
                     <span>ID: <strong class="text-white">{{ $id }}</strong></span>
