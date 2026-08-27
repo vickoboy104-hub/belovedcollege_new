@@ -141,6 +141,44 @@ class WebhookController extends Controller
         return response()->json(['received' => true]);
     }
 
+    public function opay(Request $request): JsonResponse
+    {
+        // The notification itself is never trusted to settle a bill. It only
+        // supplies the merchant reference; the server then queries OPay and
+        // verifies status, reference, currency and amount independently.
+        $reference = (string) (
+            $request->input('data.reference')
+            ?: $request->input('reference')
+            ?: $request->query('reference')
+        );
+        $payment = $this->payment($reference, PaymentProvider::OPay);
+
+        if (! $payment) {
+            return response()->json(['message' => 'Payment reference not found'], 404);
+        }
+
+        try {
+            $verification = $this->gateways->gateway(PaymentProvider::OPay)->verify($reference);
+        } catch (Throwable $exception) {
+            report($exception);
+
+            return response()->json(['message' => 'Payment verification is temporarily unavailable'], 503);
+        }
+
+        if (! $this->matches($payment, PaymentProvider::OPay, $verification)) {
+            return response()->json(['message' => 'Payment verification mismatch'], 422);
+        }
+
+        $this->settle($payment, [
+            'gateway_reference' => data_get($verification, 'data.gateway_reference'),
+            'channel' => data_get($verification, 'data.channel', 'opay'),
+            'paid_at' => data_get($verification, 'data.paid_at'),
+            'payload' => ['webhook_verification' => $verification],
+        ]);
+
+        return response()->json(['received' => true]);
+    }
+
     public function palmpay(Request $request): JsonResponse
     {
         return response()->json([
@@ -165,7 +203,7 @@ class WebhookController extends Controller
         $status = strtolower((string) data_get($verification, 'data.status'));
         $reference = (string) data_get($verification, 'data.reference');
         $currency = strtoupper((string) data_get($verification, 'data.currency'));
-        $amount = (float) data_get($verification, 'data.amount', -1);
+        $rawAmount = data_get($verification, 'data.amount', -1);
 
         if (! hash_equals($payment->reference, $reference) || $currency !== strtoupper((string) $payment->currency)) {
             return false;
@@ -173,9 +211,11 @@ class WebhookController extends Controller
 
         return match ($provider) {
             PaymentProvider::Flutterwave => in_array($status, ['successful', 'success'], true)
-                && abs($amount - (float) $payment->amount) < 0.01,
+                && abs((float) $rawAmount - (float) $payment->amount) < 0.01,
             PaymentProvider::Monnify => in_array($status, ['paid', 'overpaid'], true)
-                && $amount + 0.00001 >= (float) $payment->amount,
+                && (float) $rawAmount + 0.00001 >= (float) $payment->amount,
+            PaymentProvider::OPay => in_array($status, ['success', 'successful', 'paid'], true)
+                && (int) $rawAmount === (int) round(((float) $payment->amount) * 100),
             default => false,
         };
     }
