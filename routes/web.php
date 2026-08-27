@@ -35,7 +35,7 @@ Route::post('/result-checker', [ReportController::class, 'checkerLookup'])
     ->name('reports.checker.lookup');
 
 Route::get('/payments/callback/{provider}', [PaymentController::class, 'callback'])
-    ->where('provider', 'paystack|palmpay|flutterwave|monnify')
+    ->where('provider', 'paystack|palmpay|flutterwave|monnify|opay')
     ->middleware('throttle:30,1')
     ->name('payments.callback');
 Route::post('/webhooks/paystack', [WebhookController::class, 'paystack'])
@@ -50,6 +50,9 @@ Route::post('/webhooks/flutterwave', [WebhookController::class, 'flutterwave'])
 Route::post('/webhooks/monnify', [WebhookController::class, 'monnify'])
     ->middleware('throttle:120,1')
     ->name('webhooks.monnify');
+Route::post('/webhooks/opay', [WebhookController::class, 'opay'])
+    ->middleware('throttle:120,1')
+    ->name('webhooks.opay');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
