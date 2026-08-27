@@ -258,6 +258,13 @@ class PaymentController extends Controller
                 && $currency === strtoupper((string) $payment->currency);
         }
 
+        if ($provider === PaymentProvider::OPay) {
+            return in_array($status, ['success', 'successful', 'paid'], true)
+                && hash_equals($payment->reference, $reference)
+                && (int) $gatewayAmount === (int) round(((float) $payment->amount) * 100)
+                && $currency === strtoupper((string) $payment->currency);
+        }
+
         return false;
     }
 
