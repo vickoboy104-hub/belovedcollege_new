@@ -12,11 +12,21 @@
     const providerPattern = '(paystack|palmpay|flutterwave|monnify|opay)';
     const bundlePattern = new RegExp(`/payments/checkout/${providerPattern}(?:\\?.*)?$`);
     const individualPattern = new RegExp(`/payments/[^/]+/checkout/${providerPattern}(?:\\?.*)?$`);
+    const invoiceInputSelector = 'input[name="invoice_ids[]"]';
 
     const preferredGateway = () => gateways.find((gateway) => gateway.recommended) || gateways[0] || null;
 
     const providerAction = (sampleAction, provider) =>
         sampleAction.replace(new RegExp(`/${providerPattern}(?:\\?.*)?$`), `/${provider}`);
+
+    const nodeTouchesInvoiceSelection = (node) => {
+        if (node.nodeType !== Node.ELEMENT_NODE) return false;
+
+        return node.matches?.(invoiceInputSelector) || Boolean(node.querySelector?.(invoiceInputSelector));
+    };
+
+    const mutationTouchesInvoiceSelection = (mutation) =>
+        [...mutation.addedNodes, ...mutation.removedNodes].some(nodeTouchesInvoiceSelection);
 
     const createGatewayChoice = (gateway, groupName, checked = false) => {
         const label = document.createElement('label');
@@ -162,17 +172,28 @@
         form.append(flow);
 
         const updateState = () => {
-            const selectedBills = form.querySelectorAll('input[name="invoice_ids[]"]');
+            const selectedBills = form.querySelectorAll(invoiceInputSelector);
             const count = selectedBills.length;
+            const selectedGateway = gateways.find((gateway) => gateway.value === selectedProvider);
+            const nextSummary = count === 0
+                ? 'Step 1: Tick at least one unpaid bill to continue.'
+                : `${count} bill${count === 1 ? '' : 's'} selected • ${selectedGateway?.label || 'Payment method'} chosen`;
+
             continueButton.disabled = count === 0 || !selectedProvider;
             continueButton.formAction = providerAction(sampleAction, selectedProvider || selectedDefault.value);
-            summary.textContent = count === 0
-                ? 'Step 1: Tick at least one unpaid bill to continue.'
-                : `${count} bill${count === 1 ? '' : 's'} selected • ${gateways.find((gateway) => gateway.value === selectedProvider)?.label || 'Payment method'} chosen`;
+
+            if (summary.textContent !== nextSummary) {
+                summary.textContent = nextSummary;
+            }
             summary.classList.toggle('is-ready', count > 0 && Boolean(selectedProvider));
         };
 
-        new MutationObserver(updateState).observe(form, { childList: true, subtree: true });
+        const observer = new MutationObserver((mutations) => {
+            if (mutations.some(mutationTouchesInvoiceSelection)) {
+                updateState();
+            }
+        });
+        observer.observe(form, { childList: true, subtree: true });
         updateState();
     });
 
