@@ -16,7 +16,7 @@
     <x-slot name="header">
         <x-page-header :title="'Welcome back, ' . $user->name . '.'">
             <x-slot name="eyebrow">Digital campus control room</x-slot>
-            <x-slot name="description">{{ $schoolSettings['portal_notice'] ?? 'Manage people, academics, fees, assessments, and communication from one school-wide dashboard.' }}</x-slot>
+            <x-slot name="description">{{ $dashboardDescription }}</x-slot>
             <x-slot name="actions">
                 <div class="rounded-3xl brand-gradient px-5 py-4 text-white shadow-xl shadow-slate-900/10 sm:px-6 sm:py-5 flex flex-col justify-center min-w-[200px]">
                     <div class="text-[10px] font-extrabold uppercase tracking-[0.25em] text-white/70">{{ $user->roleLabel() }}</div>
@@ -27,22 +27,24 @@
         </x-page-header>
     </x-slot>
 
-    <!-- Stats Section —— vibrant gradient cards -->
+    <!-- Role-scoped account metrics -->
     <div class="dashboard-stats-grid grid grid-cols-2 gap-4 lg:grid-cols-4">
         @foreach ($stats as $stat)
             @php
                 $accentColor = 'blue';
                 $iconName = 'circle';
                 $lbl = strtolower($stat['label']);
-                if      (str_contains($lbl, 'student'))                            { $accentColor = 'blue';   $iconName = 'student'; }
-                elseif  (str_contains($lbl, 'staff') || str_contains($lbl,'teacher')) { $accentColor = 'green';  $iconName = 'staff'; }
-                elseif  (str_contains($lbl, 'invoice'))                            { $accentColor = 'orange'; $iconName = 'finance'; }
-                elseif  (str_contains($lbl, 'payment'))                            { $accentColor = 'rose';   $iconName = 'finance'; }
-                elseif  (str_contains($lbl, 'parent'))                             { $accentColor = 'purple'; $iconName = 'parents'; }
-                elseif  (str_contains($lbl, 'class'))                              { $accentColor = 'teal';   $iconName = 'classes'; }
-                elseif  (str_contains($lbl, 'subject'))                            { $accentColor = 'orange'; $iconName = 'learning'; }
-                elseif  (str_contains($lbl, 'fee') || str_contains($lbl,'bill'))   { $accentColor = 'gold';   $iconName = 'finance'; }
-                elseif  (str_contains($lbl, 'cbt') || str_contains($lbl,'exam'))   { $accentColor = 'purple'; $iconName = 'portal'; }
+                if      (str_contains($lbl, 'student') || str_contains($lbl, 'child')) { $accentColor = 'blue';   $iconName = 'student'; }
+                elseif  (str_contains($lbl, 'staff') || str_contains($lbl, 'teacher')) { $accentColor = 'green';  $iconName = 'staff'; }
+                elseif  (str_contains($lbl, 'invoice'))                               { $accentColor = 'orange'; $iconName = 'finance'; }
+                elseif  (str_contains($lbl, 'payment') || str_contains($lbl, 'collection')) { $accentColor = 'rose'; $iconName = 'finance'; }
+                elseif  (str_contains($lbl, 'parent'))                                { $accentColor = 'purple'; $iconName = 'parents'; }
+                elseif  (str_contains($lbl, 'class'))                                 { $accentColor = 'teal';   $iconName = 'classes'; }
+                elseif  (str_contains($lbl, 'lesson'))                                { $accentColor = 'blue';   $iconName = 'learning'; }
+                elseif  (str_contains($lbl, 'assignment'))                            { $accentColor = 'orange'; $iconName = 'assignments'; }
+                elseif  (str_contains($lbl, 'assessment') || str_contains($lbl, 'report')) { $accentColor = 'purple'; $iconName = 'reports'; }
+                elseif  (str_contains($lbl, 'fee') || str_contains($lbl, 'bill') || str_contains($lbl, 'outstanding')) { $accentColor = 'gold'; $iconName = 'finance'; }
+                elseif  (str_contains($lbl, 'cbt') || str_contains($lbl, 'exam'))      { $accentColor = 'purple'; $iconName = 'portal'; }
             @endphp
             <x-stat-card :label="$stat['label']" :value="$stat['value']" :accent="$accentColor" :icon="$iconName" />
         @endforeach
@@ -82,7 +84,7 @@
         </x-dashboard-card>
     </div>
 
-    <!-- Finance Operational Picture -->
+    <!-- Finance Operational Picture: leadership/accounting roles only -->
     @if ($financeSnapshot)
         <div class="mt-8">
             <x-section-card class="dashboard-dark-panel dashboard-finance-panel" title="Operational payment picture" subtitle="School finance board" icon="finance" tone="gold"
