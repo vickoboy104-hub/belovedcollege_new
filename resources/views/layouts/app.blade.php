@@ -33,6 +33,7 @@
     <link rel="stylesheet" href="{{ asset('theme-settings-presets.css') }}?v=20260714-theme-settings-presets-1">
     <link rel="stylesheet" href="{{ asset('table-consistency.css') }}?v=20260720-global-table-consistency-1">
     <link rel="stylesheet" href="{{ asset('ui-contrast-audit.css') }}?v=20260827-ui-contrast-audit-2">
+    <link rel="stylesheet" href="{{ asset('payment-selection.css') }}?v=20260827-payment-flow-1">
     @if (request()->routeIs('admin.reports.index'))
         <script src="{{ asset('report-search-behavior.js') }}?v=20260719-report-search-optional-2"></script>
     @endif
@@ -99,7 +100,7 @@
         <script src="{{ asset('teacher-access-filter.js') }}?v=20260714-teacher-access-1"></script>
     @endif
     @isset($paymentGatewayCatalog)
-        <script src="{{ asset('payment-gateway-buttons.js') }}?v=20260714-payment-gateways-1"></script>
+        <script src="{{ asset('payment-gateway-buttons.js') }}?v=20260827-payment-flow-1"></script>
     @endisset
 </body>
 </html>
