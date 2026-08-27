@@ -36,4 +36,72 @@ class DashboardPerformanceTest extends TestCase
                 && $snapshot['outstanding'] === 0.0;
         });
     }
+
+    public function test_student_dashboard_contains_only_personal_account_metric_categories(): void
+    {
+        $student = User::factory()->create([
+            'role' => UserRole::Student,
+        ]);
+
+        $response = $this->actingAs($student)->get(route('dashboard'));
+
+        $response->assertOk();
+        $response->assertViewHas('stats', function (array $stats): bool {
+            return collect($stats)->pluck('label')->all() === [
+                'Lesson Notes',
+                'Assignments',
+                'Published Reports',
+                'Fees Owed',
+            ];
+        });
+        $response->assertViewHas('financeSnapshot', null);
+        $response->assertSee('Your personal academic account summary');
+        $response->assertDontSee('Operational payment picture');
+        $response->assertDontSee('Active Invoices');
+        $response->assertDontSee('Payments Logged');
+    }
+
+    public function test_teacher_dashboard_contains_only_teacher_workload_metric_categories(): void
+    {
+        $teacher = User::factory()->create([
+            'role' => UserRole::Teacher,
+        ]);
+
+        $response = $this->actingAs($teacher)->get(route('dashboard'));
+
+        $response->assertOk();
+        $response->assertViewHas('stats', function (array $stats): bool {
+            return collect($stats)->pluck('label')->all() === [
+                'Lessons Published',
+                'Assignments Created',
+                'Assessments Created',
+                'Managed Classes',
+            ];
+        });
+        $response->assertViewHas('financeSnapshot', null);
+        $response->assertSee('Your teaching workload');
+        $response->assertDontSee('Operational payment picture');
+        $response->assertDontSee('Active Invoices');
+        $response->assertDontSee('Payments Logged');
+    }
+
+    public function test_accountant_dashboard_is_finance_scoped_instead_of_people_scoped(): void
+    {
+        $accountant = User::factory()->create([
+            'role' => UserRole::Accountant,
+        ]);
+
+        $response = $this->actingAs($accountant)->get(route('dashboard'));
+
+        $response->assertOk();
+        $response->assertViewHas('stats', function (array $stats): bool {
+            return collect($stats)->pluck('label')->all() === [
+                'Active Invoices',
+                'Payments Logged',
+                'Outstanding Balance',
+                'Collection Rate',
+            ];
+        });
+        $response->assertSee('Finance activity and collection information');
+    }
 }
