@@ -38,6 +38,14 @@ return Application::configure(basePath: dirname(__DIR__))
                 | Request::HEADER_X_FORWARDED_PREFIX,
         );
 
+        // Payment providers cannot send a browser CSRF token. Their webhook
+        // endpoints remain protected by provider signatures and/or an
+        // authoritative server-to-server transaction verification before any
+        // invoice is marked paid.
+        $middleware->validateCsrfTokens(except: [
+            'webhooks/*',
+        ]);
+
         $middleware->web(append: [
             OptimizeUploadedMedia::class,
             DeferAutoplayMedia::class,
