@@ -100,7 +100,7 @@
         <script src="{{ asset('teacher-access-filter.js') }}?v=20260714-teacher-access-1"></script>
     @endif
     @isset($paymentGatewayCatalog)
-        <script src="{{ asset('payment-gateway-buttons.js') }}?v=20260827-payment-flow-1"></script>
+        <script src="{{ asset('payment-gateway-buttons.js') }}?v=20260827-payment-flow-2"></script>
     @endisset
 </body>
 </html>
