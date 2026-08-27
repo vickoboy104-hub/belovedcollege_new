@@ -5,25 +5,115 @@
  * narrow so fixes do not alter unrelated buttons, badges, cards, or text.
  */
 
-/* Authenticated topbar: the role label must follow the selected topbar theme.
-   Light Corporate uses a light user pill with dark text; dark presets provide
-   a light --theme-topbar-subtext value. This replaces the hard-coded white
-   utility on only the role label beneath the authenticated user's name. */
-.app-shell .app-topbar-user > span:last-child > span:last-child {
-    color: var(--theme-topbar-subtext, #475569) !important;
+/* Authenticated topbar: keep both the account name and role readable inside
+   the user pill for every role. The role uses the same foreground as the name
+   at reduced emphasis rather than the page-level subtext colour, which can be
+   too pale when a custom/light topbar uses a light pill. */
+.app-shell .app-topbar-user > span:last-child > span:first-child {
+    color: var(--theme-topbar-text, #0f172a) !important;
     opacity: 1 !important;
 }
 
-/* Public home program/department image labels: the pill is a light surface,
-   so use the theme's readable dark-side colour without changing its geometry,
-   background, border, spacing, or hover behaviour. */
-html:not(.theme-dark-corporate) .beloved-home .beloved-school-card__img > .beloved-badge {
-    color: var(--theme-secondary, #071833) !important;
+.app-shell .app-topbar-user > span:last-child > span:last-child {
+    color: var(--theme-topbar-text, #0f172a) !important;
+    opacity: 0.72 !important;
 }
 
-/* Dark theme cards use dark surfaces; retain a readable light label there. */
+/* Student/staff profile hero is a deliberately dark brand surface. Keep the
+   person's name on the same gold accent family as the initials and icons. */
+.app-shell .profile-hero .profile-hero-name {
+    color: #fbbf24 !important;
+    text-shadow: 0 1px 1px rgba(2, 6, 23, 0.2);
+}
+
+.app-shell .profile-hero .profile-hero-meta,
+.app-shell .profile-hero .profile-hero-meta strong {
+    color: #ffffff !important;
+}
+
+/* Quick-action cards can be light in the light preset. The Explore control
+   therefore needs an explicit high-contrast filled treatment instead of using
+   the light icon foreground as its text colour. */
+.app-shell .quick-action-card .quick-action-card-link {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.35rem !important;
+    border: 1px solid color-mix(in srgb, var(--theme-primary, #2563eb) 82%, #0f172a) !important;
+    border-radius: 0.65rem !important;
+    background: var(--theme-primary, #2563eb) !important;
+    color: #ffffff !important;
+    padding: 0.48rem 0.78rem !important;
+    box-shadow: 0 5px 12px color-mix(in srgb, var(--theme-primary, #2563eb) 20%, transparent) !important;
+}
+
+.app-shell .quick-action-card .quick-action-card-link > span {
+    color: inherit !important;
+    opacity: 1 !important;
+}
+
+/* Action-button content should always inherit the contrast-safe colour chosen
+   by its button variant rather than a generic nested-span rule. */
+.app-shell .btn > span,
+.app-shell .theme-button > span,
+.app-shell .theme-button-secondary > span {
+    color: inherit !important;
+    opacity: 1 !important;
+}
+
+.app-shell .btn-primary,
+.app-shell .btn-danger,
+.app-shell .theme-button:not(.theme-button-secondary) {
+    color: #ffffff !important;
+}
+
+.app-shell .btn-secondary,
+.app-shell .theme-button-secondary {
+    color: var(--theme-primary, #1d4ed8) !important;
+}
+
+/* Public home program/department image labels sit over photography. Give the
+   pill an opaque-enough surface and dark text in light themes so PROGRAM,
+   DEPARTMENT, PORTAL and VALUES remain readable regardless of the image. */
+html:not(.theme-dark-corporate) .beloved-home .beloved-school-card__img > .beloved-badge {
+    background: rgba(255, 255, 255, 0.94) !important;
+    border: 1px solid rgba(15, 23, 42, 0.16) !important;
+    color: #071833 !important;
+    opacity: 1 !important;
+    text-shadow: none !important;
+}
+
+/* Dark theme cards retain a strong dark pill with a readable light label. */
 html.theme-dark-corporate .beloved-home .beloved-school-card__img > .beloved-badge {
+    background: rgba(2, 6, 23, 0.88) !important;
+    border-color: rgba(255, 255, 255, 0.24) !important;
     color: #f8fafc !important;
+    opacity: 1 !important;
+    text-shadow: none !important;
+}
+
+/* Lesson supporting-resource actions use a proper visible control. Actual
+   teacher links keep normal navigation; generated fallback controls open a
+   local message instead of sending students to placeholder domains. */
+.app-shell .lesson-resource-action {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 0.35rem !important;
+    min-height: 2.25rem !important;
+    border: 1px solid color-mix(in srgb, var(--theme-primary, #2563eb) 32%, #cbd5e1) !important;
+    border-radius: 0.7rem !important;
+    background: color-mix(in srgb, var(--theme-primary, #2563eb) 8%, #ffffff) !important;
+    color: color-mix(in srgb, var(--theme-primary, #2563eb) 84%, #0f172a) !important;
+    padding: 0.5rem 0.8rem !important;
+    font-size: 0.75rem !important;
+    font-weight: 800 !important;
+    text-decoration: none !important;
+    cursor: pointer !important;
+}
+
+.app-shell .lesson-resource-action:hover {
+    background: color-mix(in srgb, var(--theme-primary, #2563eb) 14%, #ffffff) !important;
+    border-color: var(--theme-primary, #2563eb) !important;
 }
 
 /* Small neutral metadata was repeatedly using slate-400 on white cards. Use the
