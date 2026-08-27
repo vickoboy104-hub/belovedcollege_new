@@ -9,6 +9,7 @@ enum PaymentProvider: string
     case PalmPay = 'palmpay';
     case Flutterwave = 'flutterwave';
     case Monnify = 'monnify';
+    case OPay = 'opay';
 
     public function label(): string
     {
@@ -18,6 +19,7 @@ enum PaymentProvider: string
             self::PalmPay => 'PalmPay',
             self::Flutterwave => 'Flutterwave',
             self::Monnify => 'Monnify',
+            self::OPay => 'OPay',
         };
     }
 
