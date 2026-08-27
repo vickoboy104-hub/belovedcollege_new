@@ -24,7 +24,7 @@ class PaymentGatewaySettingsController extends Controller
     {
         $validated = $request->validate([
             'enabled_payment_gateways' => ['nullable', 'array'],
-            'enabled_payment_gateways.*' => [Rule::in(['paystack', 'palmpay', 'flutterwave', 'monnify'])],
+            'enabled_payment_gateways.*' => [Rule::in(['paystack', 'palmpay', 'flutterwave', 'monnify', 'opay'])],
 
             'paystack_public_key' => ['nullable', 'string', 'max:255'],
             'paystack_secret_key' => ['nullable', 'string', 'max:255'],
@@ -50,6 +50,12 @@ class PaymentGatewaySettingsController extends Controller
             'monnify_contract_code' => ['nullable', 'string', 'max:255'],
             'monnify_environment' => ['nullable', Rule::in(['sandbox', 'live'])],
             'monnify_payment_methods' => ['nullable', 'string', 'max:500'],
+
+            'opay_merchant_id' => ['nullable', 'string', 'max:255'],
+            'opay_public_key' => ['nullable', 'string', 'max:1000'],
+            'opay_secret_key' => ['nullable', 'string', 'max:1000'],
+            'opay_environment' => ['nullable', Rule::in(['sandbox', 'live'])],
+            'opay_pay_method' => ['nullable', 'string', 'max:100'],
         ]);
 
         $enabled = collect($validated['enabled_payment_gateways'] ?? [])
