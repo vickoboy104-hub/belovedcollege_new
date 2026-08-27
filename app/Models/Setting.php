@@ -23,6 +23,7 @@ class Setting extends Model
         'flutterwave_secret_hash',
         'flutterwave_client_secret',
         'monnify_secret_key',
+        'opay_secret_key',
     ];
 
     protected const ENCRYPTED_PREFIX = 'encrypted:';
