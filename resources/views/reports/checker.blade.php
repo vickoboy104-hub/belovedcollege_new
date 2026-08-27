@@ -7,7 +7,7 @@
     @include('partials.theme-head')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @include('partials.theme-overrides')
-    <link rel="stylesheet" href="{{ asset('ui-contrast-audit.css') }}?v=20260827-ui-contrast-audit-1">
+    <link rel="stylesheet" href="{{ asset('ui-contrast-audit.css') }}?v=20260827-ui-contrast-audit-2">
 </head>
 <body class="result-checker-page antialiased">
     <main class="result-checker-shell mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8">
