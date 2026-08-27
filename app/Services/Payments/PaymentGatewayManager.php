@@ -99,13 +99,13 @@ class PaymentGatewayManager
                 'initials' => 'PS',
                 'description' => 'Cards, bank transfer, USSD and other Paystack checkout channels.',
                 'recommended' => true,
-                'mode' => str_starts_with((string) Setting::getValue('paystack_public_key', ''), 'pk_test_') ? 'Test mode' : 'Live mode',
+                'mode' => $this->keyMode((string) Setting::getValue('paystack_public_key', ''), 'pk_test_'),
             ],
             PaymentProvider::Flutterwave => [
                 'initials' => 'FW',
                 'description' => 'Cards, bank transfer, USSD and supported wallet channels.',
                 'recommended' => false,
-                'mode' => str_contains(strtoupper((string) Setting::getValue('flutterwave_public_key', '')), 'TEST') ? 'Test mode' : 'Live mode',
+                'mode' => $this->keyMode((string) Setting::getValue('flutterwave_public_key', ''), 'TEST'),
             ],
             PaymentProvider::Monnify => [
                 'initials' => 'MN',
@@ -132,5 +132,14 @@ class PaymentGatewayManager
                 'mode' => 'Configured',
             ],
         };
+    }
+
+    protected function keyMode(string $key, string $testMarker): string
+    {
+        if (trim($key) === '') {
+            return 'Not configured';
+        }
+
+        return str_contains(strtoupper($key), strtoupper($testMarker)) ? 'Test mode' : 'Live mode';
     }
 }
