@@ -467,194 +467,251 @@
 
         <!-- 7. BILLING & FEES SECTION -->
         <div x-show="activeSection === 'billing'" x-cloak x-transition:enter="transition ease-out duration-250">
-            <x-dashboard-card title="Financial Balance & Billing Ledger" subtitle="Review school fee items, generate web checkout links, and view local payment receipts." icon="finance" accent="red">
-                <div class="grid gap-8 xl:grid-cols-[1.1fr,0.9fr]">
-                    <!-- Payment Selection and Invoices list -->
-                    <div class="space-y-6" x-data="{ selectedInvoices: [], totals: @js($invoices->mapWithKeys(fn ($invoice) => [$invoice->id => (float) $invoice->balance])) }">
-                        
-                        <!-- Alpine dynamic payment basket card -->
-                        <div class="rounded-[18px] border border-slate-200 bg-slate-50/50 p-5 shadow-inner">
-                            <div class="flex items-start justify-between gap-4 flex-wrap sm:flex-nowrap border-b border-slate-100 pb-4 mb-4">
-                                <div>
-                                    <div class="flex items-center gap-2">
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-[#fbbf24] border border-[#fbbf24]/20 text-[#071833]">
-                                            Checkout Basket
-                                        </span>
-                                        <span class="text-xs font-bold text-slate-500" x-text="`${selectedInvoices.length} Item(s) Selected`"></span>
-                                    </div>
-                                    <h4 class="display-font text-base font-extrabold text-[#071833] mt-2 leading-snug">
-                                        Combined Invoice Checkout
-                                    </h4>
-                                    <p class="text-[11px] font-semibold text-slate-500 mt-1 max-w-md">
-                                        Check one or more billing rows below to calculate your final combined total before launching online portals.
-                                    </p>
-                                </div>
-                                <div class="text-left sm:text-right">
-                                    <div class="text-[9px] font-extrabold uppercase tracking-wider text-slate-400">Total Selection</div>
-                                    <div class="display-font mt-1 text-2xl font-black text-[#071833]" x-text="`NGN ${selectedInvoices.reduce((sum, id) => sum + Number(totals[id] || 0), 0).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`"></div>
-                                </div>
-                            </div>
-
-                            <form method="POST" class="flex flex-col sm:flex-row items-center gap-3">
-                                @csrf
-                                <template x-for="invoiceId in selectedInvoices" :key="invoiceId">
-                                    <input type="hidden" name="invoice_ids[]" :value="invoiceId">
-                                </template>
-                                <button type="submit" formaction="{{ route('payments.selection.checkout', 'paystack') }}" x-bind:disabled="selectedInvoices.length === 0" class="btn inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-[12px] font-bold text-xs uppercase tracking-wider transition-all duration-200 focus:outline-none active:scale-[0.98] w-full sm:w-auto bg-[#071833] text-white border border-[#071833] hover:bg-[#0b1f3a] focus:ring-[#071833] disabled:opacity-50 disabled:cursor-not-allowed">
-                                    Pay Selected with Paystack
-                                </button>
-                                <button type="submit" formaction="{{ route('payments.selection.checkout', 'palmpay') }}" x-bind:disabled="selectedInvoices.length === 0" class="btn inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-[12px] font-bold text-xs uppercase tracking-wider transition-all duration-200 focus:outline-none active:scale-[0.98] w-full sm:w-auto bg-white text-[#1d4ed8] border border-[#c8d6ea] hover:bg-slate-50 hover:border-[#b0c4de] focus:ring-[#1d4ed8] disabled:opacity-50 disabled:cursor-not-allowed">
-                                    Pay Selected with PalmPay
-                                </button>
-                            </form>
+            <div
+                class="space-y-5"
+                x-data="{
+                    selectedInvoices: [],
+                    totals: @js($invoices->mapWithKeys(fn ($invoice) => [$invoice->id => (float) $invoice->balance])),
+                    paymentStep: 1,
+                    selectedGateway: 'paystack',
+                    get selectedTotal() {
+                        return this.selectedInvoices.reduce((sum, id) => sum + Number(this.totals[id] || 0), 0);
+                    }
+                }"
+            >
+                <!-- Compact balance summary -->
+                <section class="overflow-hidden rounded-[22px] border border-[#d8e2ef] bg-white shadow-sm">
+                    <div class="grid gap-4 bg-[#071833] px-5 py-5 text-white sm:grid-cols-[1fr,auto] sm:items-center sm:px-7">
+                        <div>
+                            <p class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-amber-300">Financial account</p>
+                            <h2 class="display-font mt-1 text-xl font-black text-white">Make a payment</h2>
+                            <p class="mt-1 text-xs font-semibold text-slate-200">Select only the school fees you want to pay now.</p>
                         </div>
-
-                        <!-- Individual Invoices lists -->
-                        <div class="space-y-4">
-                            @foreach ($invoices as $invoice)
-                                @php
-                                    $invoiceTotal = (float) $invoice->amount_paid + (float) $invoice->balance;
-                                    $paidPercent = $invoiceTotal > 0 ? max(0, min(100, ((float) $invoice->amount_paid / $invoiceTotal) * 100)) : 100;
-                                    $isCleared = (float) $invoice->balance <= 0;
-                                @endphp
-                                <div class="rounded-[18px] border border-slate-200 bg-white p-5 shadow-sm space-y-4 hover:border-[#fbbf24] transition-all">
-                                    <div class="flex items-start justify-between gap-4 flex-wrap">
-                                        <div>
-                                            <div class="flex items-center gap-2 flex-wrap">
-                                                <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-slate-100 border border-slate-200 text-slate-800">
-                                                    {{ $invoice->feeItem->name ?? 'Custom Invoice Item' }}
-                                                </span>
-                                                <x-status-badge :status="$isCleared ? 'paid' : 'unpaid'" />
-                                            </div>
-                                            <h4 class="display-font text-base font-extrabold text-slate-800 leading-snug mt-2">
-                                                {{ $invoice->invoice_no }}
-                                            </h4>
-                                            <p class="text-[10px] font-bold text-slate-400 mt-0.5">
-                                                Deadline: {{ optional($invoice->due_date)->format('M j, Y') ?: 'Open' }}
-                                            </p>
-                                        </div>
-                                        <div class="text-left sm:text-right">
-                                            <span class="text-[9px] font-extrabold uppercase tracking-wider text-slate-400">Balance Owed</span>
-                                            <div class="display-font text-lg font-black text-slate-900 mt-0.5">
-                                                NGN {{ number_format((float) $invoice->balance, 2) }}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    <div class="space-y-1.5">
-                                        <x-progress-bar :percentage="$paidPercent" label="" :color="$isCleared ? 'green' : 'orange'" />
-                                        <div class="flex items-center justify-between text-[10px] font-bold text-slate-400">
-                                            <span>Billed Paid: NGN {{ number_format((float) $invoice->amount_paid, 2) }}</span>
-                                            <span>{{ number_format($paidPercent, 0) }}% Cleared</span>
-                                        </div>
-                                    </div>
-
-                                    @if (!$isCleared)
-                                        <div class="flex items-center justify-between gap-3 border-t border-slate-100 pt-3 flex-wrap">
-                                            <label class="flex items-center gap-2 text-xs font-bold text-[#071833] cursor-pointer select-none">
-                                                <input type="checkbox" value="{{ $invoice->id }}" x-model="selectedInvoices" class="rounded border-slate-350 text-blue-600 focus:ring-blue-500" />
-                                                <span>Add to Selection Basket</span>
-                                            </label>
-                                            <div class="flex gap-2">
-                                                <form method="POST" action="{{ route('payments.checkout', [$invoice, 'paystack']) }}">
-                                                    @csrf
-                                                    <x-action-button type="submit" variant="primary" icon="finance" class="!py-1.5 !px-3">
-                                                        Paystack
-                                                    </x-action-button>
-                                                </form>
-                                                <form method="POST" action="{{ route('payments.checkout', [$invoice, 'palmpay']) }}">
-                                                    @csrf
-                                                    <x-action-button type="submit" variant="secondary" icon="arrow-right" class="!py-1.5 !px-3">
-                                                        PalmPay
-                                                    </x-action-button>
-                                                </form>
-                                            </div>
-                                        </div>
-                                    @endif
-                                </div>
-                            @endforeach
+                        <div class="rounded-2xl border border-white/15 bg-white/10 px-5 py-3 sm:text-right">
+                            <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-200">Outstanding balance</p>
+                            <p class="display-font mt-1 text-2xl font-black text-white">NGN {{ number_format((float) $invoices->sum('balance'), 2) }}</p>
                         </div>
                     </div>
 
-                    <!-- Right Side: Bank Accounts Transfer Details & Dynamic Receipts -->
-                    <div class="space-y-6">
-                        @if ($bankAccounts->isNotEmpty() || filled($schoolSettings['payment_instruction'] ?? null))
-                            <div class="rounded-[18px] border border-slate-200 bg-slate-50/50 p-5 shadow-sm space-y-4">
-                                <h4 class="display-font text-base font-extrabold text-[#071833] flex items-center gap-1.5">
-                                    <x-app-icon name="finance-records" class="h-5 w-5 text-amber-500" />
-                                    <span>Direct Transfer Instructions</span>
-                                </h4>
-                                <p class="text-xs text-slate-500 leading-relaxed">
-                                    You can settle school bills by direct bank transfer using the official bank details specified below:
-                                </p>
+                    @if ($errors->has('payment'))
+                        <div class="border-b border-red-200 bg-red-50 px-5 py-3 text-sm font-bold text-red-800 sm:px-7">
+                            {{ $errors->first('payment') }}
+                        </div>
+                    @endif
 
-                                <div class="space-y-3">
-                                    @foreach ($bankAccounts as $account)
-                                        <div class="rounded-xl border border-slate-200 bg-white p-3.5 shadow-sm">
-                                            <span class="text-[9px] font-extrabold uppercase tracking-widest text-slate-400 block bg-slate-100/60 border border-slate-200/50 rounded-full px-2.5 py-0.5 w-max">
-                                                {{ $account['bank'] ?: 'School Bank account' }}
-                                            </span>
-                                            <h5 class="font-bold text-slate-800 text-sm mt-2 leading-snug">
-                                                {{ $account['account_name'] ?: 'Pending name verification' }}
-                                            </h5>
-                                            <div class="display-font font-black text-slate-900 text-base tracking-tight mt-1 flex items-center justify-between bg-slate-50 p-2 rounded-lg border border-slate-100">
-                                                <span>{{ $account['account_number'] ?: 'N/A' }}</span>
-                                                <span class="text-[10px] font-black text-[#1d4ed8] uppercase cursor-pointer select-none hover:underline" onclick="navigator.clipboard.writeText('{{ $account['account_number'] }}'); alert('Account Number Copied!')">
-                                                    Copy
-                                                </span>
-                                            </div>
-                                        </div>
-                                    @endforeach
-                                </div>
+                    <form method="POST" class="p-4 sm:p-6">
+                        @csrf
+                        <template x-for="invoiceId in selectedInvoices" :key="invoiceId">
+                            <input type="hidden" name="invoice_ids[]" :value="invoiceId">
+                        </template>
 
-                                @if (filled($schoolSettings['payment_instruction'] ?? null))
-                                    <p class="text-xs font-semibold text-slate-500 italic bg-white p-3 border border-slate-200 rounded-xl leading-relaxed">
-                                        &ldquo;{{ $schoolSettings['payment_instruction'] }}&rdquo;
-                                    </p>
-                                @endif
+                        <!-- Step indicator -->
+                        <div class="mb-5 flex items-center gap-3" aria-label="Payment progress">
+                            <div class="flex items-center gap-2">
+                                <span class="flex h-7 w-7 items-center justify-center rounded-full text-xs font-black"
+                                      :class="paymentStep === 1 ? 'bg-blue-600 text-white' : 'bg-emerald-600 text-white'">1</span>
+                                <span class="text-xs font-extrabold text-[#071833]">Select fees</span>
                             </div>
-                        @endif
+                            <span class="h-px flex-1 bg-slate-200"></span>
+                            <div class="flex items-center gap-2">
+                                <span class="flex h-7 w-7 items-center justify-center rounded-full text-xs font-black"
+                                      :class="paymentStep === 2 ? 'bg-blue-600 text-white' : 'bg-slate-100 text-slate-500'">2</span>
+                                <span class="text-xs font-extrabold" :class="paymentStep === 2 ? 'text-[#071833]' : 'text-slate-500'">Payment method</span>
+                            </div>
+                        </div>
 
-                        <!-- Payment Receipt logs -->
-                        <div class="space-y-3">
-                            <h4 class="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2 block">Recent Receipts Log</h4>
-                            @forelse ($payments as $payment)
-                                <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm space-y-3.5">
-                                    <div class="flex items-start justify-between gap-3 flex-wrap">
-                                        <div>
-                                            <div class="flex items-center gap-2">
-                                                <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold bg-blue-50 border border-blue-100 text-blue-700">
-                                                    {{ $payment->provider->label() }}
-                                                </span>
-                                                <x-status-badge status="paid" label="Confirmed" />
-                                            </div>
-                                            <h5 class="display-font text-base font-black text-slate-800 tracking-tight mt-2">
-                                                NGN {{ number_format((float) $payment->amount, 2) }}
-                                            </h5>
-                                            <p class="text-[10px] font-bold text-slate-400 mt-0.5 leading-none">
-                                                Ref: {{ $payment->reference }}
-                                            </p>
-                                        </div>
-                                        <span class="text-[10px] font-bold text-slate-400 self-start">
-                                            {{ $payment->created_at?->format('M j, Y') }}
-                                        </span>
-                                    </div>
-
-                                    <div class="flex gap-2 border-t border-slate-100 pt-3 flex-wrap">
-                                        <x-action-button :href="route('payments.receipt', $payment)" target="_blank" variant="secondary" icon="eye" class="flex-1 !py-1.5 !px-2.5">
-                                            Open Receipt
-                                        </x-action-button>
-                                    </div>
+                        <!-- Step 1: fee selection -->
+                        <div x-show="paymentStep === 1" x-transition.opacity>
+                            <div class="mb-3 flex items-end justify-between gap-3">
+                                <div>
+                                    <h3 class="text-sm font-black text-[#071833]">Choose what you want to pay</h3>
+                                    <p class="mt-0.5 text-xs font-semibold text-slate-600">You can select one or several unpaid items.</p>
                                 </div>
+                                <button
+                                    type="button"
+                                    class="text-xs font-extrabold text-blue-700 hover:text-blue-900"
+                                    @click="selectedInvoices = selectedInvoices.length === Object.keys(totals).length ? [] : Object.keys(totals)"
+                                >
+                                    <span x-text="selectedInvoices.length === Object.keys(totals).length ? 'Clear all' : 'Select all'"></span>
+                                </button>
+                            </div>
+
+                            <div class="overflow-hidden rounded-2xl border border-slate-200">
+                                @forelse ($invoices as $invoice)
+                                    @php
+                                        $isCleared = (float) $invoice->balance <= 0;
+                                    @endphp
+                                    <label class="grid cursor-pointer grid-cols-[auto,1fr,auto] items-center gap-3 border-b border-slate-100 px-4 py-4 last:border-b-0 hover:bg-blue-50/40 {{ $isCleared ? 'cursor-default bg-slate-50 opacity-70' : 'bg-white' }}">
+                                        <input
+                                            type="checkbox"
+                                            value="{{ $invoice->id }}"
+                                            x-model="selectedInvoices"
+                                            @disabled($isCleared)
+                                            class="h-5 w-5 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                                        />
+                                        <span class="min-w-0">
+                                            <span class="block truncate text-sm font-extrabold text-[#071833]">{{ $invoice->feeItem->name ?? 'Custom Invoice Item' }}</span>
+                                            <span class="mt-0.5 block text-[11px] font-semibold text-slate-500">
+                                                {{ $invoice->invoice_no }} &bull; Due {{ optional($invoice->due_date)->format('M j, Y') ?: 'anytime' }}
+                                            </span>
+                                        </span>
+                                        <span class="text-right">
+                                            <span class="block whitespace-nowrap text-sm font-black text-[#071833]">NGN {{ number_format((float) $invoice->balance, 2) }}</span>
+                                            <span class="mt-0.5 block text-[10px] font-extrabold {{ $isCleared ? 'text-emerald-700' : 'text-amber-700' }}">{{ $isCleared ? 'PAID' : 'UNPAID' }}</span>
+                                        </span>
+                                    </label>
+                                @empty
+                                    <div class="px-5 py-10 text-center">
+                                        <p class="text-sm font-black text-[#071833]">No fee items available</p>
+                                        <p class="mt-1 text-xs font-semibold text-slate-500">New invoices will appear here when the school creates them.</p>
+                                    </div>
+                                @endforelse
+                            </div>
+
+                            <div class="sticky bottom-3 mt-5 flex flex-col gap-3 rounded-2xl border border-[#c8d6ea] bg-white p-4 shadow-lg sm:flex-row sm:items-center sm:justify-between">
+                                <div>
+                                    <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
+                                        <span x-text="selectedInvoices.length"></span> item(s) selected
+                                    </p>
+                                    <p class="display-font mt-0.5 text-xl font-black text-[#071833]"
+                                       x-text="'NGN ' + selectedTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })"></p>
+                                </div>
+                                <button
+                                    type="button"
+                                    @click="if (selectedInvoices.length) paymentStep = 2"
+                                    :disabled="selectedInvoices.length === 0"
+                                    class="inline-flex min-h-11 items-center justify-center rounded-xl bg-blue-600 px-6 py-3 text-sm font-black text-white shadow-sm transition hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-300 disabled:text-slate-600"
+                                >
+                                    Continue to payment
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Step 2: payment method -->
+                        <div x-show="paymentStep === 2" x-cloak x-transition.opacity>
+                            <div class="mb-4">
+                                <h3 class="text-sm font-black text-[#071833]">How would you like to pay?</h3>
+                                <p class="mt-0.5 text-xs font-semibold text-slate-600">The secure gateway will show the payment channels available to you.</p>
+                            </div>
+
+                            <div class="grid gap-3 sm:grid-cols-2">
+                                <label class="cursor-pointer rounded-2xl border-2 p-4 transition"
+                                       :class="selectedGateway === 'paystack' ? 'border-blue-600 bg-blue-50' : 'border-slate-200 bg-white hover:border-slate-300'">
+                                    <input type="radio" x-model="selectedGateway" value="paystack" class="sr-only">
+                                    <span class="flex items-start gap-3">
+                                        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-lg text-white">💳</span>
+                                        <span>
+                                            <span class="block text-sm font-black text-[#071833]">Card, bank or USSD</span>
+                                            <span class="mt-1 block text-xs font-semibold leading-relaxed text-slate-600">Continue securely with the school's Paystack checkout.</span>
+                                        </span>
+                                    </span>
+                                </label>
+
+                                <label class="cursor-pointer rounded-2xl border-2 p-4 transition"
+                                       :class="selectedGateway === 'palmpay' ? 'border-blue-600 bg-blue-50' : 'border-slate-200 bg-white hover:border-slate-300'">
+                                    <input type="radio" x-model="selectedGateway" value="palmpay" class="sr-only">
+                                    <span class="flex items-start gap-3">
+                                        <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-lg text-white">📱</span>
+                                        <span>
+                                            <span class="block text-sm font-black text-[#071833]">Wallet payment</span>
+                                            <span class="mt-1 block text-xs font-semibold leading-relaxed text-slate-600">Pay through the configured PalmPay wallet gateway.</span>
+                                        </span>
+                                    </span>
+                                </label>
+                            </div>
+
+                            <div class="mt-5 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                                <div class="flex items-center justify-between gap-3">
+                                    <span class="text-xs font-extrabold text-slate-600">Amount to pay</span>
+                                    <span class="display-font text-xl font-black text-[#071833]"
+                                          x-text="'NGN ' + selectedTotal.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })"></span>
+                                </div>
+                                <p class="mt-2 text-[11px] font-semibold text-slate-500">Your card or banking details are entered only on the secure payment provider page.</p>
+                            </div>
+
+                            <div class="mt-5 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+                                <button type="button" @click="paymentStep = 1" class="min-h-11 rounded-xl border border-slate-300 bg-white px-5 py-3 text-sm font-black text-[#071833] hover:bg-slate-50">
+                                    Back to fees
+                                </button>
+                                <button
+                                    x-show="selectedGateway === 'paystack'"
+                                    type="submit"
+                                    formaction="{{ route('payments.selection.checkout', 'paystack') }}"
+                                    class="min-h-11 rounded-xl bg-blue-600 px-6 py-3 text-sm font-black text-white shadow-sm hover:bg-blue-700"
+                                >
+                                    Pay securely now
+                                </button>
+                                <button
+                                    x-show="selectedGateway === 'palmpay'"
+                                    type="submit"
+                                    formaction="{{ route('payments.selection.checkout', 'palmpay') }}"
+                                    class="min-h-11 rounded-xl bg-emerald-600 px-6 py-3 text-sm font-black text-white shadow-sm hover:bg-emerald-700"
+                                >
+                                    Continue to wallet
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+
+                <!-- Transfer details and receipts -->
+                <div class="grid gap-5 lg:grid-cols-2">
+                    @if ($bankAccounts->isNotEmpty() || filled($schoolSettings['payment_instruction'] ?? null))
+                        <section class="rounded-[20px] border border-slate-200 bg-white p-5 shadow-sm">
+                            <div class="mb-4 flex items-start gap-3">
+                                <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-lg">🏦</span>
+                                <div>
+                                    <h3 class="text-sm font-black text-[#071833]">Direct bank transfer</h3>
+                                    <p class="mt-0.5 text-xs font-semibold text-slate-600">Use only the official school account below.</p>
+                                </div>
+                            </div>
+                            <div class="space-y-3">
+                                @foreach ($bankAccounts as $account)
+                                    <div class="rounded-xl border border-slate-200 bg-slate-50 p-3.5">
+                                        <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">{{ $account['bank'] ?: 'School bank account' }}</p>
+                                        <p class="mt-1 text-sm font-bold text-[#071833]">{{ $account['account_name'] ?: 'Pending name verification' }}</p>
+                                        <div class="mt-2 flex items-center justify-between gap-3">
+                                            <span class="display-font text-lg font-black tracking-wide text-[#071833]">{{ $account['account_number'] ?: 'N/A' }}</span>
+                                            @if (filled($account['account_number']))
+                                                <button type="button" class="rounded-lg border border-blue-200 bg-white px-3 py-1.5 text-xs font-black text-blue-700 hover:bg-blue-50" onclick="navigator.clipboard.writeText('{{ $account['account_number'] }}')">Copy</button>
+                                            @endif
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+                            @if (filled($schoolSettings['payment_instruction'] ?? null))
+                                <p class="mt-3 rounded-xl bg-amber-50 p-3 text-xs font-semibold leading-relaxed text-amber-900">{{ $schoolSettings['payment_instruction'] }}</p>
+                            @endif
+                        </section>
+                    @endif
+
+                    <section class="rounded-[20px] border border-slate-200 bg-white p-5 shadow-sm {{ $bankAccounts->isEmpty() && blank($schoolSettings['payment_instruction'] ?? null) ? 'lg:col-span-2' : '' }}">
+                        <div class="mb-4 flex items-start gap-3">
+                            <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-lg">🧾</span>
+                            <div>
+                                <h3 class="text-sm font-black text-[#071833]">Recent receipts</h3>
+                                <p class="mt-0.5 text-xs font-semibold text-slate-600">Confirmed payments for this student account.</p>
+                            </div>
+                        </div>
+                        <div class="space-y-2.5">
+                            @forelse ($payments->take(5) as $payment)
+                                <a href="{{ route('payments.receipt', $payment) }}" target="_blank" class="flex items-center justify-between gap-3 rounded-xl border border-slate-200 px-3.5 py-3 transition hover:border-blue-300 hover:bg-blue-50/40">
+                                    <span class="min-w-0">
+                                        <span class="block text-sm font-black text-[#071833]">NGN {{ number_format((float) $payment->amount, 2) }}</span>
+                                        <span class="mt-0.5 block truncate text-[10px] font-semibold text-slate-500">{{ $payment->provider->label() }} &bull; {{ $payment->created_at?->format('M j, Y') }}</span>
+                                    </span>
+                                    <span class="shrink-0 text-xs font-black text-blue-700">View receipt →</span>
+                                </a>
                             @empty
-                                <div class="text-xs text-slate-400 bg-slate-50 border border-dashed border-slate-350 p-4 rounded-xl text-center">
-                                    No confirmed online payment transactions logged yet.
+                                <div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center">
+                                    <p class="text-sm font-black text-[#071833]">No confirmed receipts yet</p>
+                                    <p class="mt-1 text-xs font-semibold text-slate-500">Successful payments will appear here automatically.</p>
                                 </div>
                             @endforelse
                         </div>
-                    </div>
+                    </section>
                 </div>
-            </x-dashboard-card>
+            </div>
         </div>
 
         <!-- 8. ATTENDANCE LOG SECTION -->
