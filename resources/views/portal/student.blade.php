@@ -471,7 +471,7 @@
                 class="space-y-5"
                 x-data="{
                     selectedInvoices: [],
-                    totals: @js($invoices->mapWithKeys(fn ($invoice) => [$invoice->id => (float) $invoice->balance])),
+                    totals: @js($invoices->filter(fn ($invoice) => (float) $invoice->balance > 0)->mapWithKeys(fn ($invoice) => [$invoice->id => (float) $invoice->balance])),
                     paymentStep: 1,
                     selectedGateway: 'paystack',
                     get selectedTotal() {
