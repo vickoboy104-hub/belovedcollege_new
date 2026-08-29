@@ -16,6 +16,7 @@ use App\Models\Setting;
 use App\Models\Student;
 use App\Models\StudentTermReport;
 use App\Services\Payments\PaymentGatewayManager;
+use App\Services\Payments\PaymentMethodResolver;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View as ViewFacade;
@@ -23,7 +24,7 @@ use Illuminate\View\View;
 
 class StudentPortalController extends Controller
 {
-    public function index(Request $request, PaymentGatewayManager $gateways): View
+    public function index(Request $request, PaymentGatewayManager $gateways, PaymentMethodResolver $methods): View
     {
         $user = $request->user();
         $children = collect();
@@ -123,6 +124,12 @@ class StudentPortalController extends Controller
             : collect();
 
         $paymentGateways = $gateways->catalog(onlyAvailable: true);
+        $bankTransferAvailable = collect(range(1, 3))->contains(function (int $index): bool {
+            return filled(Setting::getValue("bank_name_{$index}"))
+                || filled(Setting::getValue("account_name_{$index}"))
+                || filled(Setting::getValue("account_number_{$index}"));
+        });
+        $paymentMethods = $methods->catalog($bankTransferAvailable);
         ViewFacade::share('paymentGatewayCatalog', $paymentGateways);
 
         return view('portal.student', compact(
@@ -142,6 +149,7 @@ class StudentPortalController extends Controller
             'cbtAssessments',
             'cbtAttempts',
             'paymentGateways',
+            'paymentMethods',
         ));
     }
 
