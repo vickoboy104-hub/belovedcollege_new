@@ -136,7 +136,7 @@ async function runAdminFinance(browser) {
   const page = await context.newPage();
   const errors = captureBrowserErrors(page);
 
-  await login(page, '/login', 'admin@belovedschool.test', 'password');
+  await login(page, '/staff/login', 'admin@belovedschool.test', 'password');
   await page.goto(`${baseURL}/admin/finance/record-payment`, { waitUntil: 'networkidle' });
   await page.getByText('Payments and collections', { exact: true }).waitFor({ state: 'visible' });
   await page.screenshot({ path: `${screenshotDir}/admin-finance-page.png`, fullPage: true });
