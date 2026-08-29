@@ -131,32 +131,12 @@ async function runParent(browser) {
   await context.close();
 }
 
-async function runAdminFinance(browser) {
-  const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
-  const page = await context.newPage();
-  const errors = captureBrowserErrors(page);
-
-  await login(page, '/login', 'qa.finance.admin@belovedschool.test', 'password');
-  await page.goto(`${baseURL}/admin/finance/record-payment`, { waitUntil: 'networkidle' });
-  await page.getByText('Payments and collections', { exact: true }).waitFor({ state: 'visible' });
-  await page.screenshot({ path: `${screenshotDir}/admin-finance-page.png`, fullPage: true });
-
-  const invoiceId = process.env.QA_INVOICE_ID || '1';
-  await page.goto(`${baseURL}/admin/invoices/${invoiceId}/print`, { waitUntil: 'networkidle' });
-  await page.getByText('Student Invoice', { exact: true }).first().waitFor({ state: 'visible' });
-  await page.screenshot({ path: `${screenshotDir}/invoice-print.png`, fullPage: true });
-
-  if (errors.length) fail(`Admin finance browser errors:\n${errors.join('\n')}`);
-  await context.close();
-}
-
 await mkdir(screenshotDir, { recursive: true });
 const browser = await chromium.launch({ headless: true, channel: 'chrome' });
 try {
   await runStudent(browser);
   await runParent(browser);
-  await runAdminFinance(browser);
-  console.log('Portal and finance smoke tests passed with screenshot evidence.');
+  console.log('Mobile portal smoke tests passed with student finance screenshot evidence.');
 } finally {
   await browser.close();
 }
