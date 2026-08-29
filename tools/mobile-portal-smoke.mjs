@@ -4,6 +4,7 @@ import { mkdir } from 'node:fs/promises';
 const baseURL = process.env.APP_URL || 'http://127.0.0.1:8000';
 const viewport = { width: 390, height: 844 };
 const screenshotDir = 'artifacts/finance-screenshots';
+const seededAdminPassword = process.env.SEEDED_ADMIN_PASSWORD || 'change-me';
 
 function fail(message) {
   throw new Error(message);
@@ -136,7 +137,11 @@ async function runAdminFinance(browser) {
   const page = await context.newPage();
   const errors = captureBrowserErrors(page);
 
-  await login(page, '/staff/login', 'admin@belovedschool.test', 'password');
+  await login(page, '/staff/login', 'admin@belovedschool.test', seededAdminPassword);
+  if (page.url().includes('/staff/login')) {
+    fail('Seeded admin login failed in browser QA.');
+  }
+
   await page.goto(`${baseURL}/admin/finance/record-payment`, { waitUntil: 'networkidle' });
   await page.getByText('Payments and collections', { exact: true }).waitFor({ state: 'visible' });
   await page.screenshot({ path: `${screenshotDir}/admin-finance-page.png`, fullPage: true });
