@@ -61,6 +61,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         ->name('private-media.avatar');
     Route::post('/payments/{invoice}/checkout/{provider}', [PaymentController::class, 'checkout'])->name('payments.checkout');
     Route::post('/payments/checkout/{provider}', [PaymentController::class, 'checkoutSelection'])->name('payments.selection.checkout');
+    Route::post('/payments/checkout-method/{method}', [PaymentController::class, 'checkoutMethod'])
+        ->where('method', 'card|ussd|wallet')
+        ->name('payments.method.checkout');
     Route::get('/payments/{payment}/receipt', [PaymentController::class, 'receipt'])->name('payments.receipt');
 
     Route::middleware('role:admin,principal')->group(function () {
@@ -124,6 +127,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->where('section', 'create-fee-item|generate-invoice|record-payment|finance-overview|recent-invoices')
             ->name('admin.finance');
         Route::get('/admin/finance/printable-fee-list', [FinanceController::class, 'printableFeeList'])->name('admin.finance.printable-fee-list');
+        Route::get('/admin/invoices/{invoice}/print', [FinanceController::class, 'printInvoice'])->name('admin.invoices.print');
         Route::post('/admin/fee-items', [FinanceController::class, 'storeFeeItem'])->name('admin.fee-items.store');
         Route::delete('/admin/fee-items/{feeItem}', [FinanceController::class, 'destroyFeeItem'])->name('admin.fee-items.destroy');
         Route::post('/admin/invoices', [FinanceController::class, 'storeInvoice'])->name('admin.invoices.store');
