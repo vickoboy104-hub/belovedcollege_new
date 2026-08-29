@@ -124,8 +124,6 @@ jobs:
       - name: Make seeded portal accounts browser-test ready
         run: |
           php artisan tinker --execute="\App\Models\User::query()->whereIn('email', ['student.jss-1-general.1@belovedschool.test', 'parent.jss-1-general.1@belovedschool.test'])->update(['must_change_password' => false]);"
-          php artisan tinker --execute="$u=\App\Models\User::query()->where('role','admin')->first(); if($u){$u->forceFill(['email'=>'qa.finance.admin@belovedschool.test','password'=>\Illuminate\Support\Facades\Hash::make('password'),'must_change_password'=>false,'email_verified_at'=>now(),'status'=>'active'])->save();}"
-          php artisan tinker --execute="echo 'QA_INVOICE_ID='.(\App\Models\FeeInvoice::query()->value('id') ?: 1);" >> "$GITHUB_ENV"
 
       - name: Verify system Chrome
         run: google-chrome --version
