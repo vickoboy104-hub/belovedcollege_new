@@ -29,12 +29,18 @@ class PaystackGateway implements PaymentGateway
             throw new RuntimeException('Paystack secret key is not configured.');
         }
 
+        $email = $this->resolveCustomerEmail($invoice);
+
+        if (! $email) {
+            throw new RuntimeException('A valid student email address is required before making an online payment.');
+        }
+
         $response = Http::withToken($secret)
             ->acceptJson()
             ->timeout(30)
             ->retry(2, 300)
             ->post('https://api.paystack.co/transaction/initialize', [
-                'email' => $invoice->student->user->email,
+                'email' => $email,
                 'amount' => (int) round(((float) $payment->amount) * 100),
                 'currency' => $payment->currency,
                 'reference' => $payment->reference,
@@ -52,6 +58,23 @@ class PaystackGateway implements PaymentGateway
         }
 
         return $response->json();
+    }
+
+    protected function resolveCustomerEmail(object $invoice): ?string
+    {
+        $emails = [
+            data_get($invoice, 'student.user.email'),
+            data_get($invoice, 'student.email'),
+            data_get($invoice, 'student.parent.email'),
+        ];
+
+        foreach ($emails as $email) {
+            if (filled($email) && filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                return $email;
+            }
+        }
+
+        return null;
     }
 
     public function verify(string $reference, array $context = []): array
