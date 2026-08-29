@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AdminAccountStatusController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\BankTransferController;
 use App\Http\Controllers\CbtController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FinanceController;
@@ -65,6 +66,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/payments/checkout-method/{method}', [PaymentController::class, 'checkoutMethod'])
         ->where('method', 'card|ussd|wallet')
         ->name('payments.method.checkout');
+    Route::post('/payments/bank-transfer-claims', [BankTransferController::class, 'submit'])->name('payments.bank-transfer.submit');
     Route::get('/payments/{payment}/receipt', [PaymentController::class, 'receipt'])->name('payments.receipt');
 
     Route::middleware('role:admin,principal')->group(function () {
@@ -128,6 +130,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->where('section', 'create-fee-item|generate-invoice|record-payment|finance-overview|recent-invoices')
             ->name('admin.finance');
         Route::get('/admin/finance/printable-fee-list', [FinanceController::class, 'printableFeeList'])->name('admin.finance.printable-fee-list');
+        Route::get('/admin/finance/bank-transfers', [BankTransferController::class, 'index'])->name('admin.bank-transfers.index');
+        Route::post('/admin/finance/bank-transfers/{payment}/verify', [BankTransferController::class, 'verify'])->name('admin.bank-transfers.verify');
         Route::get('/admin/invoices/{invoice}/print', [FinancePaymentController::class, 'printInvoice'])->name('admin.invoices.print');
         Route::post('/admin/fee-items', [FinanceController::class, 'storeFeeItem'])->name('admin.fee-items.store');
         Route::delete('/admin/fee-items/{feeItem}', [FinanceController::class, 'destroyFeeItem'])->name('admin.fee-items.destroy');
