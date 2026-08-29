@@ -13,6 +13,37 @@ use Illuminate\View\View;
 
 class FinancePaymentController extends Controller
 {
+    public function desk(): View
+    {
+        $invoices = FeeInvoice::query()
+            ->with('student.user', 'student.schoolClass', 'feeItem')
+            ->where('balance', '>', 0)
+            ->latest('issued_at')
+            ->get();
+
+        $payments = Payment::query()
+            ->with('student.user', 'student.schoolClass')
+            ->latest()
+            ->get()
+            ->reject(fn (Payment $payment) => data_get($payment->payload, 'source') === 'bundle_allocation')
+            ->values();
+
+        $metrics = [
+            'paymentsToday' => $payments
+                ->filter(fn (Payment $payment) => $payment->status === PaymentStatus::Paid && $payment->paid_at?->isToday())
+                ->sum(fn (Payment $payment) => (float) $payment->amount),
+            'successfulTransactions' => $payments->filter(fn (Payment $payment) => $payment->status === PaymentStatus::Paid)->count(),
+            'pendingPayments' => $payments->filter(fn (Payment $payment) => in_array($payment->status, [PaymentStatus::Initialized, PaymentStatus::Pending], true))->count(),
+            'outstandingBalance' => (float) $invoices->sum('balance'),
+        ];
+
+        return view('admin.finance.payment-desk', [
+            'invoices' => $invoices,
+            'payments' => $payments->take(20),
+            'metrics' => $metrics,
+        ]);
+    }
+
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
