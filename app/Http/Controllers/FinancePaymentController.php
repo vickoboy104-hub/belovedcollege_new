@@ -18,7 +18,9 @@ class FinancePaymentController extends Controller
         $validated = $request->validate([
             'fee_invoice_id' => ['required', 'exists:fee_invoices,id'],
             'amount' => ['required', 'numeric', 'min:1'],
-            'payment_method' => ['required', 'in:cash,bank-transfer,pos'],
+            'payment_method' => ['nullable', 'in:cash,bank-transfer,pos'],
+            'provider' => ['nullable', 'in:manual,paystack,palmpay'],
+            'channel' => ['nullable', 'string', 'max:255'],
             'reference' => ['nullable', 'string', 'max:255'],
             'paid_at' => ['nullable', 'date'],
             'note' => ['nullable', 'string', 'max:1000'],
@@ -32,6 +34,7 @@ class FinancePaymentController extends Controller
             ])->withInput();
         }
 
+        $paymentMethod = $validated['payment_method'] ?? $this->legacyPaymentMethod($validated['channel'] ?? null);
         $methodLabels = [
             'cash' => 'Cash',
             'bank-transfer' => 'Bank Transfer',
@@ -51,14 +54,15 @@ class FinancePaymentController extends Controller
             'amount' => $validated['amount'],
             'currency' => 'NGN',
             'status' => PaymentStatus::Paid,
-            'channel' => $validated['payment_method'],
+            'channel' => $paymentMethod,
             'paid_at' => $validated['paid_at'] ?? now(),
             'recorded_by' => $request->user()->id,
-            'note' => $validated['note'] ?? $methodLabels[$validated['payment_method']].' payment recorded at the finance desk.',
+            'note' => $validated['note'] ?? $methodLabels[$paymentMethod].' payment recorded at the finance desk.',
             'payload' => [
                 'source' => 'manual_finance_entry',
-                'payment_method' => $validated['payment_method'],
-                'payment_method_label' => $methodLabels[$validated['payment_method']],
+                'payment_method' => $paymentMethod,
+                'payment_method_label' => $methodLabels[$paymentMethod],
+                'legacy_channel_note' => $validated['channel'] ?? null,
                 'recorded_amount' => (float) $validated['amount'],
                 'invoice_balance_before_payment' => (float) $invoice->balance,
                 'overpayment_amount' => max((float) $validated['amount'] - (float) $invoice->balance, 0),
@@ -67,7 +71,7 @@ class FinancePaymentController extends Controller
 
         $invoice->refresh()->syncBalance();
 
-        return back()->with('status', $methodLabels[$validated['payment_method']].' payment recorded successfully.');
+        return back()->with('status', $methodLabels[$paymentMethod].' payment recorded successfully.');
     }
 
     public function printInvoice(FeeInvoice $invoice): View
@@ -82,5 +86,20 @@ class FinancePaymentController extends Controller
         ]);
 
         return view('admin.finance.invoice-print', compact('invoice'));
+    }
+
+    protected function legacyPaymentMethod(?string $channel): string
+    {
+        $channel = strtolower(trim((string) $channel));
+
+        if (str_contains($channel, 'pos')) {
+            return 'pos';
+        }
+
+        if (str_contains($channel, 'bank') || str_contains($channel, 'transfer') || str_contains($channel, 'teller')) {
+            return 'bank-transfer';
+        }
+
+        return 'cash';
     }
 }
