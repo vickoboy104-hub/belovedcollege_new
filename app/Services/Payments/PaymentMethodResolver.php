@@ -16,7 +16,8 @@ class PaymentMethodResolver
         $preferences = match ($method) {
             'card' => [PaymentProvider::Paystack, PaymentProvider::Flutterwave, PaymentProvider::Monnify],
             'ussd' => [PaymentProvider::Paystack, PaymentProvider::Flutterwave, PaymentProvider::Monnify],
-            'wallet' => [PaymentProvider::OPay, PaymentProvider::PalmPay],
+            // PalmPay remains a settings/template surface until an official integration is approved.
+            'wallet' => [PaymentProvider::OPay],
             default => [],
         };
 
@@ -42,19 +43,19 @@ class PaymentMethodResolver
             [
                 'value' => 'bank-transfer',
                 'label' => 'Bank Transfer',
-                'description' => 'Transfer to the official school account and submit your reference.',
+                'description' => 'Transfer from your bank to the official school account.',
                 'available' => $bankTransferAvailable,
             ],
             [
                 'value' => 'ussd',
                 'label' => 'USSD',
-                'description' => 'Complete payment using a supported bank USSD channel.',
+                'description' => 'Pay without internet using a supported bank USSD channel.',
                 'available' => $this->providerFor('ussd') !== null,
             ],
             [
                 'value' => 'wallet',
                 'label' => 'Wallet',
-                'description' => 'Pay using an enabled OPay or PalmPay wallet checkout.',
+                'description' => 'Pay using an enabled OPay wallet checkout.',
                 'available' => $this->providerFor('wallet') !== null,
             ],
         ]);
