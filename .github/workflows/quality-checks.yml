@@ -123,7 +123,7 @@ jobs:
 
       - name: Make seeded portal accounts browser-test ready
         run: |
-          php artisan tinker --execute="\App\Models\User::query()->whereIn('email', ['student.jss-1-general.1@belovedschool.test', 'parent.jss-1-general.1@belovedschool.test', 'admin@belovedschool.test'])->update(['must_change_password' => false]);"
+          php artisan tinker --execute="\App\Models\User::query()->whereIn('email', ['student.jss-1-general.1@belovedschool.test', 'parent.jss-1-general.1@belovedschool.test'])->update(['must_change_password' => false]); \App\Models\User::query()->where('email', 'admin@belovedschool.test')->update(['must_change_password' => false, 'email_verified_at' => now()]);"
 
       - name: Verify system Chrome
         run: google-chrome --version
