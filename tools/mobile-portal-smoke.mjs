@@ -78,8 +78,6 @@ async function captureStudentPaymentFlow(page) {
   await assertHealthyPage(page, 'Student payment fee selection');
   await page.screenshot({ path: `${screenshotDir}/student-payment-page.png`, fullPage: true });
 
-  // The page intentionally renders separate desktop and mobile fee controls.
-  // In the 390px smoke viewport, target only the visible mobile checkbox.
   const selectable = page.locator('input[type="checkbox"]:not([disabled]):visible').first();
   if (await selectable.count()) {
     await selectable.check();
@@ -133,12 +131,37 @@ async function runParent(browser) {
   await context.close();
 }
 
+async function runAdminFinance(browser) {
+  const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+  const page = await context.newPage();
+  const errors = captureBrowserErrors(page);
+
+  await login(page, '/login', 'admin@belovedschool.test', 'password');
+  await page.goto(`${baseURL}/admin/finance/record-payment`, { waitUntil: 'networkidle' });
+  await page.getByText('Payments and collections', { exact: true }).waitFor({ state: 'visible' });
+  await page.screenshot({ path: `${screenshotDir}/admin-finance-page.png`, fullPage: true });
+
+  await page.goto(`${baseURL}/admin/finance/recent-invoices`, { waitUntil: 'networkidle' });
+  const printLink = page.getByRole('link', { name: 'Print / PDF' }).first();
+  await printLink.waitFor({ state: 'visible' });
+  const printHref = await printLink.getAttribute('href');
+  if (!printHref) fail('Invoice register did not expose a printable invoice link.');
+
+  await page.goto(new URL(printHref, baseURL).toString(), { waitUntil: 'networkidle' });
+  await page.getByText('Student Invoice', { exact: true }).first().waitFor({ state: 'visible' });
+  await page.screenshot({ path: `${screenshotDir}/invoice-print.png`, fullPage: true });
+
+  if (errors.length) fail(`Admin finance browser errors:\n${errors.join('\n')}`);
+  await context.close();
+}
+
 await mkdir(screenshotDir, { recursive: true });
 const browser = await chromium.launch({ headless: true, channel: 'chrome' });
 try {
   await runStudent(browser);
   await runParent(browser);
-  console.log('Mobile portal smoke tests passed with student finance screenshot evidence.');
+  await runAdminFinance(browser);
+  console.log('Portal and finance smoke tests passed with all required finance screenshot evidence.');
 } finally {
   await browser.close();
 }
