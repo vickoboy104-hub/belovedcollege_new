@@ -78,7 +78,9 @@ async function captureStudentPaymentFlow(page) {
   await assertHealthyPage(page, 'Student payment fee selection');
   await page.screenshot({ path: `${screenshotDir}/student-payment-page.png`, fullPage: true });
 
-  const selectable = page.locator('input[type="checkbox"]:not([disabled])').first();
+  // The page intentionally renders separate desktop and mobile fee controls.
+  // In the 390px smoke viewport, target only the visible mobile checkbox.
+  const selectable = page.locator('input[type="checkbox"]:not([disabled]):visible').first();
   if (await selectable.count()) {
     await selectable.check();
     await page.getByRole('button', { name: 'Continue', exact: true }).click();
