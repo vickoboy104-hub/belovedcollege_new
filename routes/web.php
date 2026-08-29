@@ -103,11 +103,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::middleware('role:admin,principal,accountant')->group(function () {
         Route::get('/admin/finance/record-payment', [FinancePaymentController::class, 'desk'])->name('admin.finance.payment-desk');
+        Route::get('/admin/finance/recent-invoices', [FinancePaymentController::class, 'invoices'])->name('admin.finance.invoice-register');
         Route::get('/admin/finance/records/{section?}', [FinanceController::class, 'records'])
             ->where('section', 'printable-fee-list|created-fee-items|student-balances|class-bills|payment-summary|recent-payments|overpayment-tracker|payment-progression')
             ->name('admin.finance.records');
         Route::get('/admin/finance/{section?}', [FinanceController::class, 'index'])
-            ->where('section', 'create-fee-item|generate-invoice|finance-overview|recent-invoices')
+            ->where('section', 'create-fee-item|generate-invoice|record-payment|finance-overview|recent-invoices')
             ->name('admin.finance');
         Route::get('/admin/finance/printable-fee-list', [FinanceController::class, 'printableFeeList'])->name('admin.finance.printable-fee-list');
         Route::get('/admin/finance/bank-transfers', [BankTransferController::class, 'index'])->name('admin.bank-transfers.index');
