@@ -5,6 +5,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\CbtController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FinanceController;
+use App\Http\Controllers\FinancePaymentController;
 use App\Http\Controllers\ParentAccountController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PaymentGatewaySettingsController;
@@ -127,11 +128,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->where('section', 'create-fee-item|generate-invoice|record-payment|finance-overview|recent-invoices')
             ->name('admin.finance');
         Route::get('/admin/finance/printable-fee-list', [FinanceController::class, 'printableFeeList'])->name('admin.finance.printable-fee-list');
-        Route::get('/admin/invoices/{invoice}/print', [FinanceController::class, 'printInvoice'])->name('admin.invoices.print');
+        Route::get('/admin/invoices/{invoice}/print', [FinancePaymentController::class, 'printInvoice'])->name('admin.invoices.print');
         Route::post('/admin/fee-items', [FinanceController::class, 'storeFeeItem'])->name('admin.fee-items.store');
         Route::delete('/admin/fee-items/{feeItem}', [FinanceController::class, 'destroyFeeItem'])->name('admin.fee-items.destroy');
         Route::post('/admin/invoices', [FinanceController::class, 'storeInvoice'])->name('admin.invoices.store');
-        Route::post('/admin/manual-payments', [FinanceController::class, 'storeManualPayment'])->name('admin.manual-payments.store');
+        Route::post('/admin/manual-payments', [FinancePaymentController::class, 'store'])->name('admin.manual-payments.store');
         Route::get('/admin/payments/{payment}/receipt', [FinanceController::class, 'receipt'])->name('admin.payments.receipt');
     });
 
