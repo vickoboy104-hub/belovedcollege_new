@@ -44,6 +44,16 @@ class FinancePaymentController extends Controller
         ]);
     }
 
+    public function invoices(): View
+    {
+        $invoices = FeeInvoice::query()
+            ->with('student.user', 'student.schoolClass', 'feeItem', 'payments')
+            ->latest('issued_at')
+            ->get();
+
+        return view('admin.finance.invoices', compact('invoices'));
+    }
+
     public function store(Request $request): RedirectResponse
     {
         $validated = $request->validate([
