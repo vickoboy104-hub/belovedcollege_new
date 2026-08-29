@@ -46,7 +46,12 @@ class StudentPortalController extends Controller
             ->where('school_class_id', $student->school_class_id)
             ->latest()
             ->take(8)
-            ->get();
+            ->get()
+            ->each(function (Lesson $lesson): void {
+                if (filled($lesson->resource_link) && str_contains(strtolower((string) $lesson->resource_link), 'example.com')) {
+                    $lesson->resource_link = null;
+                }
+            });
 
         $assignments = Assignment::query()
             ->with('subject', 'teacher')
@@ -131,6 +136,17 @@ class StudentPortalController extends Controller
         });
         $paymentMethods = $methods->catalog($bankTransferAvailable);
         ViewFacade::share('paymentGatewayCatalog', $paymentGateways);
+
+        if ($request->string('section')->toString() === 'billing') {
+            return view('portal.payment', compact(
+                'user',
+                'student',
+                'children',
+                'invoices',
+                'payments',
+                'paymentMethods',
+            ));
+        }
 
         return view('portal.student', compact(
             'user',
