@@ -49,7 +49,8 @@ class StudentPortalController extends Controller
             ->get()
             ->each(function (Lesson $lesson): void {
                 if (filled($lesson->resource_link) && str_contains(strtolower((string) $lesson->resource_link), 'example.com')) {
-                    $lesson->resource_link = null;
+                    $message = 'No resources available yet. Your teacher has not uploaded any learning material.';
+                    $lesson->resource_link = 'javascript:void(window.alert('.json_encode($message).'))';
                 }
             });
 
