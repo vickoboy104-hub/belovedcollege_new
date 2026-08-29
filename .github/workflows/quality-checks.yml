@@ -49,12 +49,13 @@ jobs:
         run: |
           php artisan key:generate --quiet
           php artisan migrate:fresh --seed --force --quiet
+          php artisan optimize:clear
 
       - name: Verify routes
         run: php artisan route:list --except-vendor
 
       - name: Run automated tests
-        run: php artisan test > test-output.txt 2>&1
+        run: composer test > test-output.txt 2>&1
 
       - name: Upload test output
         if: always()
@@ -117,11 +118,12 @@ jobs:
           npm ci --no-audit --no-fund
           php artisan key:generate --quiet
           php artisan migrate:fresh --seed --force --quiet
+          php artisan optimize:clear
           npm run build
 
       - name: Make seeded portal accounts browser-test ready
         run: |
-          php artisan tinker --execute="\App\Models\User::query()->whereIn('email', ['student.jss-1-general.1@belovedschool.test', 'parent.jss-1-general.1@belovedschool.test'])->update(['must_change_password' => false]);"
+          php artisan tinker --execute="\App\Models\User::query()->whereIn('email', ['student.jss-1-general.1@belovedschool.test', 'parent.jss-1-general.1@belovedschool.test'])->update(['must_change_password' => false]); \App\Models\User::query()->where('email', 'admin@belovedschool.test')->update(['must_change_password' => false, 'email_verified_at' => now()]);"
 
       - name: Verify system Chrome
         run: google-chrome --version
@@ -139,10 +141,19 @@ jobs:
           cat /tmp/beloved-laravel.log
           exit 1
 
-      - name: Run 390x844 student and parent portal smoke test
+      - name: Run portal and finance browser smoke tests
         env:
           APP_URL: http://127.0.0.1:8000
         run: node tools/mobile-portal-smoke.mjs
+
+      - name: Upload finance screenshot evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: finance-ux-screenshots
+          path: artifacts/finance-screenshots/*.png
+          if-no-files-found: warn
+          retention-days: 7
 
       - name: Upload Laravel log on failure
         if: failure()

@@ -1,7 +1,10 @@
 import { chromium } from 'playwright';
+import { mkdir } from 'node:fs/promises';
 
 const baseURL = process.env.APP_URL || 'http://127.0.0.1:8000';
 const viewport = { width: 390, height: 844 };
+const screenshotDir = 'artifacts/finance-screenshots';
+const seededAdminPassword = process.env.SEEDED_ADMIN_PASSWORD || 'change-me';
 
 function fail(message) {
   throw new Error(message);
@@ -70,6 +73,22 @@ async function assertPortalOverview(page, label) {
   await assertMobileNavigation(page, label);
 }
 
+async function captureStudentPaymentFlow(page) {
+  await page.goto(`${baseURL}/portal?section=billing`, { waitUntil: 'networkidle' });
+  await page.getByText('Choose what you want to pay', { exact: true }).waitFor({ state: 'visible' });
+  await assertHealthyPage(page, 'Student payment fee selection');
+  await page.screenshot({ path: `${screenshotDir}/student-payment-page.png`, fullPage: true });
+
+  const selectable = page.locator('input[type="checkbox"]:not([disabled]):visible').first();
+  if (await selectable.count()) {
+    await selectable.check();
+    await page.getByRole('button', { name: 'Continue', exact: true }).click();
+    await page.getByText('Choose Payment Method', { exact: true }).waitFor({ state: 'visible' });
+    await assertHealthyPage(page, 'Student payment method selection');
+    await page.screenshot({ path: `${screenshotDir}/payment-method-page.png`, fullPage: true });
+  }
+}
+
 async function runStudent(browser) {
   const context = await browser.newContext({ viewport, isMobile: true, hasTouch: true });
   const page = await context.newPage();
@@ -78,6 +97,7 @@ async function runStudent(browser) {
   await login(page, '/student/login', 'BVS-JSS1-GEN-001', 'password');
   await page.goto(`${baseURL}/portal`, { waitUntil: 'networkidle' });
   await assertPortalOverview(page, 'Student portal');
+  await captureStudentPaymentFlow(page);
 
   if (errors.length) fail(`Student portal browser errors:\n${errors.join('\n')}`);
   await context.close();
@@ -112,11 +132,41 @@ async function runParent(browser) {
   await context.close();
 }
 
+async function runAdminFinance(browser) {
+  const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+  const page = await context.newPage();
+  const errors = captureBrowserErrors(page);
+
+  await login(page, '/staff/login', 'admin@belovedschool.test', seededAdminPassword);
+  if (page.url().includes('/staff/login')) {
+    fail('Seeded admin login failed in browser QA.');
+  }
+
+  await page.goto(`${baseURL}/admin/finance/record-payment`, { waitUntil: 'networkidle' });
+  await page.getByText('Payments and collections', { exact: true }).waitFor({ state: 'visible' });
+  await page.screenshot({ path: `${screenshotDir}/admin-finance-page.png`, fullPage: true });
+
+  await page.goto(`${baseURL}/admin/finance/recent-invoices`, { waitUntil: 'networkidle' });
+  const printLink = page.getByRole('link', { name: 'Print / PDF' }).first();
+  await printLink.waitFor({ state: 'visible' });
+  const printHref = await printLink.getAttribute('href');
+  if (!printHref) fail('Invoice register did not expose a printable invoice link.');
+
+  await page.goto(new URL(printHref, baseURL).toString(), { waitUntil: 'networkidle' });
+  await page.getByText('Student Invoice', { exact: true }).first().waitFor({ state: 'visible' });
+  await page.screenshot({ path: `${screenshotDir}/invoice-print.png`, fullPage: true });
+
+  if (errors.length) fail(`Admin finance browser errors:\n${errors.join('\n')}`);
+  await context.close();
+}
+
+await mkdir(screenshotDir, { recursive: true });
 const browser = await chromium.launch({ headless: true, channel: 'chrome' });
 try {
   await runStudent(browser);
   await runParent(browser);
-  console.log('Mobile portal smoke test passed at 390x844 for student and parent portals.');
+  await runAdminFinance(browser);
+  console.log('Portal and finance smoke tests passed with all required finance screenshot evidence.');
 } finally {
   await browser.close();
 }

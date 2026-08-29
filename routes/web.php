@@ -2,9 +2,11 @@
 
 use App\Http\Controllers\AdminAccountStatusController;
 use App\Http\Controllers\AdminController;
+use App\Http\Controllers\BankTransferController;
 use App\Http\Controllers\CbtController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\FinanceController;
+use App\Http\Controllers\FinancePaymentController;
 use App\Http\Controllers\ParentAccountController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PaymentGatewaySettingsController;
@@ -26,41 +28,27 @@ Route::get('/', [WebsiteController::class, 'home'])->name('home');
 Route::get('/about', [WebsiteController::class, 'about'])->name('about');
 Route::get('/admissions', [WebsiteController::class, 'admissions'])->name('admissions');
 Route::get('/contact', [WebsiteController::class, 'contact'])->name('contact');
-Route::post('/contact', [WebsiteController::class, 'storeContact'])
-    ->middleware('throttle:5,1')
-    ->name('contact.store');
+Route::post('/contact', [WebsiteController::class, 'storeContact'])->middleware('throttle:5,1')->name('contact.store');
 Route::get('/result-checker', [ReportController::class, 'checker'])->name('reports.checker');
-Route::post('/result-checker', [ReportController::class, 'checkerLookup'])
-    ->middleware('throttle:8,1')
-    ->name('reports.checker.lookup');
+Route::post('/result-checker', [ReportController::class, 'checkerLookup'])->middleware('throttle:8,1')->name('reports.checker.lookup');
 
 Route::get('/payments/callback/{provider}', [PaymentController::class, 'callback'])
     ->where('provider', 'paystack|palmpay|flutterwave|monnify|opay')
     ->middleware('throttle:30,1')
     ->name('payments.callback');
-Route::post('/webhooks/paystack', [WebhookController::class, 'paystack'])
-    ->middleware('throttle:120,1')
-    ->name('webhooks.paystack');
-Route::post('/webhooks/palmpay', [WebhookController::class, 'palmpay'])
-    ->middleware('throttle:120,1')
-    ->name('webhooks.palmpay');
-Route::post('/webhooks/flutterwave', [WebhookController::class, 'flutterwave'])
-    ->middleware('throttle:120,1')
-    ->name('webhooks.flutterwave');
-Route::post('/webhooks/monnify', [WebhookController::class, 'monnify'])
-    ->middleware('throttle:120,1')
-    ->name('webhooks.monnify');
-Route::post('/webhooks/opay', [WebhookController::class, 'opay'])
-    ->middleware('throttle:120,1')
-    ->name('webhooks.opay');
+Route::post('/webhooks/paystack', [WebhookController::class, 'paystack'])->middleware('throttle:120,1')->name('webhooks.paystack');
+Route::post('/webhooks/palmpay', [WebhookController::class, 'palmpay'])->middleware('throttle:120,1')->name('webhooks.palmpay');
+Route::post('/webhooks/flutterwave', [WebhookController::class, 'flutterwave'])->middleware('throttle:120,1')->name('webhooks.flutterwave');
+Route::post('/webhooks/monnify', [WebhookController::class, 'monnify'])->middleware('throttle:120,1')->name('webhooks.monnify');
+Route::post('/webhooks/opay', [WebhookController::class, 'opay'])->middleware('throttle:120,1')->name('webhooks.opay');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
-    Route::get('/private-media/users/{user}/avatar', [PrivateMediaController::class, 'avatar'])
-        ->middleware('throttle:120,1')
-        ->name('private-media.avatar');
+    Route::get('/private-media/users/{user}/avatar', [PrivateMediaController::class, 'avatar'])->middleware('throttle:120,1')->name('private-media.avatar');
     Route::post('/payments/{invoice}/checkout/{provider}', [PaymentController::class, 'checkout'])->name('payments.checkout');
     Route::post('/payments/checkout/{provider}', [PaymentController::class, 'checkoutSelection'])->name('payments.selection.checkout');
+    Route::post('/payments/checkout-method/{method}', [PaymentController::class, 'checkoutMethod'])->where('method', 'card|ussd|wallet')->name('payments.method.checkout');
+    Route::post('/payments/bank-transfer-claims', [BankTransferController::class, 'submit'])->name('payments.bank-transfer.submit');
     Route::get('/payments/{payment}/receipt', [PaymentController::class, 'receipt'])->name('payments.receipt');
 
     Route::middleware('role:admin,principal')->group(function () {
@@ -105,11 +93,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/admin/announcements', [AdminController::class, 'storeAnnouncement'])->name('admin.announcements.store');
         Route::post('/admin/cbt/toggle', [CbtController::class, 'toggleGlobal'])->name('admin.cbt.toggle');
         Route::patch('/admin/cbt-assessments/{assessment}/toggle', [CbtController::class, 'toggleAssessment'])->name('admin.cbt.assessments.toggle');
-        Route::get('/admin/reports/student/{student}/{section?}', [ReportController::class, 'adminShow'])
-            ->where('section', 'overview|scores|remarks|publication')
-            ->name('admin.reports.show');
-        Route::get('/admin/reports/{classSlug?}', [ReportController::class, 'adminIndex'])
-            ->name('admin.reports.index');
+        Route::get('/admin/reports/student/{student}/{section?}', [ReportController::class, 'adminShow'])->where('section', 'overview|scores|remarks|publication')->name('admin.reports.show');
+        Route::get('/admin/reports/{classSlug?}', [ReportController::class, 'adminIndex'])->name('admin.reports.index');
         Route::post('/admin/students/{student}/reports/{term}', [ReportController::class, 'update'])->name('admin.reports.update');
         Route::post('/admin/students/{student}/reports/{term}/publish', [ReportController::class, 'publish'])->name('admin.reports.publish');
         Route::get('/admin/students/{student}/reports/{term}/print', [ReportController::class, 'adminPrint'])->name('admin.reports.print');
@@ -117,6 +102,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 
     Route::middleware('role:admin,principal,accountant')->group(function () {
+        Route::get('/admin/finance/record-payment', [FinancePaymentController::class, 'desk'])->name('admin.finance.payment-desk');
+        Route::get('/admin/finance/recent-invoices', [FinancePaymentController::class, 'invoices'])->name('admin.finance.invoice-register');
         Route::get('/admin/finance/records/{section?}', [FinanceController::class, 'records'])
             ->where('section', 'printable-fee-list|created-fee-items|student-balances|class-bills|payment-summary|recent-payments|overpayment-tracker|payment-progression')
             ->name('admin.finance.records');
@@ -124,10 +111,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
             ->where('section', 'create-fee-item|generate-invoice|record-payment|finance-overview|recent-invoices')
             ->name('admin.finance');
         Route::get('/admin/finance/printable-fee-list', [FinanceController::class, 'printableFeeList'])->name('admin.finance.printable-fee-list');
+        Route::get('/admin/finance/bank-transfers', [BankTransferController::class, 'index'])->name('admin.bank-transfers.index');
+        Route::post('/admin/finance/bank-transfers/{payment}/verify', [BankTransferController::class, 'verify'])->name('admin.bank-transfers.verify');
+        Route::get('/admin/invoices/{invoice}/print', [FinancePaymentController::class, 'printInvoice'])->name('admin.invoices.print');
         Route::post('/admin/fee-items', [FinanceController::class, 'storeFeeItem'])->name('admin.fee-items.store');
         Route::delete('/admin/fee-items/{feeItem}', [FinanceController::class, 'destroyFeeItem'])->name('admin.fee-items.destroy');
         Route::post('/admin/invoices', [FinanceController::class, 'storeInvoice'])->name('admin.invoices.store');
-        Route::post('/admin/manual-payments', [FinanceController::class, 'storeManualPayment'])->name('admin.manual-payments.store');
+        Route::post('/admin/manual-payments', [FinancePaymentController::class, 'store'])->name('admin.manual-payments.store');
         Route::get('/admin/payments/{payment}/receipt', [FinanceController::class, 'receipt'])->name('admin.payments.receipt');
     });
 
@@ -139,27 +129,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/teacher/lessons', [TeacherController::class, 'storeLesson'])->name('teacher.lessons.store');
         Route::post('/teacher/assignments', [TeacherController::class, 'storeAssignment'])->name('teacher.assignments.store');
         Route::post('/teacher/assessments', [TeacherController::class, 'storeAssessment'])->name('teacher.assessments.store');
-        Route::post('/teacher/cbt-assessments', [CbtController::class, 'storeAssessment'])
-            ->middleware(EnsureTeacherSubjectAssignment::class)
-            ->name('teacher.cbt.assessments.store');
-        Route::get('/teacher/cbt-assessments/{assessment}', [CbtController::class, 'showAssessment'])
-            ->middleware(EnsureTeacherSubjectAssignment::class)
-            ->name('teacher.cbt.assessments.show');
-        Route::post('/teacher/cbt-assessments/{assessment}/questions', [CbtController::class, 'storeQuestion'])
-            ->middleware(EnsureTeacherSubjectAssignment::class)
-            ->name('teacher.cbt.questions.store');
-        Route::patch('/teacher/cbt-questions/{question}', [CbtController::class, 'updateQuestion'])
-            ->middleware(EnsureTeacherSubjectAssignment::class)
-            ->name('teacher.cbt.questions.update');
-        Route::delete('/teacher/cbt-questions/{question}', [CbtController::class, 'destroyQuestion'])
-            ->middleware(EnsureTeacherSubjectAssignment::class)
-            ->name('teacher.cbt.questions.destroy');
-        Route::get('/teacher/cbt-attempts/{attempt}', [CbtController::class, 'showAttemptReview'])
-            ->middleware(EnsureTeacherSubjectAssignment::class)
-            ->name('teacher.cbt.attempts.show');
-        Route::post('/teacher/cbt-answers/{answer}/grade', [CbtController::class, 'gradeAnswer'])
-            ->middleware(EnsureTeacherSubjectAssignment::class)
-            ->name('teacher.cbt.answers.grade');
+        Route::post('/teacher/cbt-assessments', [CbtController::class, 'storeAssessment'])->middleware(EnsureTeacherSubjectAssignment::class)->name('teacher.cbt.assessments.store');
+        Route::get('/teacher/cbt-assessments/{assessment}', [CbtController::class, 'showAssessment'])->middleware(EnsureTeacherSubjectAssignment::class)->name('teacher.cbt.assessments.show');
+        Route::post('/teacher/cbt-assessments/{assessment}/questions', [CbtController::class, 'storeQuestion'])->middleware(EnsureTeacherSubjectAssignment::class)->name('teacher.cbt.questions.store');
+        Route::patch('/teacher/cbt-questions/{question}', [CbtController::class, 'updateQuestion'])->middleware(EnsureTeacherSubjectAssignment::class)->name('teacher.cbt.questions.update');
+        Route::delete('/teacher/cbt-questions/{question}', [CbtController::class, 'destroyQuestion'])->middleware(EnsureTeacherSubjectAssignment::class)->name('teacher.cbt.questions.destroy');
+        Route::get('/teacher/cbt-attempts/{attempt}', [CbtController::class, 'showAttemptReview'])->middleware(EnsureTeacherSubjectAssignment::class)->name('teacher.cbt.attempts.show');
+        Route::post('/teacher/cbt-answers/{answer}/grade', [CbtController::class, 'gradeAnswer'])->middleware(EnsureTeacherSubjectAssignment::class)->name('teacher.cbt.answers.grade');
         Route::post('/teacher/results', [TeacherController::class, 'storeResult'])->name('teacher.results.store');
         Route::post('/teacher/attendance', [TeacherController::class, 'storeAttendance'])->name('teacher.attendance.store');
         Route::post('/teacher/submissions/{submission}/grade', [TeacherController::class, 'gradeSubmission'])->name('teacher.submissions.grade');
@@ -169,9 +145,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/portal', [StudentPortalController::class, 'index'])->name('portal.index');
         Route::post('/portal/assignments/{assignment}/submit', [StudentPortalController::class, 'submitAssignment'])->name('portal.assignments.submit');
         Route::get('/portal/cbt/{assessment}', [CbtController::class, 'takeAssessment'])->name('portal.cbt.show');
-        Route::post('/portal/cbt/{assessment}/submit', [CbtController::class, 'submitAssessment'])
-            ->middleware(EnsureCbtSubmissionIsOpen::class)
-            ->name('portal.cbt.submit');
+        Route::post('/portal/cbt/{assessment}/submit', [CbtController::class, 'submitAssessment'])->middleware(EnsureCbtSubmissionIsOpen::class)->name('portal.cbt.submit');
         Route::get('/portal/results/{term}/print', [ReportController::class, 'portalPrint'])->name('portal.results.print');
         Route::get('/portal/student-record', [ReportController::class, 'portalRecord'])->name('portal.record');
     });

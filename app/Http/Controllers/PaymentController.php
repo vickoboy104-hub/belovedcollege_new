@@ -8,6 +8,7 @@ use App\Enums\UserRole;
 use App\Models\FeeInvoice;
 use App\Models\Payment;
 use App\Services\Payments\PaymentGatewayManager;
+use App\Services\Payments\PaymentMethodResolver;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -16,13 +17,15 @@ use Throwable;
 
 class PaymentController extends Controller
 {
-    public function __construct(protected PaymentGatewayManager $gateways)
-    {
+    public function __construct(
+        protected PaymentGatewayManager $gateways,
+        protected PaymentMethodResolver $methods,
+    ) {
     }
 
     public function checkout(Request $request, FeeInvoice $invoice, string $provider): RedirectResponse
     {
-        $this->authorizeInvoiceAccess($request->user(), $invoice->load('student.user'));
+        $this->authorizeInvoiceAccess($request->user(), $invoice->load('student.user', 'student.parent'));
 
         $providerEnum = PaymentProvider::tryFrom($provider);
         abort_unless($providerEnum?->isOnline(), 404);
@@ -51,11 +54,29 @@ class PaymentController extends Controller
         return $this->initializePayment($invoice, $payment, $providerEnum);
     }
 
+    public function checkoutMethod(Request $request, string $method): RedirectResponse
+    {
+        abort_unless(in_array($method, ['card', 'ussd', 'wallet'], true), 404);
+
+        $provider = $this->methods->providerFor($method);
+
+        if (! $provider) {
+            return back()->withErrors([
+                'payment' => 'This payment method is not available right now. Please choose another method or contact the school bursary.',
+            ]);
+        }
+
+        $request->merge(['payment_method' => $method]);
+
+        return $this->checkoutSelection($request, $provider->value);
+    }
+
     public function checkoutSelection(Request $request, string $provider): RedirectResponse
     {
         $validated = $request->validate([
             'invoice_ids' => ['required', 'array', 'min:1'],
             'invoice_ids.*' => ['integer', 'exists:fee_invoices,id'],
+            'payment_method' => ['nullable', 'in:card,ussd,wallet'],
         ]);
 
         $providerEnum = PaymentProvider::tryFrom($provider);
@@ -68,7 +89,7 @@ class PaymentController extends Controller
         }
 
         $invoices = FeeInvoice::query()
-            ->with('student.user', 'feeItem')
+            ->with('student.user', 'student.parent', 'feeItem')
             ->whereIn('id', $validated['invoice_ids'])
             ->get()
             ->filter(fn (FeeInvoice $invoice) => (float) $invoice->balance > 0)
@@ -84,6 +105,7 @@ class PaymentController extends Controller
         }
 
         $primaryInvoice = $invoices->first();
+        $paymentMethod = $validated['payment_method'] ?? null;
         $payment = Payment::create([
             'student_id' => $primaryInvoice->student_id,
             'provider' => $providerEnum,
@@ -91,10 +113,12 @@ class PaymentController extends Controller
             'amount' => $invoices->sum(fn (FeeInvoice $invoice) => (float) $invoice->balance),
             'currency' => 'NGN',
             'status' => PaymentStatus::Initialized,
+            'channel' => $paymentMethod,
             'payload' => [
                 'source' => 'bundle_checkout',
                 'invoice_ids' => $invoices->pluck('id')->values()->all(),
                 'bundle_label' => 'Selected fee items',
+                'requested_method' => $paymentMethod,
             ],
         ]);
 
@@ -135,7 +159,7 @@ class PaymentController extends Controller
             if ($this->verifiedPaymentMatches($providerEnum, $payment, $payload)) {
                 $payment = $this->markPaymentSuccessful($payment, [
                     'gateway_reference' => data_get($payload, 'data.gateway_reference') ?: data_get($payload, 'data.reference'),
-                    'channel' => data_get($payload, 'data.channel'),
+                    'channel' => data_get($payload, 'data.channel') ?: $payment->channel,
                     'paid_at' => data_get($payload, 'data.paid_at') ?: now(),
                     'payload' => ['verification' => $payload],
                 ]);
@@ -190,9 +214,11 @@ class PaymentController extends Controller
                 'payload' => array_merge($payment->payload ?? [], ['message' => 'Payment initialization failed.']),
             ]);
 
-            return back()->withErrors([
-                'payment' => $provider->label().' could not start the payment. Check the gateway configuration or try another enabled method.',
-            ]);
+            $message = str_contains(strtolower($exception->getMessage()), 'email')
+                ? 'Please update your account email before making an online payment.'
+                : $provider->label().' could not start the payment. Check the gateway configuration or try another enabled method.';
+
+            return back()->withErrors(['payment' => $message]);
         }
     }
 

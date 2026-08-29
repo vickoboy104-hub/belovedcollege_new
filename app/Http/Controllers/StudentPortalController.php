@@ -16,6 +16,7 @@ use App\Models\Setting;
 use App\Models\Student;
 use App\Models\StudentTermReport;
 use App\Services\Payments\PaymentGatewayManager;
+use App\Services\Payments\PaymentMethodResolver;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\View as ViewFacade;
@@ -23,7 +24,7 @@ use Illuminate\View\View;
 
 class StudentPortalController extends Controller
 {
-    public function index(Request $request, PaymentGatewayManager $gateways): View
+    public function index(Request $request, PaymentGatewayManager $gateways, PaymentMethodResolver $methods): View
     {
         $user = $request->user();
         $children = collect();
@@ -45,7 +46,13 @@ class StudentPortalController extends Controller
             ->where('school_class_id', $student->school_class_id)
             ->latest()
             ->take(8)
-            ->get();
+            ->get()
+            ->each(function (Lesson $lesson): void {
+                if (filled($lesson->resource_link) && str_contains(strtolower((string) $lesson->resource_link), 'example.com')) {
+                    $message = 'No resources available yet. Your teacher has not uploaded any learning material.';
+                    $lesson->resource_link = 'javascript:void(window.alert('.json_encode($message).'))';
+                }
+            });
 
         $assignments = Assignment::query()
             ->with('subject', 'teacher')
@@ -123,7 +130,24 @@ class StudentPortalController extends Controller
             : collect();
 
         $paymentGateways = $gateways->catalog(onlyAvailable: true);
+        $bankTransferAvailable = collect(range(1, 3))->contains(function (int $index): bool {
+            return filled(Setting::getValue("bank_name_{$index}"))
+                || filled(Setting::getValue("account_name_{$index}"))
+                || filled(Setting::getValue("account_number_{$index}"));
+        });
+        $paymentMethods = $methods->catalog($bankTransferAvailable);
         ViewFacade::share('paymentGatewayCatalog', $paymentGateways);
+
+        if ($request->string('section')->toString() === 'billing') {
+            return view('portal.payment', compact(
+                'user',
+                'student',
+                'children',
+                'invoices',
+                'payments',
+                'paymentMethods',
+            ));
+        }
 
         return view('portal.student', compact(
             'user',
@@ -142,6 +166,7 @@ class StudentPortalController extends Controller
             'cbtAssessments',
             'cbtAttempts',
             'paymentGateways',
+            'paymentMethods',
         ));
     }
 
