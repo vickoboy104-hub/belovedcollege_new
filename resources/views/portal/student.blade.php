@@ -77,13 +77,13 @@
             </div>
 
             <!-- Monolithic page layout view elements divided in clean grid layout -->
-            <div class="grid gap-8 xl:grid-cols-[1.1fr,0.9fr]">
+            <div class="grid gap-5 xl:grid-cols-[1.1fr,0.9fr]">
                 <!-- Left Column: Lessons Preview -->
-                <div class="space-y-6">
+                <div class="space-y-4">
                     <x-dashboard-card title="Recent Lesson Notes" subtitle="Curriculum notes and reference resources published by your teachers." icon="learning" accent="blue">
-                        <div class="space-y-4">
-                            @forelse ($lessons->take(3) as $lesson)
-                                <article class="rounded-[18px] border border-slate-200 bg-white p-5 shadow-sm hover:border-blue-500 transition-all space-y-4">
+                        <div class="space-y-3">
+                            @forelse ($lessons->take(2) as $lesson)
+                                <article class="rounded-[14px] border border-slate-200 bg-white p-4 shadow-sm hover:border-blue-500 transition-all space-y-3">
                                     <div class="flex items-start justify-between gap-4 flex-wrap sm:flex-nowrap">
                                         <div>
                                             <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-50 border border-blue-100 text-blue-700">
@@ -102,11 +102,11 @@
                                         </span>
                                     </div>
                                     @if ($lesson->summary)
-                                        <p class="text-xs font-semibold text-slate-550 leading-relaxed bg-slate-50 border border-slate-100 p-3 rounded-[12px]">
+                                        <p class="truncate text-xs font-semibold text-slate-550 bg-slate-50 border border-slate-100 px-3 py-2 rounded-[10px]">
                                             {{ $lesson->summary }}
                                         </p>
                                     @endif
-                                    <div class="pt-3 border-t border-slate-100 flex justify-end">
+                                    <div class="pt-2 border-t border-slate-100 flex justify-end">
                                         <button @click="activeSection = 'lessons'; window.scrollTo({ top: 0, behavior: 'smooth' })" class="text-xs font-extrabold text-blue-600 hover:text-blue-700 flex items-center gap-1">
                                             <span>Read Note Details</span>
                                             <span>&rarr;</span>
@@ -121,15 +121,15 @@
                 </div>
 
                 <!-- Right Column: Quick Performance -->
-                <div class="space-y-6">
+                <div class="space-y-4">
                     <x-dashboard-card title="Subject Performance" subtitle="Realtime average calculations based on cumulative academic grading entries." icon="reports" accent="blue">
-                        <div class="space-y-4">
-                            @forelse ($reportSummary->take(4) as $subject => $summary)
+                        <div class="space-y-3">
+                            @forelse ($reportSummary->take(3) as $subject => $summary)
                                 @php
                                     $average = max(0, min(100, (float) $summary['average']));
                                     $colorType = $average >= 70 ? 'green' : ($average >= 50 ? 'blue' : ($average >= 40 ? 'orange' : 'red'));
                                 @endphp
-                                <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm space-y-3">
+                                <div class="rounded-xl border border-slate-200 bg-white p-3 shadow-sm space-y-2">
                                     <div class="flex items-start justify-between gap-3 flex-wrap">
                                         <div>
                                             <span class="text-xs font-extrabold uppercase tracking-wide text-slate-800 block">
@@ -490,15 +490,15 @@
             >
                 <!-- Compact balance summary -->
                 <section class="overflow-hidden rounded-[22px] border border-[#d8e2ef] bg-white shadow-sm">
-                    <div class="grid gap-4 bg-[#071833] px-5 py-5 text-white sm:grid-cols-[1fr,auto] sm:items-center sm:px-7">
+                    <div class="grid gap-3 bg-[#071833] px-5 py-4 text-white sm:grid-cols-[1fr,auto] sm:items-center sm:px-6">
                         <div>
                             <p class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-amber-300">Financial account</p>
-                            <h2 class="display-font mt-1 text-xl font-black text-white">Make a payment</h2>
+                            <h2 class="display-font mt-1 text-lg font-black !text-white">Make a payment</h2>
                             <p class="mt-1 text-xs font-semibold text-slate-200">Select only the school fees you want to pay now.</p>
                         </div>
-                        <div class="rounded-2xl border border-white/15 bg-white/10 px-5 py-3 sm:text-right">
+                        <div class="rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 sm:text-right">
                             <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-200">Outstanding balance</p>
-                            <p class="display-font mt-1 text-2xl font-black text-white">NGN {{ number_format((float) $invoices->sum('balance'), 2) }}</p>
+                            <p class="display-font mt-0.5 text-xl font-black !text-white">NGN {{ number_format((float) $invoices->sum('balance'), 2) }}</p>
                         </div>
                     </div>
 
@@ -508,14 +508,14 @@
                         </div>
                     @endif
 
-                    <form method="POST" class="p-4 sm:p-6">
+                    <form method="POST" class="p-4 sm:p-5">
                         @csrf
                         <template x-for="invoiceId in selectedInvoices" :key="invoiceId">
                             <input type="hidden" name="invoice_ids[]" :value="invoiceId">
                         </template>
 
                         <!-- Step indicator -->
-                        <div class="mb-5 flex items-center gap-3" aria-label="Payment progress">
+                        <div class="mb-4 flex items-center gap-3" aria-label="Payment progress">
                             <div class="flex items-center gap-2">
                                 <span class="flex h-7 w-7 items-center justify-center rounded-full text-xs font-black"
                                       :class="paymentStep === 1 ? 'bg-blue-600 text-white' : 'bg-emerald-600 text-white'">1</span>
@@ -546,11 +546,11 @@
                             </div>
 
                             <div class="overflow-hidden rounded-2xl border border-slate-200">
-                                @forelse ($invoices as $invoice)
+                                @forelse ($invoices->filter(fn ($invoice) => (float) $invoice->balance > 0) as $invoice)
                                     @php
-                                        $isCleared = (float) $invoice->balance <= 0;
+                                        $isCleared = false;
                                     @endphp
-                                    <label class="grid cursor-pointer grid-cols-[auto,1fr,auto] items-center gap-3 border-b border-slate-100 px-4 py-4 last:border-b-0 hover:bg-blue-50/40 {{ $isCleared ? 'cursor-default bg-slate-50 opacity-70' : 'bg-white' }}">
+                                    <label class="grid cursor-pointer grid-cols-[auto,1fr,auto] items-center gap-3 border-b border-slate-100 px-4 py-3 last:border-b-0 hover:bg-blue-50/40 {{ $isCleared ? 'cursor-default bg-slate-50 opacity-70' : 'bg-white' }}">
                                         <input
                                             type="checkbox"
                                             value="{{ $invoice->id }}"
@@ -577,7 +577,7 @@
                                 @endforelse
                             </div>
 
-                            <div class="sticky bottom-3 mt-5 flex flex-col gap-3 rounded-2xl border border-[#c8d6ea] bg-white p-4 shadow-lg sm:flex-row sm:items-center sm:justify-between">
+                            <div class="sticky bottom-3 mt-4 flex flex-col gap-3 rounded-xl border border-[#c8d6ea] bg-white p-3 shadow-lg sm:flex-row sm:items-center sm:justify-between">
                                 <div>
                                     <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">
                                         <span x-text="selectedInvoices.length"></span> item(s) selected
