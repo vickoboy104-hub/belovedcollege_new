@@ -39,20 +39,20 @@
         @endif
 
         <section class="overflow-hidden rounded-[22px] border border-[#d8e2ef] bg-white shadow-sm">
-            <div class="grid gap-4 bg-[#071833] px-5 py-5 text-white sm:grid-cols-[1fr,auto] sm:items-center sm:px-7">
+            <div class="grid gap-3 bg-[#071833] px-5 py-4 text-white sm:grid-cols-[1fr,auto] sm:items-center sm:px-6">
                 <div>
                     <p class="text-[10px] font-black uppercase tracking-[0.18em] text-amber-300">Financial account</p>
-                    <h2 class="mt-1 text-xl font-black">Choose what you want to pay</h2>
+                    <h2 class="mt-1 text-lg font-black !text-white">Choose what you want to pay</h2>
                     <p class="mt-1 text-xs font-semibold text-slate-200">One fee or several fees can be settled in one checkout.</p>
                 </div>
-                <div class="rounded-2xl border border-white/15 bg-white/10 px-5 py-3 sm:text-right">
+                <div class="rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 sm:text-right">
                     <p class="text-[10px] font-black uppercase tracking-wider text-slate-200">Outstanding Balance</p>
-                    <p class="mt-1 text-2xl font-black">NGN {{ number_format((float) $invoices->sum('balance'), 2) }}</p>
+                    <p class="mt-0.5 text-xl font-black !text-white">NGN {{ number_format((float) $outstandingInvoices->sum('balance'), 2) }}</p>
                 </div>
             </div>
 
-            <div class="p-4 sm:p-6">
-                <div class="mb-5 flex items-center gap-3" aria-label="Payment progress">
+            <div class="p-4 sm:p-5">
+                <div class="mb-4 flex items-center gap-3" aria-label="Payment progress">
                     <div class="flex items-center gap-2">
                         <span class="flex h-7 w-7 items-center justify-center rounded-full text-xs font-black" :class="step === 1 ? 'bg-blue-600 text-white' : 'bg-emerald-600 text-white'">1</span>
                         <span class="text-xs font-black text-[#071833]">Select Fees</span>
@@ -79,13 +79,13 @@
                         <table class="w-full text-left text-sm">
                             <thead class="bg-slate-50 text-[10px] font-black uppercase tracking-wider text-slate-500"><tr><th class="px-4 py-3"></th><th class="px-4 py-3">Fee</th><th class="px-4 py-3 text-right">Amount</th><th class="px-4 py-3 text-right">Status</th></tr></thead>
                             <tbody class="divide-y divide-slate-100">
-                                @forelse ($invoices as $invoice)
+                                @forelse ($outstandingInvoices as $invoice)
                                     @php $cleared = (float) $invoice->balance <= 0; @endphp
                                     <tr class="{{ $cleared ? 'bg-slate-50 opacity-60' : 'bg-white' }}">
-                                        <td class="px-4 py-4"><input type="checkbox" value="{{ $invoice->id }}" x-model="selectedInvoices" @disabled($cleared) class="h-5 w-5 rounded border-slate-300 text-blue-600"></td>
-                                        <td class="px-4 py-4"><div class="font-black text-[#071833]">{{ $invoice->feeItem->name ?? 'School fee' }}</div><div class="text-[10px] font-semibold text-slate-500">{{ $invoice->invoice_no }}</div></td>
-                                        <td class="px-4 py-4 text-right font-black">NGN {{ number_format((float) $invoice->balance, 2) }}</td>
-                                        <td class="px-4 py-4 text-right text-[10px] font-black {{ $cleared ? 'text-emerald-700' : 'text-amber-700' }}">{{ $cleared ? 'PAID' : 'OUTSTANDING' }}</td>
+                                        <td class="px-4 py-3"><input type="checkbox" value="{{ $invoice->id }}" x-model="selectedInvoices" @disabled($cleared) class="h-5 w-5 rounded border-slate-300 text-blue-600"></td>
+                                        <td class="px-4 py-3"><div class="font-black text-[#071833]">{{ $invoice->feeItem->name ?? 'School fee' }}</div><div class="text-[10px] font-semibold text-slate-500">{{ $invoice->invoice_no }}</div></td>
+                                        <td class="px-4 py-3 text-right font-black">NGN {{ number_format((float) $invoice->balance, 2) }}</td>
+                                        <td class="px-4 py-3 text-right text-[10px] font-black {{ $cleared ? 'text-emerald-700' : 'text-amber-700' }}">{{ $cleared ? 'PAID' : 'OUTSTANDING' }}</td>
                                     </tr>
                                 @empty
                                     <tr><td colspan="4" class="px-4 py-10 text-center text-sm font-semibold text-slate-500">No invoices available.</td></tr>
@@ -95,9 +95,9 @@
                     </div>
 
                     <div class="space-y-3 md:hidden">
-                        @foreach ($invoices as $invoice)
+                        @foreach ($outstandingInvoices as $invoice)
                             @php $cleared = (float) $invoice->balance <= 0; @endphp
-                            <label class="flex items-center gap-3 rounded-xl border border-slate-200 p-4 {{ $cleared ? 'bg-slate-50 opacity-60' : 'bg-white' }}">
+                            <label class="flex items-center gap-3 rounded-xl border border-slate-200 p-3 {{ $cleared ? 'bg-slate-50 opacity-60' : 'bg-white' }}">
                                 <input type="checkbox" value="{{ $invoice->id }}" x-model="selectedInvoices" @disabled($cleared) class="h-5 w-5 rounded border-slate-300 text-blue-600">
                                 <span class="min-w-0 flex-1"><span class="block truncate text-sm font-black text-[#071833]">{{ $invoice->feeItem->name ?? 'School fee' }}</span><span class="text-[10px] font-semibold text-slate-500">{{ $invoice->invoice_no }}</span></span>
                                 <span class="text-right"><span class="block text-sm font-black text-[#071833]">NGN {{ number_format((float) $invoice->balance, 2) }}</span><span class="text-[10px] font-black {{ $cleared ? 'text-emerald-700' : 'text-amber-700' }}">{{ $cleared ? 'PAID' : 'DUE' }}</span></span>
@@ -105,7 +105,7 @@
                         @endforeach
                     </div>
 
-                    <div class="sticky bottom-3 mt-5 flex flex-col gap-3 rounded-2xl border border-[#c8d6ea] bg-white p-4 shadow-lg sm:flex-row sm:items-center sm:justify-between">
+                    <div class="sticky bottom-3 mt-4 flex flex-col gap-3 rounded-xl border border-[#c8d6ea] bg-white p-3 shadow-lg sm:flex-row sm:items-center sm:justify-between">
                         <div><p class="text-[10px] font-black uppercase tracking-wider text-slate-500"><span x-text="selectedInvoices.length"></span> selected</p><p class="mt-1 text-xl font-black text-[#071833]" x-text="'NGN ' + selectedTotal.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})"></p></div>
                         <button type="button" @click="if (selectedInvoices.length) step = 2" :disabled="selectedInvoices.length === 0" class="min-h-11 rounded-xl bg-blue-600 px-6 py-3 text-sm font-black text-white disabled:bg-slate-300">Continue</button>
                     </div>
