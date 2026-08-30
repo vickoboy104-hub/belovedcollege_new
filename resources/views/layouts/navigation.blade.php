@@ -553,7 +553,7 @@
                                                 <a
                                                     href="{{ $childHref }}"
                                                     x-show="matchesNav(@js($childSearchText))"
-                                                    x-on:click.prevent="$dispatch('section-change', '{{ $childSection }}'); activeSection = '{{ $childSection }}'; window.history.pushState(null, '', $el.href)"
+                                                    x-on:click="localStorage.setItem('sms_nav_group', 'student_portal')"
                                                     class="{{ $childBaseClass }}"
                                                     :class="activeSection === '{{ $childSection }}' ? 'is-active' : ''"
                                                 >
@@ -711,7 +711,7 @@
                                                     <a
                                                         href="{{ $childHref }}"
                                                         x-show="matchesNav(@js($childSearchText))"
-                                                        x-on:click.prevent="$dispatch('section-change', '{{ $childSection }}'); activeSection = '{{ $childSection }}'; window.history.pushState(null, '', $el.href); open = false"
+                                                        x-on:click="localStorage.setItem('sms_nav_group', 'student_portal'); open = false"
                                                         class="app-sidebar-child-link"
                                                         :class="activeSection === '{{ $childSection }}' ? 'is-active' : ''"
                                                     >
