@@ -59,6 +59,28 @@ class FinancePaymentUpgradeTest extends TestCase
         $response->assertDontSee('Continue securely with the school&#039;s Paystack checkout', false);
     }
 
+    public function test_billing_banner_keeps_explicit_high_contrast_text(): void
+    {
+        [$user] = $this->studentWithInvoice(125000);
+
+        $this->actingAs($user)
+            ->get(route('portal.index', ['section' => 'billing']))
+            ->assertOk()
+            ->assertSee('Choose what you want to pay')
+            ->assertSee('color: #ffffff !important;', false);
+    }
+
+    public function test_student_portal_navigation_uses_real_links_instead_of_history_only_updates(): void
+    {
+        [$user] = $this->studentWithInvoice(125000);
+
+        $this->actingAs($user)
+            ->get(route('portal.index', ['section' => 'lessons']))
+            ->assertOk()
+            ->assertSee(route('portal.index', ['section' => 'billing']), false)
+            ->assertDontSee("window.history.pushState(null, '', $el.href)", false);
+    }
+
     public function test_bank_transfer_claim_stays_pending_until_finance_verifies_it(): void
     {
         [$studentUser, $student, $invoice] = $this->studentWithInvoice(50000);
