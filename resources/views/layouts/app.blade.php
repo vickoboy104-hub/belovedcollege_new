@@ -34,6 +34,7 @@
     <link rel="stylesheet" href="{{ asset('table-consistency.css') }}?v=20260720-global-table-consistency-1">
     <link rel="stylesheet" href="{{ asset('ui-contrast-audit.css') }}?v=20260827-ui-contrast-audit-2">
     <link rel="stylesheet" href="{{ asset('payment-selection.css') }}?v=20260827-payment-flow-1">
+    <link rel="stylesheet" href="{{ asset('global-ui-density-fixes.css') }}?v=20260831-density-navigation-1">
     @if (request()->routeIs('admin.reports.index'))
         <script src="{{ asset('report-search-behavior.js') }}?v=20260719-report-search-optional-2"></script>
     @endif
@@ -89,6 +90,7 @@
     <script src="{{ asset('sidebar-scroll-persistence.js') }}?v=20260711-sidebar-scroll-1"></script>
     <script src="{{ asset('table-consistency.js') }}?v=20260720-global-table-consistency-1"></script>
     <script src="{{ asset('resource-link-guard.js') }}?v=20260827-resource-fallback-1"></script>
+    <script src="{{ asset('portal-navigation-hardening.js') }}?v=20260831-density-navigation-1"></script>
     @if (auth()->user()?->hasAnyRole(['admin', 'principal']))
         <script
             src="{{ asset('admin-navigation-shortcuts.js') }}?v=20260714-admin-shortcuts-1"
