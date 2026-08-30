@@ -198,7 +198,7 @@
                             </div>
 
                             <!-- Card Action buttons -->
-                            <div class="flex items-center gap-2 border-t border-slate-100 pt-3 flex-wrap">
+                            <div class="flex items-center gap-2 border-t border-slate-100 pt-2 flex-wrap">
                                 <x-action-button :href="route('portal.results.print', [$publishedReport->term]) . ($children->isNotEmpty() ? '?student='.$student->id : '')" target="_blank" variant="primary" icon="eye" class="flex-1 !py-2">
                                     Open Report Card
                                 </x-action-button>
@@ -219,9 +219,9 @@
         <!-- 3. LESSON NOTES SECTION -->
         <div x-show="activeSection === 'lessons'" x-cloak x-transition:enter="transition ease-out duration-250">
             <x-dashboard-card title="Lesson Notes Library" subtitle="Explore curriculum notes and reference resources published by your teachers." icon="learning" accent="blue">
-                <div class="space-y-6">
+                <div class="space-y-3">
                     @forelse ($lessons as $lesson)
-                        <article class="rounded-[18px] border border-slate-200 bg-white p-6 shadow-sm hover:border-blue-500 hover:shadow-md transition-all space-y-4">
+                        <article class="rounded-[18px] border border-slate-200 bg-white p-4 shadow-sm hover:border-blue-500 hover:shadow-md transition-all space-y-4">
                             <div class="flex items-start justify-between gap-4 flex-wrap sm:flex-nowrap">
                                 <div>
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-50 border border-blue-100 text-blue-700">
@@ -241,12 +241,12 @@
                             </div>
 
                             @if ($lesson->summary)
-                                <p class="text-xs font-semibold text-slate-500 leading-relaxed bg-slate-50 border border-slate-100 p-3 rounded-[12px]">
+                                <p class="text-xs font-semibold text-slate-500 leading-relaxed bg-slate-50 border border-slate-100 px-3 py-2 rounded-[10px]">
                                     {{ $lesson->summary }}
                                 </p>
                             @endif
 
-                            <p class="text-sm text-slate-700 whitespace-pre-line leading-relaxed font-medium">
+                            <p class="text-sm text-slate-700 whitespace-pre-line leading-6 font-medium">
                                 {{ $lesson->body }}
                             </p>
 
@@ -274,7 +274,7 @@
                                 </div>
                             @endif
 
-                            <div class="border-t border-slate-100 pt-3 flex">
+                            <div class="border-t border-slate-100 pt-2 flex">
                                 @if ($lesson->resource_link)
                                     <a href="{{ $lesson->resource_link }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-xs font-extrabold text-blue-600 hover:text-blue-700">
                                         <span>Open Supporting Resource Link</span>
@@ -302,12 +302,12 @@
         <!-- 4. ASSIGNMENTS SECTION -->
         <div x-show="activeSection === 'assignments'" x-cloak x-transition:enter="transition ease-out duration-250">
             <x-dashboard-card title="Assignments & Tasks" subtitle="Submit homework, review guidelines, and track grading statuses." icon="assignments" accent="orange">
-                <div class="space-y-6">
+                <div class="space-y-3">
                     @forelse ($assignments as $assignment)
                         @php
                             $hasSubmitted = $submissions->has($assignment->id);
                         @endphp
-                        <article class="rounded-[18px] border border-slate-200 bg-white p-5 shadow-sm space-y-4">
+                        <article class="rounded-[18px] border border-slate-200 bg-white p-4 shadow-sm space-y-4">
                             <div class="flex items-start justify-between gap-4 flex-wrap sm:flex-nowrap">
                                 <div>
                                     <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-50 border border-orange-100 text-orange-700">
@@ -490,15 +490,15 @@
             >
                 <!-- Compact balance summary -->
                 <section class="overflow-hidden rounded-[22px] border border-[#d8e2ef] bg-white shadow-sm">
-                    <div class="grid gap-3 bg-[#071833] px-5 py-4 text-white sm:grid-cols-[1fr,auto] sm:items-center sm:px-6">
+                    <div class="finance-contrast-banner grid gap-3 bg-[#071833] px-5 py-4 text-white sm:grid-cols-[1fr,auto] sm:items-center sm:px-6">
                         <div>
                             <p class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-amber-300">Financial account</p>
-                            <h2 class="display-font mt-1 text-lg font-black !text-white">Make a payment</h2>
-                            <p class="mt-1 text-xs font-semibold text-slate-200">Select only the school fees you want to pay now.</p>
+                            <h2 class="finance-banner-title display-font mt-1 text-lg font-black">Make a payment</h2>
+                            <p class="finance-banner-summary mt-1 text-xs font-semibold">Select only the school fees you want to pay now.</p>
                         </div>
                         <div class="rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 sm:text-right">
-                            <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-200">Outstanding balance</p>
-                            <p class="display-font mt-0.5 text-xl font-black !text-white">NGN {{ number_format((float) $invoices->sum('balance'), 2) }}</p>
+                            <p class="finance-banner-label text-[10px] font-extrabold uppercase tracking-wider">Outstanding balance</p>
+                            <p class="finance-banner-value display-font mt-0.5 text-xl font-black">NGN {{ number_format((float) $invoices->sum('balance'), 2) }}</p>
                         </div>
                     </div>
 
@@ -666,7 +666,7 @@
                 <!-- Transfer details and receipts -->
                 <div class="grid gap-5 lg:grid-cols-2">
                     @if ($bankAccounts->isNotEmpty() || filled($schoolSettings['payment_instruction'] ?? null))
-                        <section class="rounded-[20px] border border-slate-200 bg-white p-5 shadow-sm">
+                        <section class="rounded-[20px] border border-slate-200 bg-white p-4 shadow-sm">
                             <div class="mb-4 flex items-start gap-3">
                                 <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-amber-100 text-lg">🏦</span>
                                 <div>
@@ -694,7 +694,7 @@
                         </section>
                     @endif
 
-                    <section class="rounded-[20px] border border-slate-200 bg-white p-5 shadow-sm {{ $bankAccounts->isEmpty() && blank($schoolSettings['payment_instruction'] ?? null) ? 'lg:col-span-2' : '' }}">
+                    <section class="rounded-[20px] border border-slate-200 bg-white p-4 shadow-sm {{ $bankAccounts->isEmpty() && blank($schoolSettings['payment_instruction'] ?? null) ? 'lg:col-span-2' : '' }}">
                         <div class="mb-4 flex items-start gap-3">
                             <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-lg">🧾</span>
                             <div>
