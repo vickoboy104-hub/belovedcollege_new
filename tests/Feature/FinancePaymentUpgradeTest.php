@@ -7,10 +7,12 @@ use App\Enums\PaymentStatus;
 use App\Enums\UserRole;
 use App\Models\FeeInvoice;
 use App\Models\FeeItem;
+use App\Models\Lesson;
 use App\Models\Payment;
 use App\Models\SchoolClass;
 use App\Models\Setting;
 use App\Models\Student;
+use App\Models\Subject;
 use App\Models\User;
 use App\Services\Payments\PaymentMethodResolver;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -89,6 +91,109 @@ class FinancePaymentUpgradeTest extends TestCase
         $this->assertSame(PaymentStatus::Paid, $claim->fresh()->status);
         $this->assertSame(0.0, (float) $invoice->fresh()->balance);
         $this->assertSame('paid', $invoice->fresh()->status);
+    }
+
+    public function test_missing_lesson_resource_still_renders_an_explanatory_action(): void
+    {
+        [$studentUser, $student] = $this->studentWithInvoice(50000);
+        $teacher = User::factory()->create([
+            'role' => UserRole::Teacher,
+            'email_verified_at' => now(),
+            'status' => 'active',
+        ]);
+        $subject = Subject::create([
+            'name' => 'Mathematics',
+            'code' => 'MTH',
+        ]);
+        Lesson::create([
+            'teacher_id' => $teacher->id,
+            'subject_id' => $subject->id,
+            'school_class_id' => $student->school_class_id,
+            'title' => 'Fractions',
+            'body' => 'A lesson without an uploaded supporting resource.',
+            'resource_link' => null,
+        ]);
+
+        $this->actingAs($studentUser)
+            ->get(route('portal.index', ['section' => 'lessons']))
+            ->assertOk()
+            ->assertSee('Open Supporting Resource Link')
+            ->assertSee('No resources available yet. Your teacher has not uploaded any learning material.');
+    }
+
+    public function test_bank_transfer_reference_cannot_be_reused_by_another_student(): void
+    {
+        [$firstUser, $firstStudent, $firstInvoice] = $this->studentWithInvoice(50000);
+
+        $class = $firstStudent->schoolClass;
+        $secondUser = User::factory()->create([
+            'role' => UserRole::Student,
+            'email_verified_at' => now(),
+            'status' => 'active',
+        ]);
+        $secondStudent = Student::create([
+            'user_id' => $secondUser->id,
+            'admission_no' => 'BEL-FIN-002',
+            'student_id_no' => 'BEL-FIN-STU-002',
+            'school_class_id' => $class->id,
+            'status' => 'active',
+        ]);
+        $secondInvoice = FeeInvoice::create([
+            'invoice_no' => 'INV-FIN-002',
+            'student_id' => $secondStudent->id,
+            'fee_item_id' => $firstInvoice->fee_item_id,
+            'amount_due' => 50000,
+            'amount_paid' => 0,
+            'balance' => 50000,
+            'status' => 'unpaid',
+            'issued_at' => now(),
+        ]);
+
+        $this->actingAs($firstUser)->post(route('payments.bank-transfer.submit'), [
+            'invoice_ids' => [$firstInvoice->id],
+            'bank_reference' => ' bank-ref-duplicate ',
+        ])->assertSessionHas('status');
+
+        $this->actingAs($secondUser)->post(route('payments.bank-transfer.submit'), [
+            'invoice_ids' => [$secondInvoice->id],
+            'bank_reference' => 'BANK-REF-DUPLICATE',
+        ])->assertSessionHasErrors('payment');
+
+        $this->assertSame(1, Payment::query()
+            ->where('channel', 'bank-transfer')
+            ->where('payload->source', 'bank_transfer_claim')
+            ->count());
+    }
+
+    public function test_bank_transfer_claim_cannot_be_verified_twice(): void
+    {
+        [$studentUser, $student, $invoice] = $this->studentWithInvoice(50000);
+        $admin = User::factory()->create([
+            'role' => UserRole::Admin,
+            'email_verified_at' => now(),
+            'status' => 'active',
+        ]);
+
+        $this->actingAs($studentUser)->post(route('payments.bank-transfer.submit'), [
+            'invoice_ids' => [$invoice->id],
+            'bank_reference' => 'BANK-REF-ONCE',
+        ]);
+
+        $claim = Payment::query()->where('student_id', $student->id)->firstOrFail();
+
+        $this->actingAs($admin)
+            ->post(route('admin.bank-transfers.verify', $claim))
+            ->assertRedirect();
+
+        $this->actingAs($admin)
+            ->post(route('admin.bank-transfers.verify', $claim))
+            ->assertStatus(422);
+
+        $this->assertSame(0.0, (float) $invoice->fresh()->balance);
+        $this->assertSame(1, Payment::query()
+            ->where('student_id', $student->id)
+            ->where('payload->source', 'bundle_allocation')
+            ->count());
     }
 
     public function test_finance_staff_can_record_partial_cash_payment_in_same_ledger(): void
