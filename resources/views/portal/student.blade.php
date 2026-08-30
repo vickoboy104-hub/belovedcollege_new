@@ -274,14 +274,23 @@
                                 </div>
                             @endif
 
-                            @if ($lesson->resource_link)
-                                <div class="border-t border-slate-100 pt-3 flex">
-                                    <a href="{{ $lesson->resource_link }}" target="_blank" class="inline-flex items-center gap-1 text-xs font-extrabold text-blue-600 hover:text-blue-700">
+                            <div class="border-t border-slate-100 pt-3 flex">
+                                @if ($lesson->resource_link)
+                                    <a href="{{ $lesson->resource_link }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-xs font-extrabold text-blue-600 hover:text-blue-700">
                                         <span>Open Supporting Resource Link</span>
                                         <span>&rarr;</span>
                                     </a>
-                                </div>
-                            @endif
+                                @else
+                                    <button
+                                        type="button"
+                                        onclick="window.alert('No resources available yet. Your teacher has not uploaded any learning material.')"
+                                        class="inline-flex items-center gap-1 text-xs font-extrabold text-slate-500 hover:text-slate-700"
+                                    >
+                                        <span>Open Supporting Resource Link</span>
+                                        <span>&rarr;</span>
+                                    </button>
+                                @endif
+                            </div>
                         </article>
                     @empty
                         <x-empty-state title="No lesson notes available yet" subtitle="When your course teachers publish lesson libraries, notes, and video attachments, they will appear here." icon="learning" />
