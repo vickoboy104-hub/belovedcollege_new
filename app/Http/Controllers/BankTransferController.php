@@ -7,8 +7,10 @@ use App\Enums\PaymentStatus;
 use App\Enums\UserRole;
 use App\Models\FeeInvoice;
 use App\Models\Payment;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -36,33 +38,46 @@ class BankTransferController extends Controller
             $this->authorizeInvoiceAccess($request, $invoice);
         }
 
+        $bankReference = $this->normalizeBankReference($validated['bank_reference']);
+        $paymentReference = 'TRF-'.hash('sha256', $bankReference);
+
         $existingClaim = Payment::query()
-            ->where('student_id', $invoices->first()->student_id)
             ->where('provider', PaymentProvider::Manual)
-            ->where('status', PaymentStatus::Pending)
+            ->whereIn('status', [PaymentStatus::Pending, PaymentStatus::Paid])
             ->where('channel', 'bank-transfer')
-            ->where('payload->bank_reference', trim($validated['bank_reference']))
-            ->exists();
+            ->where('payload->source', 'bank_transfer_claim')
+            ->get(['payload'])
+            ->contains(fn (Payment $payment) => $this->normalizeBankReference(
+                (string) data_get($payment->payload, 'bank_reference')
+            ) === $bankReference);
 
         if ($existingClaim) {
             return back()->withErrors(['payment' => 'This bank transfer reference has already been submitted for verification.']);
         }
 
-        Payment::create([
-            'student_id' => $invoices->first()->student_id,
-            'provider' => PaymentProvider::Manual,
-            'reference' => 'TRF-'.Str::upper(Str::random(12)),
-            'amount' => $invoices->sum(fn (FeeInvoice $invoice) => (float) $invoice->balance),
-            'currency' => 'NGN',
-            'status' => PaymentStatus::Pending,
-            'channel' => 'bank-transfer',
-            'payload' => [
-                'source' => 'bank_transfer_claim',
-                'bank_reference' => trim($validated['bank_reference']),
-                'invoice_ids' => $invoices->pluck('id')->values()->all(),
-                'submitted_at' => now()->toIso8601String(),
-            ],
-        ]);
+        try {
+            Payment::create([
+                'student_id' => $invoices->first()->student_id,
+                'provider' => PaymentProvider::Manual,
+                'reference' => $paymentReference,
+                'amount' => $invoices->sum(fn (FeeInvoice $invoice) => (float) $invoice->balance),
+                'currency' => 'NGN',
+                'status' => PaymentStatus::Pending,
+                'channel' => 'bank-transfer',
+                'payload' => [
+                    'source' => 'bank_transfer_claim',
+                    'bank_reference' => $bankReference,
+                    'invoice_ids' => $invoices->pluck('id')->values()->all(),
+                    'submitted_at' => now()->toIso8601String(),
+                ],
+            ]);
+        } catch (QueryException $exception) {
+            if (Payment::query()->where('reference', $paymentReference)->exists()) {
+                return back()->withErrors(['payment' => 'This bank transfer reference has already been submitted for verification.']);
+            }
+
+            throw $exception;
+        }
 
         return back()->with('status', 'Bank transfer submitted for bursary verification. Your invoice will update after confirmation.');
     }
@@ -83,31 +98,37 @@ class BankTransferController extends Controller
 
     public function verify(Request $request, Payment $payment): RedirectResponse
     {
-        abort_unless(
-            $payment->provider === PaymentProvider::Manual
-            && $payment->status === PaymentStatus::Pending
-            && $payment->channel === 'bank-transfer'
-            && data_get($payment->payload, 'source') === 'bank_transfer_claim',
-            422,
-            'This payment is not a pending bank transfer claim.'
-        );
+        DB::transaction(function () use ($request, $payment): void {
+            $lockedPayment = Payment::query()
+                ->lockForUpdate()
+                ->findOrFail($payment->id);
 
-        $payment->update([
-            'status' => PaymentStatus::Paid,
-            'paid_at' => now(),
-            'recorded_by' => $request->user()->id,
-            'receipt_no' => $payment->receipt_no ?: 'RCP-'.now()->format('Ymd').'-'.Str::upper(Str::random(5)),
-            'payload' => array_merge($payment->payload ?? [], [
-                'verified_at' => now()->toIso8601String(),
-                'verified_by' => $request->user()->id,
-            ]),
-        ]);
+            abort_unless(
+                $lockedPayment->provider === PaymentProvider::Manual
+                && $lockedPayment->status === PaymentStatus::Pending
+                && $lockedPayment->channel === 'bank-transfer'
+                && data_get($lockedPayment->payload, 'source') === 'bank_transfer_claim',
+                422,
+                'This payment is not a pending bank transfer claim.'
+            );
 
-        if ($payment->feeInvoice) {
-            $payment->feeInvoice->syncBalance();
-        } else {
-            $payment->allocateBundleInvoices();
-        }
+            $lockedPayment->update([
+                'status' => PaymentStatus::Paid,
+                'paid_at' => now(),
+                'recorded_by' => $request->user()->id,
+                'receipt_no' => $lockedPayment->receipt_no ?: 'RCP-'.now()->format('Ymd').'-'.Str::upper(Str::random(5)),
+                'payload' => array_merge($lockedPayment->payload ?? [], [
+                    'verified_at' => now()->toIso8601String(),
+                    'verified_by' => $request->user()->id,
+                ]),
+            ]);
+
+            if ($lockedPayment->feeInvoice) {
+                $lockedPayment->feeInvoice->syncBalance();
+            } else {
+                $lockedPayment->allocateBundleInvoices();
+            }
+        });
 
         return back()->with('status', 'Bank transfer verified and student balance updated.');
     }
@@ -125,5 +146,10 @@ class BankTransferController extends Controller
         }
 
         abort(403);
+    }
+
+    protected function normalizeBankReference(string $reference): string
+    {
+        return Str::upper((string) preg_replace('/\s+/', '', trim($reference)));
     }
 }
