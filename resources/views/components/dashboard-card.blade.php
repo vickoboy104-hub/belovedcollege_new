@@ -21,7 +21,7 @@
                 @if($icon)
                     <div class="icon-box w-9 h-9 rounded-[10px] flex items-center justify-center shadow-sm shrink-0"
                          style="background: {{ $iconStyle['bg'] }}; color: {{ $iconStyle['color'] }}; border: 1px solid var(--theme-border-soft, rgba(148,163,184,0.28));">
-                        <x-app-icon :name="$icon" class="h-4.5 w-4.5" />
+                        <x-app-icon :name="$icon" class="h-4 w-4" />
                     </div>
                 @endif
                 <div class="min-w-0">
