@@ -4873,3 +4873,46 @@ body {
         gap: 1rem !important;
     }
 }
+
+
+/* Shared portal density and high-contrast safeguards. */
+.app-shell .admin-panel.section-card-panel {
+    padding: 1rem !important;
+}
+
+.app-shell .admin-panel.section-card-panel > .section-header {
+    margin-bottom: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+    gap: 0.75rem !important;
+}
+
+.app-shell .admin-panel.section-card-panel .section-description {
+    margin-top: 0.15rem;
+    line-height: 1.35;
+}
+
+.app-shell .stat-tile,
+.app-shell .mobile-record-card {
+    padding: 0.9rem !important;
+}
+
+.app-shell .finance-contrast-banner .finance-banner-title,
+.app-shell .finance-contrast-banner .finance-banner-value {
+    color: #ffffff !important;
+}
+
+.app-shell .finance-contrast-banner .finance-banner-summary,
+.app-shell .finance-contrast-banner .finance-banner-label {
+    color: #e2e8f0 !important;
+}
+
+@media (max-width: 767px) {
+    .app-shell .admin-panel.section-card-panel {
+        padding: 0.85rem !important;
+    }
+
+    .app-shell .admin-panel.section-card-panel > .section-header {
+        margin-bottom: 0.65rem !important;
+        padding-bottom: 0.65rem !important;
+    }
+}
