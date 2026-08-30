@@ -78,7 +78,7 @@ class FinancePaymentUpgradeTest extends TestCase
             ->get(route('portal.index', ['section' => 'lessons']))
             ->assertOk()
             ->assertSee(route('portal.index', ['section' => 'billing']), false)
-            ->assertDontSee("window.history.pushState(null, '', $el.href)", false);
+            ->assertDontSee('window.history.pushState', false);
     }
 
     public function test_bank_transfer_claim_stays_pending_until_finance_verifies_it(): void
