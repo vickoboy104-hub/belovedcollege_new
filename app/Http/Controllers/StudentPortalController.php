@@ -46,13 +46,7 @@ class StudentPortalController extends Controller
             ->where('school_class_id', $student->school_class_id)
             ->latest()
             ->take(8)
-            ->get()
-            ->each(function (Lesson $lesson): void {
-                if (filled($lesson->resource_link) && str_contains(strtolower((string) $lesson->resource_link), 'example.com')) {
-                    $message = 'No resources available yet. Your teacher has not uploaded any learning material.';
-                    $lesson->resource_link = 'javascript:void(window.alert('.json_encode($message).'))';
-                }
-            });
+            ->get();
 
         $assignments = Assignment::query()
             ->with('subject', 'teacher')
