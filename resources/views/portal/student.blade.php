@@ -492,13 +492,13 @@
                 <section class="overflow-hidden rounded-[22px] border border-[#d8e2ef] bg-white shadow-sm">
                     <div class="finance-contrast-banner grid gap-3 bg-[#071833] px-5 py-4 text-white sm:grid-cols-[1fr,auto] sm:items-center sm:px-6">
                         <div>
-                            <p class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-amber-300">Financial account</p>
-                            <h2 class="finance-banner-title display-font mt-1 text-lg font-black">Make a payment</h2>
-                            <p class="finance-banner-summary mt-1 text-xs font-semibold">Select only the school fees you want to pay now.</p>
+                            <p class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-amber-300" style="color: #fcd34d !important;">Financial account</p>
+                            <h2 class="finance-banner-title display-font mt-1 text-lg font-black" style="color: #ffffff !important;">Make a payment</h2>
+                            <p class="finance-banner-summary mt-1 text-xs font-semibold" style="color: #e2e8f0 !important;">Select only the school fees you want to pay now.</p>
                         </div>
                         <div class="rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 sm:text-right">
-                            <p class="finance-banner-label text-[10px] font-extrabold uppercase tracking-wider">Outstanding balance</p>
-                            <p class="finance-banner-value display-font mt-0.5 text-xl font-black">NGN {{ number_format((float) $invoices->sum('balance'), 2) }}</p>
+                            <p class="finance-banner-label text-[10px] font-extrabold uppercase tracking-wider" style="color: #e2e8f0 !important;">Outstanding balance</p>
+                            <p class="finance-banner-value display-font mt-0.5 text-xl font-black" style="color: #ffffff !important;">NGN {{ number_format((float) $invoices->sum('balance'), 2) }}</p>
                         </div>
                     </div>
 
