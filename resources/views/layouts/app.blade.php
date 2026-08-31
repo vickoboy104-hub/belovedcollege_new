@@ -36,6 +36,7 @@
     <link rel="stylesheet" href="{{ asset('payment-selection.css') }}?v=20260827-payment-flow-1">
     <link rel="stylesheet" href="{{ asset('global-ui-density-fixes.css') }}?v=20260831-density-navigation-1">
     <link rel="stylesheet" href="{{ asset('staff-workflow-efficiency.css') }}?v=20260831-staff-workflow-1">
+    <link rel="stylesheet" href="{{ asset('teacher-submissions-workflow.css') }}?v=20260831-submissions-workflow-1">
     @if (request()->routeIs('admin.reports.index'))
         <script src="{{ asset('report-search-behavior.js') }}?v=20260719-report-search-optional-2"></script>
     @endif
@@ -102,6 +103,7 @@
     @if (request()->routeIs('teacher.*'))
         <script src="{{ asset('teacher-access-filter.js') }}?v=20260714-teacher-access-1"></script>
         <script src="{{ asset('staff-workflow-efficiency.js') }}?v=20260831-staff-workflow-1"></script>
+        <script src="{{ asset('teacher-submissions-workflow.js') }}?v=20260831-submissions-workflow-1"></script>
     @endif
     @isset($paymentGatewayCatalog)
         <script src="{{ asset('payment-gateway-buttons.js') }}?v=20260827-payment-flow-2"></script>
