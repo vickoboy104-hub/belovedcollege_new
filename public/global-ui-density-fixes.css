@@ -78,6 +78,79 @@
     max-height: 18rem;
 }
 
+/* Lesson Notes page: remove the oversized nested panel and make each note concise. */
+.route-portal-index [x-show="activeSection === 'lessons'"] > .admin-panel.section-card-panel {
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+.route-portal-index [x-show="activeSection === 'lessons'"] > .admin-panel.section-card-panel > .section-header {
+    margin: 0 0 0.65rem !important;
+    padding: 0.7rem 0.85rem !important;
+    border: 1px solid #dbe5f1 !important;
+    border-radius: 0.85rem !important;
+    background: rgba(255, 255, 255, 0.94) !important;
+}
+
+.route-portal-index [x-show="activeSection === 'lessons'"] > .admin-panel.section-card-panel > .section-header .icon-box {
+    width: 2rem !important;
+    height: 2rem !important;
+}
+
+.route-portal-index [x-show="activeSection === 'lessons'"] > .admin-panel.section-card-panel > .section-header .section-title {
+    font-size: 1rem !important;
+    line-height: 1.2 !important;
+}
+
+.route-portal-index [x-show="activeSection === 'lessons'"] > .admin-panel.section-card-panel > .section-header .section-description {
+    font-size: 0.72rem !important;
+    line-height: 1.25 !important;
+}
+
+.route-portal-index [x-show="activeSection === 'lessons'"] .space-y-6 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 0.7rem !important;
+}
+
+.route-portal-index [x-show="activeSection === 'lessons'"] article[class*="rounded-[18px]"] {
+    padding: 0.75rem 0.9rem !important;
+    border-radius: 0.85rem !important;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05) !important;
+}
+
+.route-portal-index [x-show="activeSection === 'lessons'"] article[class*="rounded-[18px]"] > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 0.55rem !important;
+}
+
+.route-portal-index [x-show="activeSection === 'lessons'"] article h4 {
+    margin-top: 0.35rem !important;
+    font-size: 0.93rem !important;
+    line-height: 1.25 !important;
+}
+
+.route-portal-index [x-show="activeSection === 'lessons'"] article p[class*="bg-slate-50"] {
+    padding: 0.5rem 0.65rem !important;
+    line-height: 1.35 !important;
+}
+
+.route-portal-index [x-show="activeSection === 'lessons'"] article p.whitespace-pre-line {
+    font-size: 0.78rem !important;
+    line-height: 1.45 !important;
+}
+
+.route-portal-index [x-show="activeSection === 'lessons'"] article [class*="border-t"] {
+    padding-top: 0.5rem !important;
+}
+
+.route-portal-index [x-show="activeSection === 'lessons'"] article img[class*="h-36"] {
+    height: 7.5rem !important;
+}
+
+.route-portal-index [x-show="activeSection === 'lessons'"] article video {
+    max-height: 13rem !important;
+}
+
 /* Billing/payment banners: force readable text only inside the dark finance banner. */
 .route-portal-payment [class*="bg-[#071833]"] h1,
 .route-portal-payment [class*="bg-[#071833]"] h2,
@@ -139,5 +212,13 @@
 
     .route-portal-index article[class*="rounded-[18px]"] {
         padding: 0.85rem !important;
+    }
+
+    .route-portal-index [x-show="activeSection === 'lessons'"] > .admin-panel.section-card-panel {
+        padding: 0 !important;
+    }
+
+    .route-portal-index [x-show="activeSection === 'lessons'"] article[class*="rounded-[18px]"] {
+        padding: 0.7rem !important;
     }
 }
