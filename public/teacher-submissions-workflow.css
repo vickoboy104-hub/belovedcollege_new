@@ -31,7 +31,9 @@ body.teacher-submissions-workflow .app-main > .space-y-5 > .card:first-child p {
     padding-bottom: .65rem !important;
 }
 
-.teacher-submissions-original-table {
+/* Critical fallback: never hide the server-rendered submissions table unless the
+   enhanced review queue has mounted successfully. */
+body.teacher-submissions-enhanced .teacher-submissions-original-table {
     display: none !important;
 }
 
@@ -108,9 +110,7 @@ body.teacher-submissions-workflow .app-main > .space-y-5 > .card:first-child p {
     font-weight: 700;
 }
 
-.submission-review-summary strong {
-    color: #0f172a;
-}
+.submission-review-summary strong { color: #0f172a; }
 
 .submission-review-list {
     display: grid;
@@ -129,13 +129,8 @@ body.teacher-submissions-workflow .app-main > .space-y-5 > .card:first-child p {
     box-shadow: 0 3px 10px rgba(15,23,42,.035);
 }
 
-.submission-review-card[data-status="unmarked"] {
-    border-left: 4px solid #f59e0b;
-}
-
-.submission-review-card[data-status="graded"] {
-    border-left: 4px solid #10b981;
-}
+.submission-review-card[data-status="unmarked"] { border-left: 4px solid #f59e0b; }
+.submission-review-card[data-status="graded"] { border-left: 4px solid #10b981; }
 
 .submission-review-main {
     min-width: 0;
@@ -290,36 +285,14 @@ body.teacher-submissions-workflow .app-main > .space-y-5 > .card:first-child p {
         top: 70px;
         grid-template-columns: 1fr;
     }
-
-    .submission-filter-group {
-        justify-content: flex-start;
-    }
-
-    .submission-review-card {
-        grid-template-columns: 1fr;
-    }
+    .submission-filter-group { justify-content: flex-start; }
+    .submission-review-card { grid-template-columns: 1fr; }
 }
 
 @media (max-width: 640px) {
-    .teacher-submissions-panel {
-        padding: .65rem !important;
-    }
-
-    .submission-review-toolbar {
-        position: static;
-        padding: .55rem;
-    }
-
-    .submission-review-card {
-        padding: .65rem;
-        gap: .6rem;
-    }
-
-    .submission-grade-box .table-inline-form {
-        grid-template-columns: 82px minmax(0, 1fr);
-    }
-
-    .submission-grade-box .table-toggle-btn {
-        grid-column: 1 / -1;
-    }
+    .teacher-submissions-panel { padding: .65rem !important; }
+    .submission-review-toolbar { position: static; padding: .55rem; }
+    .submission-review-card { padding: .65rem; gap: .6rem; }
+    .submission-grade-box .table-inline-form { grid-template-columns: 82px minmax(0, 1fr); }
+    .submission-grade-box .table-toggle-btn { grid-column: 1 / -1; }
 }
