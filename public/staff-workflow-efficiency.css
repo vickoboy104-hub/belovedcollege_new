@@ -1,0 +1,321 @@
+/* Staff workflow efficiency layer. Scoped to operational workspaces. */
+.route-teacher-learning .workflow-compact-form-section {
+    padding: 1rem !important;
+    border-radius: 1rem !important;
+}
+
+.route-teacher-learning .workflow-compact-form-section .form-section-header {
+    margin-bottom: 0.9rem !important;
+    padding-bottom: 0.75rem !important;
+}
+
+.route-teacher-learning .workflow-compact-form-section .form-stack {
+    gap: 0.9rem !important;
+}
+
+.workflow-bulk-panel {
+    display: grid;
+    gap: 0.85rem;
+}
+
+.workflow-toolbar {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+}
+
+.workflow-toolbar-results {
+    grid-template-columns: minmax(0, 2fr) minmax(14rem, 1fr);
+}
+
+.workflow-field {
+    display: grid;
+    gap: 0.35rem;
+    min-width: 0;
+}
+
+.workflow-field-wide {
+    min-width: 0;
+}
+
+.workflow-label {
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: #334155;
+}
+
+.workflow-control {
+    min-height: 2.65rem !important;
+}
+
+.workflow-quickbar,
+.workflow-sticky-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    border: 1px solid #dbe4f0;
+    background: #f8fafc;
+    border-radius: 0.85rem;
+    padding: 0.65rem 0.75rem;
+}
+
+.workflow-helper {
+    font-size: 0.76rem;
+    font-weight: 650;
+    line-height: 1.4;
+    color: #64748b;
+}
+
+.workflow-helper-block {
+    border: 1px solid #dbe4f0;
+    background: #f8fafc;
+    border-radius: 0.75rem;
+    padding: 0.65rem 0.75rem;
+}
+
+.workflow-quick-actions {
+    display: flex;
+    gap: 0.45rem;
+    flex-wrap: wrap;
+}
+
+.workflow-secondary-button,
+.workflow-primary-button {
+    border-radius: 0.7rem;
+    min-height: 2.35rem;
+    padding: 0.55rem 0.85rem;
+    font-size: 0.76rem;
+    font-weight: 850;
+    transition: 150ms ease;
+}
+
+.workflow-secondary-button {
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    color: #0f172a;
+}
+
+.workflow-secondary-button:hover {
+    background: #f1f5f9;
+}
+
+.workflow-primary-button {
+    border: 1px solid #0f2747;
+    background: #071833;
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(7, 24, 51, 0.12);
+}
+
+.workflow-primary-button:hover {
+    background: #0b2547;
+}
+
+.workflow-primary-button:disabled {
+    cursor: wait;
+    opacity: 0.6;
+}
+
+.workflow-summary {
+    font-size: 0.74rem;
+    font-weight: 800;
+    color: #475569;
+}
+
+.workflow-roster,
+.workflow-score-roster {
+    display: grid;
+    gap: 0.4rem;
+}
+
+.workflow-roster-row,
+.workflow-score-row {
+    display: grid;
+    align-items: center;
+    gap: 0.55rem;
+    border: 1px solid #e2e8f0;
+    background: #fff;
+    border-radius: 0.72rem;
+    padding: 0.5rem 0.6rem;
+}
+
+.workflow-roster-row {
+    grid-template-columns: minmax(13rem, 1.45fr) minmax(8rem, 0.5fr) minmax(12rem, 1fr);
+}
+
+.workflow-score-row {
+    grid-template-columns: minmax(15rem, 1.4fr) minmax(6.5rem, 0.4fr) minmax(6rem, 0.35fr) minmax(12rem, 1fr);
+}
+
+.workflow-roster-row:hover,
+.workflow-score-row:hover {
+    border-color: #bfdbfe;
+    background: #f8fbff;
+}
+
+.workflow-student-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    min-width: 0;
+}
+
+.workflow-row-number {
+    display: inline-flex;
+    width: 1.75rem;
+    height: 1.75rem;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 0.68rem;
+    font-weight: 900;
+}
+
+.workflow-student-copy {
+    min-width: 0;
+}
+
+.workflow-student-name {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.82rem;
+    line-height: 1.2;
+    color: #0f172a;
+}
+
+.workflow-student-meta {
+    display: block;
+    margin-top: 0.15rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 0.66rem;
+    font-weight: 700;
+    color: #94a3b8;
+}
+
+.workflow-status-select,
+.workflow-note-input,
+.workflow-score-input,
+.workflow-grade-input,
+.workflow-remark-input {
+    min-height: 2.35rem !important;
+    border-radius: 0.6rem !important;
+    font-size: 0.76rem !important;
+}
+
+.workflow-status-select {
+    width: 100%;
+    border: 1px solid #cbd5e1;
+    background: #fff;
+    padding: 0.45rem 0.55rem;
+    font-weight: 800;
+    color: #0f172a;
+}
+
+.workflow-save-status {
+    font-size: 0.74rem;
+    font-weight: 750;
+    color: #475569;
+}
+
+.workflow-save-status.is-success {
+    color: #047857;
+}
+
+.workflow-save-status.is-error {
+    color: #b91c1c;
+}
+
+.workflow-empty {
+    border: 1px dashed #cbd5e1;
+    border-radius: 0.75rem;
+    padding: 1rem;
+    text-align: center;
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #64748b;
+}
+
+.workflow-sticky-footer {
+    position: sticky;
+    bottom: 0.55rem;
+    z-index: 10;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+}
+
+/* Reduce unnecessarily tall teacher operational cards while keeping touch targets. */
+.route-teacher-learning .card[class*="p-6"],
+.route-teacher-learning .rounded-\[18px\][class*="p-5"],
+.route-teacher-learning .rounded-\[18px\][class*="p-6"] {
+    padding: 1rem !important;
+}
+
+.route-teacher-learning .space-y-5,
+.route-teacher-learning .space-y-6 {
+    row-gap: 1rem !important;
+}
+
+.route-teacher-learning textarea.theme-input {
+    min-height: 5rem;
+}
+
+@media (max-width: 900px) {
+    .workflow-toolbar,
+    .workflow-toolbar-results {
+        grid-template-columns: 1fr;
+    }
+
+    .workflow-roster-row,
+    .workflow-score-row {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .workflow-roster-row .workflow-student-cell,
+    .workflow-score-row .workflow-student-cell {
+        grid-column: 1 / -1;
+    }
+
+    .workflow-roster-row .workflow-note-input,
+    .workflow-score-row .workflow-remark-input {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 560px) {
+    .workflow-roster-row,
+    .workflow-score-row {
+        grid-template-columns: 1fr;
+    }
+
+    .workflow-roster-row .workflow-student-cell,
+    .workflow-roster-row .workflow-note-input,
+    .workflow-score-row .workflow-student-cell,
+    .workflow-score-row .workflow-remark-input {
+        grid-column: auto;
+    }
+
+    .workflow-quickbar,
+    .workflow-sticky-footer {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .workflow-quick-actions,
+    .workflow-primary-button {
+        width: 100%;
+    }
+
+    .workflow-secondary-button {
+        flex: 1 1 auto;
+    }
+}
