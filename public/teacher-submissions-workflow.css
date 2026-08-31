@@ -1,0 +1,325 @@
+/* Teacher assignment submissions: compact, action-first review workspace. */
+body.teacher-submissions-workflow .app-header-card {
+    padding-top: .85rem !important;
+    padding-bottom: .85rem !important;
+}
+
+body.teacher-submissions-workflow .app-main {
+    padding-top: .8rem !important;
+}
+
+body.teacher-submissions-workflow .app-main > .space-y-5 {
+    row-gap: .75rem !important;
+}
+
+body.teacher-submissions-workflow .app-main > .space-y-5 > .card:first-child {
+    padding: .75rem 1rem !important;
+    border-radius: .9rem !important;
+}
+
+body.teacher-submissions-workflow .app-main > .space-y-5 > .card:first-child p {
+    margin-top: .2rem !important;
+    line-height: 1.35 !important;
+}
+
+.teacher-submissions-panel {
+    padding: .85rem !important;
+}
+
+.teacher-submissions-panel > .section-header {
+    margin-bottom: .7rem !important;
+    padding-bottom: .65rem !important;
+}
+
+.teacher-submissions-original-table {
+    display: none !important;
+}
+
+.submission-review-shell {
+    display: grid;
+    gap: .7rem;
+}
+
+.submission-review-toolbar {
+    position: sticky;
+    top: 76px;
+    z-index: 15;
+    display: grid;
+    grid-template-columns: minmax(220px, 1fr) auto;
+    gap: .65rem;
+    align-items: center;
+    padding: .65rem;
+    border: 1px solid #dbe4f0;
+    border-radius: .85rem;
+    background: rgba(255,255,255,.97);
+    box-shadow: 0 5px 16px rgba(15,23,42,.06);
+    backdrop-filter: blur(8px);
+}
+
+.submission-review-search {
+    width: 100%;
+    min-height: 40px;
+    border: 1px solid #cbd5e1;
+    border-radius: .7rem;
+    background: #fff;
+    padding: .55rem .75rem;
+    font-size: .84rem;
+    color: #0f172a;
+    outline: none;
+}
+
+.submission-review-search:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59,130,246,.12);
+}
+
+.submission-filter-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+    justify-content: flex-end;
+}
+
+.submission-filter-btn {
+    min-height: 38px;
+    border: 1px solid #cbd5e1;
+    border-radius: .65rem;
+    background: #fff;
+    padding: .45rem .7rem;
+    font-size: .75rem;
+    font-weight: 800;
+    color: #334155;
+    cursor: pointer;
+}
+
+.submission-filter-btn.is-active {
+    border-color: #0f2a50;
+    background: #0f2a50;
+    color: #fff;
+}
+
+.submission-review-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .45rem;
+    align-items: center;
+    color: #64748b;
+    font-size: .76rem;
+    font-weight: 700;
+}
+
+.submission-review-summary strong {
+    color: #0f172a;
+}
+
+.submission-review-list {
+    display: grid;
+    gap: .55rem;
+}
+
+.submission-review-card {
+    display: grid;
+    grid-template-columns: minmax(0, 1.1fr) minmax(360px, .9fr);
+    gap: .8rem;
+    align-items: stretch;
+    padding: .75rem;
+    border: 1px solid #dbe4f0;
+    border-radius: .85rem;
+    background: #fff;
+    box-shadow: 0 3px 10px rgba(15,23,42,.035);
+}
+
+.submission-review-card[data-status="unmarked"] {
+    border-left: 4px solid #f59e0b;
+}
+
+.submission-review-card[data-status="graded"] {
+    border-left: 4px solid #10b981;
+}
+
+.submission-review-main {
+    min-width: 0;
+    display: grid;
+    gap: .48rem;
+}
+
+.submission-review-person-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: .65rem;
+}
+
+.submission-review-person {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    gap: .55rem;
+}
+
+.submission-review-avatar {
+    width: 34px;
+    height: 34px;
+    flex: 0 0 34px;
+    display: grid;
+    place-items: center;
+    border-radius: .65rem;
+    background: #eef4fb;
+    border: 1px solid #d7e3f2;
+    color: #123f78;
+    font-size: .72rem;
+    font-weight: 900;
+}
+
+.submission-review-name {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #0f172a;
+    font-size: .88rem;
+    font-weight: 900;
+}
+
+.submission-review-class,
+.submission-review-assignment {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    color: #64748b;
+    font-size: .74rem;
+    font-weight: 650;
+}
+
+.submission-status-chip {
+    flex: 0 0 auto;
+    border-radius: 999px;
+    padding: .32rem .55rem;
+    font-size: .67rem;
+    font-weight: 900;
+}
+
+.submission-status-chip.unmarked {
+    background: #fff7ed;
+    color: #9a3412;
+    border: 1px solid #fed7aa;
+}
+
+.submission-status-chip.graded {
+    background: #ecfdf5;
+    color: #047857;
+    border: 1px solid #a7f3d0;
+}
+
+.submission-answer-preview {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    min-height: 2.4em;
+    color: #334155;
+    font-size: .79rem;
+    line-height: 1.45;
+}
+
+.submission-review-meta-actions {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    flex-wrap: wrap;
+}
+
+.submission-review-meta-actions .table-view-btn {
+    min-height: 36px !important;
+    padding: .4rem .7rem !important;
+    border-radius: .6rem !important;
+}
+
+.submission-grade-box {
+    align-self: center;
+    display: grid;
+    gap: .45rem;
+    padding: .6rem;
+    border: 1px solid #e2e8f0;
+    border-radius: .75rem;
+    background: #f8fafc;
+}
+
+.submission-grade-label {
+    color: #475569;
+    font-size: .68rem;
+    font-weight: 900;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+}
+
+.submission-grade-box .table-inline-form {
+    display: grid !important;
+    grid-template-columns: 90px minmax(150px, 1fr) 88px;
+    gap: .45rem !important;
+    align-items: center;
+    width: 100% !important;
+}
+
+.submission-grade-box .table-score-input,
+.submission-grade-box .table-feedback-input {
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 40px !important;
+    border-radius: .6rem !important;
+}
+
+.submission-grade-box .table-toggle-btn {
+    width: 100% !important;
+    min-height: 40px !important;
+    border-radius: .6rem !important;
+    white-space: nowrap;
+}
+
+.submission-empty-filter {
+    padding: 1.2rem;
+    border: 1px dashed #cbd5e1;
+    border-radius: .85rem;
+    text-align: center;
+    color: #64748b;
+    font-size: .82rem;
+    font-weight: 700;
+}
+
+@media (max-width: 1023px) {
+    .submission-review-toolbar {
+        top: 70px;
+        grid-template-columns: 1fr;
+    }
+
+    .submission-filter-group {
+        justify-content: flex-start;
+    }
+
+    .submission-review-card {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 640px) {
+    .teacher-submissions-panel {
+        padding: .65rem !important;
+    }
+
+    .submission-review-toolbar {
+        position: static;
+        padding: .55rem;
+    }
+
+    .submission-review-card {
+        padding: .65rem;
+        gap: .6rem;
+    }
+
+    .submission-grade-box .table-inline-form {
+        grid-template-columns: 82px minmax(0, 1fr);
+    }
+
+    .submission-grade-box .table-toggle-btn {
+        grid-column: 1 / -1;
+    }
+}
