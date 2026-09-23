@@ -189,6 +189,27 @@ class AdminPeopleTest extends TestCase
         $response->assertSee('/private-media/users/'.$studentUser->id.'/avatar', false);
     }
 
+    public function test_student_portal_shows_updated_profile_photo(): void
+    {
+        $admin = User::factory()->create(['role' => UserRole::Admin]);
+        $studentUser = User::factory()->create([
+            'first_name' => 'Patience', 'last_name' => 'Onyeka', 'name' => 'Patience Onyeka',
+            'role' => UserRole::Student,
+        ]);
+        $student = Student::create(['user_id' => $studentUser->id, 'admission_no' => 'BVS-SS3-ART-005']);
+        $studentUser->update(['avatar_url' => '/private-media/users/'.$studentUser->id.'/avatar']);
+
+        $this->actingAs($admin)->patch(route('admin.students.update', $student), [
+            'first_name' => 'Patience', 'last_name' => 'Onyeka',
+            'admission_no' => 'BVS-SS3-ART-005',
+        ])->assertSessionHasNoErrors();
+
+        $this->actingAs($studentUser)
+            ->get(route('portal.index', ['section' => 'reports']))
+            ->assertOk()
+            ->assertSee('src="/private-media/users/'.$studentUser->id.'/avatar"', false);
+    }
+
     public function test_admin_staff_profile_renders_user_avatar_url(): void
     {
         $admin = User::factory()->create(['role' => UserRole::Admin]);
