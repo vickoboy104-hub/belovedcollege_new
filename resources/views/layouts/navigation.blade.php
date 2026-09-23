@@ -462,7 +462,11 @@
                     href="{{ route('profile.edit') }}"
                     class="app-topbar-user"
                 >
-                    <span class="app-topbar-avatar">{{ $userInitials ?: 'U' }}</span>
+                    @if($user?->avatar_url)
+                        <img src="{{ $user->avatar_url }}" alt="{{ $user->name }} profile photo" class="app-topbar-avatar object-cover" />
+                    @else
+                        <span class="app-topbar-avatar">{{ $userInitials ?: 'U' }}</span>
+                    @endif
                     <span class="hidden min-w-0 text-left sm:block">
                         <span class="block truncate font-bold">{{ $user?->name ?? 'User' }}</span>
                         <span class="block truncate text-[0.68rem] font-semibold text-white/65">{{ $roleLabel }}</span>
@@ -807,7 +811,11 @@
                 <div class="flex items-center justify-between gap-3">
                     @if($profileLink)
                         <a href="{{ route($profileLink['route']) }}" @click="open = false" class="flex items-center gap-2 text-white/90 hover:text-white">
-                            <span class="app-topbar-avatar !h-8 !w-8 !text-xs !bg-amber-400 !text-slate-900">{{ $userInitials ?: 'U' }}</span>
+                            @if($user?->avatar_url)
+                                <img src="{{ $user->avatar_url }}" alt="{{ $user->name }} profile photo" class="app-topbar-avatar !h-8 !w-8 object-cover" />
+                            @else
+                                <span class="app-topbar-avatar !h-8 !w-8 !text-xs !bg-amber-400 !text-slate-900">{{ $userInitials ?: 'U' }}</span>
+                            @endif
                             <span class="text-xs font-bold truncate max-w-[120px]">{{ $user?->name ?? 'User' }}</span>
                         </a>
                     @endif
