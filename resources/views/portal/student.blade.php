@@ -56,6 +56,7 @@
         <!-- Student Profile Hero -->
         <x-profile-hero 
             :name="$student->user->fullName()" 
+            :avatar="$student->user->avatar_url"
             role="STUDENT PORTAL" 
             :id="$student->admission_no" 
             :classDetails="$student->schoolClass->name ?? 'Pending Class'"
