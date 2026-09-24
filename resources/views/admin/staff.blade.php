@@ -141,6 +141,7 @@
                                                     'title' => $profile->user->fullName(),
                                                     'subtitle' => $profile->user->roleLabel().' - '.($profile->department ?: 'General'),
                                                     'avatar' => substr($profile->user->first_name, 0, 1).substr($profile->user->last_name, 0, 1),
+                                                    'avatarUrl' => $profile->user->avatar_url,
                                                     'profileUrl' => $staffProfileUrl,
                                                     'ctaLabel' => 'View Full Profile',
                                                     'fields' => [
@@ -156,9 +157,7 @@
                                             <tr class="hover:bg-slate-50/80 transition duration-150">
                                                 <td class="w-[35%]">
                                                     <div class="table-person">
-                                                        <div class="table-avatar">
-                                                            {{ $staffPreview['avatar'] }}
-                                                        </div>
+                                                        <x-person-avatar :user="$profile->user" />
                                                         <div class="table-person-text">
                                                             <strong>{{ $profile->user->fullName() }}</strong>
                                                             <span>{{ $profile->user->email ?: 'No email' }}</span>
@@ -193,6 +192,7 @@
                                                 'title' => $profile->user->fullName(),
                                                 'subtitle' => $profile->user->roleLabel().' - '.($profile->department ?: 'General'),
                                                 'avatar' => substr($profile->user->first_name, 0, 1).substr($profile->user->last_name, 0, 1),
+                                                'avatarUrl' => $profile->user->avatar_url,
                                                 'profileUrl' => $staffProfileUrl,
                                                 'ctaLabel' => 'View Full Profile',
                                                 'fields' => [
@@ -208,9 +208,7 @@
                                         <article class="mobile-record-card">
                                             <div class="flex items-start justify-between border-b border-slate-100 pb-3 mb-4">
                                                 <div class="flex items-center gap-3">
-                                                    <div class="table-avatar !h-9 !w-9 !text-xs">
-                                                        {{ substr($profile->user->first_name, 0, 1) }}{{ substr($profile->user->last_name, 0, 1) }}
-                                                    </div>
+                                                    <x-person-avatar :user="$profile->user" class="!h-9 !w-9 !text-xs" />
                                                     <div>
                                                         <div class="mobile-record-title">{{ $profile->user->fullName() }}</div>
                                                         <div class="text-[10px] text-slate-500 font-semibold mt-0.5">{{ $profile->user->roleLabel() }}</div>
@@ -291,6 +289,7 @@
                                                     'title' => $profile->user->fullName(),
                                                     'subtitle' => 'Payroll Record - '.($row['department'] ?: 'General'),
                                                     'avatar' => substr($profile->user->first_name, 0, 1).substr($profile->user->last_name, 0, 1),
+                                                    'avatarUrl' => $profile->user->avatar_url,
                                                     'profileUrl' => $staffProfileUrl,
                                                     'ctaLabel' => 'View Full Profile',
                                                     'fields' => [
@@ -305,7 +304,7 @@
                                             <tr class="hover:bg-slate-50/80 transition duration-150">
                                                 <td class="w-[35%]">
                                                     <div class="table-person">
-                                                        <div class="table-avatar">{{ $payrollPreview['avatar'] }}</div>
+                                                        <x-person-avatar :user="$profile->user" />
                                                         <div class="table-person-text">
                                                             <strong>{{ $profile->user->fullName() }}</strong>
                                                             <span>{{ $profile->employee_no ?: 'No employee ID' }}</span>
@@ -335,6 +334,7 @@
                                                 'title' => $profile->user->fullName(),
                                                 'subtitle' => 'Payroll Record - '.($row['department'] ?: 'General'),
                                                 'avatar' => substr($profile->user->first_name, 0, 1).substr($profile->user->last_name, 0, 1),
+                                                'avatarUrl' => $profile->user->avatar_url,
                                                 'profileUrl' => $staffProfileUrl,
                                                 'ctaLabel' => 'View Full Profile',
                                                 'fields' => [
@@ -349,9 +349,7 @@
                                         <article class="mobile-record-card">
                                             <div class="flex items-start justify-between border-b border-slate-100 pb-3 mb-4">
                                                 <div class="flex items-center gap-3">
-                                                    <div class="table-avatar !h-9 !w-9 !text-xs">
-                                                        {{ substr($profile->user->first_name, 0, 1) }}{{ substr($profile->user->last_name, 0, 1) }}
-                                                    </div>
+                                                    <x-person-avatar :user="$profile->user" class="!h-9 !w-9 !text-xs" />
                                                     <div>
                                                         <div class="mobile-record-title">{{ $profile->user->fullName() }}</div>
                                                         <div class="text-[10px] text-slate-500 font-semibold mt-0.5">{{ $profile->user->roleLabel() }}</div>

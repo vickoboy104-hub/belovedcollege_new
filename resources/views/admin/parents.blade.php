@@ -62,6 +62,7 @@
                             'title' => $parent->fullName(),
                             'subtitle' => $parentStatus.' Parent - '.$row['child_count'].' child'.($row['child_count'] === 1 ? '' : 'ren'),
                             'avatar' => $parentInitials ?: 'PA',
+                            'avatarUrl' => $parent->avatar_url,
                             'profileUrl' => $firstChild ? route('admin.students.show', $firstChild) : route('admin.students.index'),
                             'ctaLabel' => 'View Full Profile',
                             'fields' => [
@@ -78,7 +79,7 @@
                     <tr>
                         <td>
                             <div class="table-person">
-                                <div class="table-avatar">{{ $parentPreview['avatar'] }}</div>
+                                <x-person-avatar :user="$parent" />
                                 <div class="table-person-text">
                                     <strong>{{ $parent->fullName() }}</strong>
                                     <span>{{ $parent->email ?: 'No email address registered' }}</span>
@@ -131,6 +132,7 @@
                         'title' => $parent->fullName(),
                         'subtitle' => $parentStatus.' Parent - '.$row['child_count'].' child'.($row['child_count'] === 1 ? '' : 'ren'),
                         'avatar' => $parentInitials ?: 'PA',
+                        'avatarUrl' => $parent->avatar_url,
                         'profileUrl' => $firstChild ? route('admin.students.show', $firstChild) : route('admin.students.index'),
                         'ctaLabel' => 'View Full Profile',
                         'fields' => [
@@ -147,9 +149,7 @@
                 <article class="mobile-record-card">
                     <div class="flex items-start justify-between border-b border-slate-100 pb-3 mb-4">
                         <div class="flex items-center gap-3">
-                            <div class="table-avatar !h-9 !w-9 !text-xs">
-                                {{ $parentPreview['avatar'] }}
-                            </div>
+                            <x-person-avatar :user="$parent" class="!h-9 !w-9 !text-xs" />
                             <div>
                                 <div class="mobile-record-title">{{ $parent->fullName() }}</div>
                                 <div class="text-[10px] text-slate-500 font-semibold mt-0.5">{{ $parent->email ?: 'No email address registered' }}</div>

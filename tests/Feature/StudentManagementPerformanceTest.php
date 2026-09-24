@@ -40,6 +40,7 @@ class StudentManagementPerformanceTest extends TestCase
             'email' => 'daniel.student@example.test',
             'role' => UserRole::Student,
         ]);
+        $studentUser->update(['avatar_url' => '/private-media/users/'.$studentUser->id.'/avatar']);
 
         Student::create([
             'user_id' => $studentUser->id,
@@ -58,6 +59,7 @@ class StudentManagementPerformanceTest extends TestCase
 
         $directoryResponse->assertOk();
         $directoryResponse->assertSee('Daniel Adeyemi');
+        $directoryResponse->assertSee('src="/private-media/users/'.$studentUser->id.'/avatar"', false);
         $directoryResponse->assertSee('BVS-JSS1-GEN-001');
         $directoryResponse->assertSee('has-sticky-edge-columns', false);
         $directoryResponse->assertSee('student-directory-shell', false);
@@ -71,6 +73,7 @@ class StudentManagementPerformanceTest extends TestCase
         $newStudentsResponse->assertOk();
         $newStudentsResponse->assertSee('New Student Intake');
         $newStudentsResponse->assertSee('Daniel Adeyemi');
+        $newStudentsResponse->assertSee('src="/private-media/users/'.$studentUser->id.'/avatar"', false);
         $newStudentsResponse->assertSee('has-sticky-edge-columns', false);
         $newStudentsResponse->assertSee('View');
     }

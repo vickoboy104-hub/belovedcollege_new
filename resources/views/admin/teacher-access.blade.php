@@ -204,7 +204,7 @@
                         </td>
                         <td>
                             <div class="table-person">
-                                <div class="table-avatar">{{ \Illuminate\Support\Str::upper(\Illuminate\Support\Str::substr($assignment->teacher->first_name ?: $assignment->teacher->name, 0, 1).\Illuminate\Support\Str::substr($assignment->teacher->last_name ?: '', 0, 1)) }}</div>
+                                <x-person-avatar :user="$assignment->teacher" />
                                 <div class="table-person-text">
                                     <strong>{{ $assignment->teacher->fullName() }}</strong>
                                     <span>{{ $assignment->teacher->email }}</span>

@@ -174,6 +174,7 @@
                                             'title' => $student->user->fullName(),
                                             'subtitle' => ucfirst($studentStatus).' Student • '.($student->schoolClass->display_name ?? 'Unassigned'),
                                             'avatar' => substr($student->user->first_name, 0, 1).substr($student->user->last_name, 0, 1),
+                                            'avatarUrl' => $student->user->avatar_url,
                                             'profileUrl' => route('admin.students.show', ['student' => $student] + $studentState),
                                             'ctaLabel' => 'View Full Profile',
                                             'fields' => [
@@ -190,9 +191,7 @@
                                     <tr>
                                         <td>
                                             <div class="table-person">
-                                                <div class="table-avatar">
-                                                    {{ substr($student->user->first_name, 0, 1) }}{{ substr($student->user->last_name, 0, 1) }}
-                                                </div>
+                                                <x-person-avatar :user="$student->user" />
                                                 <div class="table-person-text">
                                                     <strong>{{ $student->user->fullName() }}</strong>
                                                     <span>{{ $student->user->email ?: 'No email' }}</span>
@@ -260,6 +259,7 @@
                                         'title' => $student->user->fullName(),
                                         'subtitle' => ucfirst($studentStatus).' Student • '.($student->schoolClass->display_name ?? 'Unassigned'),
                                         'avatar' => substr($student->user->first_name, 0, 1).substr($student->user->last_name, 0, 1),
+                                        'avatarUrl' => $student->user->avatar_url,
                                         'profileUrl' => route('admin.students.show', ['student' => $student] + $studentState),
                                         'ctaLabel' => 'View Full Profile',
                                         'fields' => [
@@ -276,9 +276,7 @@
                                 <article class="mobile-record-card">
                                     <div class="flex items-start justify-between border-b border-slate-100 pb-3 mb-4">
                                         <div class="flex items-center gap-3">
-                                            <div class="table-avatar !h-9 !w-9 !text-xs">
-                                                {{ substr($student->user->first_name, 0, 1) }}{{ substr($student->user->last_name, 0, 1) }}
-                                            </div>
+                                            <x-person-avatar :user="$student->user" class="!h-9 !w-9 !text-xs" />
                                             <div>
                                                 <div class="mobile-record-title">{{ $student->user->fullName() }}</div>
                                                 <div class="text-[10px] text-slate-550 font-bold mt-0.5">{{ $student->schoolClass->display_name ?? 'Unassigned' }}</div>
@@ -355,6 +353,7 @@
                                     'title' => $student->user->fullName(),
                                     'subtitle' => 'New Intake • '.($student->schoolClass->display_name ?? 'Class pending'),
                                     'avatar' => substr($student->user->first_name, 0, 1).substr($student->user->last_name, 0, 1),
+                                    'avatarUrl' => $student->user->avatar_url,
                                     'profileUrl' => route('admin.students.show', ['student' => $student, 'view' => $activeStudentView] + array_filter(['search' => $search])),
                                     'ctaLabel' => 'View Full Profile',
                                     'fields' => [
@@ -370,7 +369,7 @@
                             <tr>
                                 <td>
                                     <div class="table-person">
-                                        <div class="table-avatar">{{ substr($student->user->first_name, 0, 1) }}{{ substr($student->user->last_name, 0, 1) }}</div>
+                                        <x-person-avatar :user="$student->user" />
                                         <div class="table-person-text">
                                             <strong>{{ $student->user->fullName() }}</strong>
                                             <span>{{ $student->user->email ?: 'No email' }}</span>
@@ -409,6 +408,7 @@
                                     'title' => $student->user->fullName(),
                                     'subtitle' => 'Inactive Student • '.($student->schoolClass->display_name ?? 'Unassigned'),
                                     'avatar' => substr($student->user->first_name, 0, 1).substr($student->user->last_name, 0, 1),
+                                    'avatarUrl' => $student->user->avatar_url,
                                     'profileUrl' => route('admin.students.show', ['student' => $student, 'view' => $activeStudentView] + array_filter(['search' => $search])),
                                     'ctaLabel' => 'View Full Profile',
                                     'fields' => [
@@ -424,7 +424,7 @@
                             <tr>
                                 <td>
                                     <div class="table-person">
-                                        <div class="table-avatar">{{ substr($student->user->first_name, 0, 1) }}{{ substr($student->user->last_name, 0, 1) }}</div>
+                                        <x-person-avatar :user="$student->user" />
                                         <div class="table-person-text">
                                             <strong>{{ $student->user->fullName() }}</strong>
                                             <span>{{ $student->user->email ?: 'No email' }}</span>
@@ -465,6 +465,7 @@
                                     'title' => $row['parent']?->fullName() ?? $row['parent']?->name ?? 'Parent account not named',
                                     'subtitle' => 'Sibling Family • '.$row['family_size'].' children',
                                     'avatar' => collect(explode(' ', $row['parent']?->fullName() ?? $row['parent']?->name ?? 'Parent'))->filter()->map(fn ($part) => substr($part, 0, 1))->take(2)->join(''),
+                                    'avatarUrl' => $row['parent']?->avatar_url,
                                     'profileUrl' => $firstChild ? route('admin.students.show', ['student' => $firstChild, 'view' => $activeStudentView] + array_filter(['search' => $search])) : route('admin.parents.index'),
                                     'ctaLabel' => 'View Student Links',
                                     'fields' => [
@@ -478,7 +479,11 @@
                             <tr>
                                 <td>
                                     <div class="table-person">
-                                        <div class="table-avatar">{{ $siblingPreview['avatar'] ?: 'PA' }}</div>
+                                        @if($row['parent'])
+                                            <x-person-avatar :user="$row['parent']" />
+                                        @else
+                                            <div class="table-avatar">PA</div>
+                                        @endif
                                         <div class="table-person-text">
                                             <strong>{{ $siblingPreview['title'] }}</strong>
                                             <span>{{ $row['parent']?->email ?? 'No email' }}</span>
@@ -518,6 +523,7 @@
                                     'title' => $debtorStudent->user->fullName(),
                                     'subtitle' => 'Student Debtor - '.($debtorStudent->schoolClass->display_name ?? 'Unassigned'),
                                     'avatar' => substr($debtorStudent->user->first_name, 0, 1).substr($debtorStudent->user->last_name, 0, 1),
+                                    'avatarUrl' => $debtorStudent->user->avatar_url,
                                     'profileUrl' => route('admin.students.show', ['student' => $debtorStudent, 'view' => $activeStudentView] + array_filter(['search' => $search])),
                                     'ctaLabel' => 'View Full Details',
                                     'fields' => [
@@ -533,7 +539,7 @@
                             <tr>
                                 <td>
                                     <div class="table-person">
-                                        <div class="table-avatar">{{ substr($debtorStudent->user->first_name, 0, 1) }}{{ substr($debtorStudent->user->last_name, 0, 1) }}</div>
+                                        <x-person-avatar :user="$debtorStudent->user" />
                                         <div class="table-person-text">
                                             <strong>{{ $debtorStudent->user->fullName() }}</strong>
                                             <span>{{ $debtorStudent->admission_no ?: 'Pending' }} | {{ $debtorStudent->schoolClass->display_name ?? 'Unassigned' }}</span>
