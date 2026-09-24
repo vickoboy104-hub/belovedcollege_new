@@ -21,6 +21,7 @@ class ParentDirectoryStatusTest extends TestCase
             'role' => UserRole::Parent,
             'status' => 'inactive',
         ]);
+        $parent->update(['avatar_url' => '/private-media/users/'.$parent->id.'/avatar']);
         $studentUser = User::factory()->create([
             'name' => 'Amina Yusuf',
             'first_name' => 'Amina',
@@ -38,5 +39,6 @@ class ParentDirectoryStatusTest extends TestCase
         $response->assertOk();
         $response->assertSee('Inactive Parent - 1 child', false);
         $response->assertSee('Inactive');
+        $response->assertSee('src="/private-media/users/'.$parent->id.'/avatar"', false);
     }
 }
