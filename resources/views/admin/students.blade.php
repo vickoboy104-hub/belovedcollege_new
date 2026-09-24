@@ -190,9 +190,7 @@
                                     <tr>
                                         <td>
                                             <div class="table-person">
-                                                <div class="table-avatar">
-                                                    {{ substr($student->user->first_name, 0, 1) }}{{ substr($student->user->last_name, 0, 1) }}
-                                                </div>
+                                                <x-student-directory-avatar :user="$student->user" />
                                                 <div class="table-person-text">
                                                     <strong>{{ $student->user->fullName() }}</strong>
                                                     <span>{{ $student->user->email ?: 'No email' }}</span>
@@ -276,9 +274,7 @@
                                 <article class="mobile-record-card">
                                     <div class="flex items-start justify-between border-b border-slate-100 pb-3 mb-4">
                                         <div class="flex items-center gap-3">
-                                            <div class="table-avatar !h-9 !w-9 !text-xs">
-                                                {{ substr($student->user->first_name, 0, 1) }}{{ substr($student->user->last_name, 0, 1) }}
-                                            </div>
+                                            <x-student-directory-avatar :user="$student->user" class="!h-9 !w-9 !text-xs" />
                                             <div>
                                                 <div class="mobile-record-title">{{ $student->user->fullName() }}</div>
                                                 <div class="text-[10px] text-slate-550 font-bold mt-0.5">{{ $student->schoolClass->display_name ?? 'Unassigned' }}</div>
@@ -370,7 +366,7 @@
                             <tr>
                                 <td>
                                     <div class="table-person">
-                                        <div class="table-avatar">{{ substr($student->user->first_name, 0, 1) }}{{ substr($student->user->last_name, 0, 1) }}</div>
+                                        <x-student-directory-avatar :user="$student->user" />
                                         <div class="table-person-text">
                                             <strong>{{ $student->user->fullName() }}</strong>
                                             <span>{{ $student->user->email ?: 'No email' }}</span>
@@ -424,7 +420,7 @@
                             <tr>
                                 <td>
                                     <div class="table-person">
-                                        <div class="table-avatar">{{ substr($student->user->first_name, 0, 1) }}{{ substr($student->user->last_name, 0, 1) }}</div>
+                                        <x-student-directory-avatar :user="$student->user" />
                                         <div class="table-person-text">
                                             <strong>{{ $student->user->fullName() }}</strong>
                                             <span>{{ $student->user->email ?: 'No email' }}</span>
@@ -533,7 +529,7 @@
                             <tr>
                                 <td>
                                     <div class="table-person">
-                                        <div class="table-avatar">{{ substr($debtorStudent->user->first_name, 0, 1) }}{{ substr($debtorStudent->user->last_name, 0, 1) }}</div>
+                                        <x-student-directory-avatar :user="$debtorStudent->user" />
                                         <div class="table-person-text">
                                             <strong>{{ $debtorStudent->user->fullName() }}</strong>
                                             <span>{{ $debtorStudent->admission_no ?: 'Pending' }} | {{ $debtorStudent->schoolClass->display_name ?? 'Unassigned' }}</span>
