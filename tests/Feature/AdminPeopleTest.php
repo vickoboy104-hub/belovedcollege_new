@@ -227,6 +227,11 @@ class AdminPeopleTest extends TestCase
 
         $response->assertOk();
         $response->assertSee('/private-media/users/'.$staffUser->id.'/avatar', false);
+
+        $this->actingAs($admin)
+            ->get(route('admin.staff.index'))
+            ->assertOk()
+            ->assertSee('src="/private-media/users/'.$staffUser->id.'/avatar"', false);
     }
 
     public function test_admin_can_deactivate_student_and_delete_staff_records(): void
