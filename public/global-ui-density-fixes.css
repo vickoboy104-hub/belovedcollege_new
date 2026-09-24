@@ -9,6 +9,39 @@
     padding: 1rem !important;
 }
 
+/* Give workspace cards a clear edge against pale page backgrounds. */
+html:not(.theme-dark-corporate):not(.theme-colourful-professional) .app-main .admin-panel.section-card-panel:not(.dashboard-dark-panel),
+html:not(.theme-dark-corporate):not(.theme-colourful-professional) .app-main .student-profile-form {
+    background: #fff;
+    border: 1px solid #b8c9df;
+    box-shadow: 0 6px 22px rgba(13, 35, 70, 0.1);
+}
+
+html:not(.theme-dark-corporate):not(.theme-colourful-professional) .app-main .student-profile-records > div {
+    background: #f0f5fb;
+    border-color: #cfdbeb;
+}
+
+.result-sheet-table tr:nth-child(even) { background: rgba(226, 234, 245, 0.35); }
+
+/* Preserve the dark palette for compact tables and profile details. */
+html.theme-dark-corporate .app-main :is(.result-sheet, .student-profile-records > div, .student-profile-form) {
+    background: var(--card-bg, #182b46) !important;
+    border-color: var(--theme-border-color, #38516e) !important;
+}
+html.theme-dark-corporate .app-main .result-sheet-title {
+    background: #263a56 !important;
+    color: #f8fafc !important;
+    border-color: #38516e !important;
+}
+html.theme-dark-corporate .app-main .result-sheet-table tr { border-color: #38516e !important; }
+
+@media (max-width: 639px) {
+    .result-sheet-table td { padding: 0.55rem 0.7rem; }
+    .result-sheet-table td:last-child { width: 4.75rem; }
+    .student-profile-form .flex.flex-wrap.gap-1\.5 { width: 100%; }
+}
+
 .admin-panel.section-card-panel > .section-header {
     margin-bottom: 0.9rem !important;
     padding-bottom: 0.75rem !important;
