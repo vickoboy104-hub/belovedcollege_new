@@ -146,7 +146,7 @@
                     <tr>
                         <td>
                             <div class="table-person">
-                                <div class="table-avatar">{{ substr($student->user->first_name, 0, 1) }}{{ substr($student->user->last_name, 0, 1) }}</div>
+                                <x-person-avatar :user="$student->user" />
                                 <div class="table-person-text">
                                     <strong>{{ $student->user->fullName() }}</strong>
                                     <span>{{ $student->user->email ?: 'No email' }}</span>
