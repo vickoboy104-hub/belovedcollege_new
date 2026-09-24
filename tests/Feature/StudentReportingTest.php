@@ -20,6 +20,38 @@ class StudentReportingTest extends TestCase
 {
     use RefreshDatabase;
 
+    public function test_student_results_group_subject_scores_by_term_class_and_assessment_type(): void
+    {
+        [, $student, $term] = $this->seedReportData();
+        $subject = Subject::create(['name' => 'Basic Science', 'code' => 'SCI-001']);
+        $assessment = Assessment::create([
+            'teacher_id' => $student->schoolClass->class_teacher_id,
+            'term_id' => $term->id,
+            'subject_id' => $subject->id,
+            'school_class_id' => $student->school_class_id,
+            'title' => 'JSS 2 Basic Science',
+            'type' => 'exam',
+            'total_score' => 100,
+        ]);
+        AssessmentResult::create([
+            'assessment_id' => $assessment->id,
+            'student_id' => $student->id,
+            'score' => 74,
+            'grade' => 'B2',
+        ]);
+
+        $response = $this->actingAs($student->user)
+            ->get(route('portal.index', ['section' => 'results']));
+
+        $response->assertOk()
+            ->assertSee('JSS 2 Second Term Exam')
+            ->assertSee('JSS 2 Second Term Quiz')
+            ->assertSee('Basic Science')
+            ->assertSee('>74</td>', false)
+            ->assertDontSee('JSS 2 Basic Science')
+            ->assertDontSee('74.00 - B2');
+    }
+
     public function test_admin_can_compile_update_and_publish_student_term_report(): void
     {
         [$admin, $student, $term, $subject] = $this->seedReportData();
