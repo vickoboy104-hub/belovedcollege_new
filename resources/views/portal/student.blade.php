@@ -123,28 +123,15 @@
 
                 <!-- Right Column: Quick Performance -->
                 <div class="space-y-4">
-                    <x-dashboard-card title="Subject Performance" subtitle="Realtime average calculations based on cumulative academic grading entries." icon="reports" accent="blue">
-                        <div class="space-y-3">
+                    <x-dashboard-card title="Subject Performance" icon="reports" accent="blue">
+                        <div class="divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white">
                             @forelse ($reportSummary->take(3) as $subject => $summary)
                                 @php
                                     $average = max(0, min(100, (float) $summary['average']));
-                                    $colorType = $average >= 70 ? 'green' : ($average >= 50 ? 'blue' : ($average >= 40 ? 'orange' : 'red'));
                                 @endphp
-                                <div class="rounded-xl border border-slate-200 bg-white p-3 shadow-sm space-y-2">
-                                    <div class="flex items-start justify-between gap-3 flex-wrap">
-                                        <div>
-                                            <span class="text-xs font-extrabold uppercase tracking-wide text-slate-800 block">
-                                                {{ $subject }}
-                                            </span>
-                                            <span class="text-[10px] font-bold text-slate-400 block mt-0.5">
-                                                {{ $summary['entries'] }} recorded grading {{ \Illuminate\Support\Str::plural('entry', $summary['entries']) }}
-                                            </span>
-                                        </div>
-                                        <span class="inline-flex h-8 w-12 items-center justify-center rounded-[8px] text-xs font-black bg-blue-50 border border-blue-100 text-blue-700 shrink-0 shadow-sm">
-                                            {{ number_format($average, 1) }}%
-                                        </span>
-                                    </div>
-                                    <x-progress-bar :percentage="$average" label="" :color="$colorType" />
+                                <div class="flex items-center justify-between gap-3 px-3 py-2.5">
+                                    <span class="text-sm font-semibold text-slate-800">{{ $subject }}</span>
+                                    <span class="text-sm font-bold text-blue-700 tabular-nums">{{ number_format($average, 1) }}%</span>
                                 </div>
                             @empty
                                 <x-empty-state title="No subject averages logged yet" subtitle="Cumulative performance statistics generate dynamically when test or exam scores load." icon="reports" />
@@ -367,29 +354,36 @@
 
         <!-- 5. TEST GRADES SECTION -->
         <div x-show="activeSection === 'results'" x-cloak x-transition:enter="transition ease-out duration-250">
-            <x-dashboard-card title="Assessment Results" subtitle="Recent score summaries and official grade logs." icon="reports" accent="purple">
-                <div class="space-y-4">
-                    @forelse ($results as $result)
-                        <div class="rounded-xl border border-slate-200 bg-white p-4 shadow-sm flex items-center justify-between gap-3 hover:border-purple-300 transition">
-                            <div>
-                                <span class="text-[10px] font-bold uppercase tracking-wider text-[#1d4ed8] block">
-                                    {{ $result->assessment->subject->name }}
-                                </span>
-                                <h4 class="font-extrabold text-slate-800 text-sm leading-snug mt-0.5">
-                                    {{ $result->assessment->title }}
-                                </h4>
-                                <p class="text-[10px] font-bold text-slate-400 mt-0.5">
-                                    Term: {{ $result->assessment->term->name ?? 'N/A' }}
-                                </p>
-                            </div>
-                            <span class="inline-flex h-9 w-16 items-center justify-center rounded-[10px] text-xs font-black bg-blue-50 border border-blue-100 text-[#1d4ed8] shrink-0 shadow-sm">
-                                {{ $result->score }}{{ $result->grade ? ' - ' . $result->grade : '' }}
-                            </span>
-                        </div>
-                    @empty
-                        <x-empty-state title="No recorded results" subtitle="No grading results logged yet in this workspace." icon="reports" />
-                    @endforelse
-                </div>
+            <x-dashboard-card title="Assessment Results" icon="reports" accent="purple">
+                @php
+                    $resultGroups = $results->filter(fn ($result) => $result->assessment)
+                        ->groupBy(fn ($result) => implode(':', [
+                            $result->assessment->school_class_id ?? 'none',
+                            $result->assessment->term_id ?? 'none',
+                            $result->assessment->type?->value ?? 'other',
+                        ]));
+                @endphp
+                @forelse ($resultGroups as $group)
+                    @php $assessment = $group->first()->assessment; @endphp
+                    <section class="result-sheet mb-3 overflow-hidden rounded-xl border border-slate-300 bg-white last:mb-0">
+                        <h4 class="result-sheet-title border-b border-slate-200 bg-slate-100 px-3 py-2 text-sm font-bold text-slate-900">
+                            {{ $assessment->schoolClass->name ?? 'Class pending' }} {{ $assessment->term->name ?? 'Term pending' }} {{ $assessment->type?->label() ?? 'Assessment' }}
+                        </h4>
+                        <table class="result-sheet-table w-full table-fixed text-sm">
+                            <thead class="sr-only"><tr><th scope="col">Subject</th><th scope="col">Score</th></tr></thead>
+                            <tbody class="divide-y divide-slate-200">
+                                @foreach ($group as $result)
+                                    <tr>
+                                        <td class="break-words px-3 py-2 font-medium text-slate-800">{{ $result->assessment->subject->name ?? 'Subject unavailable' }}</td>
+                                        <td class="w-20 whitespace-nowrap px-3 py-2 text-right font-bold tabular-nums text-slate-900">{{ rtrim(rtrim(number_format((float) $result->score, 2, '.', ''), '0'), '.') }}</td>
+                                    </tr>
+                                @endforeach
+                            </tbody>
+                        </table>
+                    </section>
+                @empty
+                    <x-empty-state title="No recorded results" subtitle="Results will appear here when scores are published." icon="reports" />
+                @endforelse
             </x-dashboard-card>
         </div>
 
