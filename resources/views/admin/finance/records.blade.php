@@ -283,6 +283,7 @@
                                     'title' => $student->user->fullName(),
                                     'subtitle' => 'Finance Balance - '.($student->schoolClass->display_name ?? 'No class'),
                                     'avatar' => substr($student->user->first_name, 0, 1).substr($student->user->last_name, 0, 1),
+                                    'avatarUrl' => $student->user->avatar_url,
                                     'profileUrl' => route('admin.students.show', $student),
                                     'ctaLabel' => 'View Full Details',
                                     'fields' => [
@@ -300,7 +301,7 @@
                             <tr class="hover:bg-slate-50/50 transition">
                                 <td>
                                     <div class="table-person">
-                                        <div class="table-avatar">{{ $balancePreview['avatar'] }}</div>
+                                        <x-person-avatar :user="$student->user" />
                                         <div class="table-person-text">
                                             <strong>{{ $student->user->fullName() }}</strong>
                                             <span>{{ $student->admission_no ?: 'Pending' }} | {{ $student->schoolClass->display_name ?? 'No class' }}</span>
@@ -623,6 +624,7 @@
                                     'title' => $row['student']->user->fullName(),
                                     'subtitle' => 'Overpayment - '.$row['invoice']->invoice_no,
                                     'avatar' => substr($row['student']->user->first_name, 0, 1).substr($row['student']->user->last_name, 0, 1),
+                                    'avatarUrl' => $row['student']->user->avatar_url,
                                     'profileUrl' => route('admin.students.show', $row['student']),
                                     'ctaLabel' => 'View Full Details',
                                     'fields' => [
@@ -638,7 +640,7 @@
                             <tr class="hover:bg-slate-50/50 transition">
                                 <td>
                                     <div class="table-person">
-                                        <div class="table-avatar">{{ $overpaymentPreview['avatar'] }}</div>
+                                        <x-person-avatar :user="$row['student']->user" />
                                         <div class="table-person-text">
                                             <strong>{{ $row['student']->user->fullName() }}</strong>
                                             <span>{{ $row['student']->admission_no ?: 'Pending' }}</span>
@@ -703,6 +705,7 @@
                                     'title' => $row['student']->user->fullName(),
                                     'subtitle' => 'Payment Progression - '.$row['invoice']->invoice_no,
                                     'avatar' => substr($row['student']->user->first_name, 0, 1).substr($row['student']->user->last_name, 0, 1),
+                                    'avatarUrl' => $row['student']->user->avatar_url,
                                     'profileUrl' => route('admin.students.show', $row['student']),
                                     'ctaLabel' => 'View Full Details',
                                     'fields' => [
@@ -720,7 +723,7 @@
                             <tr>
                                 <td>
                                     <div class="table-person">
-                                        <div class="table-avatar">{{ $progressionPreview['avatar'] }}</div>
+                                        <x-person-avatar :user="$row['student']->user" />
                                         <div class="table-person-text">
                                             <strong>{{ $row['student']->user->fullName() }}</strong>
                                             <span>{{ $row['student']->admission_no ?: 'Pending' }}</span>
@@ -801,6 +804,7 @@
                                     'title' => $payment->student->user->fullName(),
                                     'subtitle' => 'Payment Receipt - '.($payment->receipt_no ?: $payment->reference),
                                     'avatar' => substr($payment->student->user->first_name, 0, 1).substr($payment->student->user->last_name, 0, 1),
+                                    'avatarUrl' => $payment->student->user->avatar_url,
                                     'profileUrl' => route('payments.receipt', $payment),
                                     'ctaLabel' => 'View Full Details',
                                     'fields' => [
@@ -820,7 +824,7 @@
                                 </td>
                                 <td>
                                     <div class="table-person">
-                                        <div class="table-avatar">{{ $paymentPreview['avatar'] }}</div>
+                                        <x-person-avatar :user="$payment->student->user" />
                                         <div class="table-person-text">
                                             <strong>{{ $payment->student->user->fullName() }}</strong>
                                             <span>Ref: {{ $payment->reference }}</span>
