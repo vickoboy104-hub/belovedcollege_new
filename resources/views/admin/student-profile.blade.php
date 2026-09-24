@@ -2,9 +2,9 @@
     @php
         $reportTerm = $terms->firstWhere('is_current', true) ?? $terms->first();
     @endphp
-    
+
     <x-slot name="header">
-        <x-page-header title="Edit Student Profile" eyebrow="Student Profile Workspace" description="Manage full records, credentials, deactivations, and settings for {{ $student->user->fullName() }}.">
+        <x-page-header title="Student Profile" eyebrow="Student Management">
             <x-slot name="actions">
                 <div class="flex flex-wrap items-center gap-3">
                     @if ($reportTerm)
@@ -27,7 +27,7 @@
         @php
             $credentials = session('generated_credentials');
         @endphp
-        <div class="mb-8 rounded-2xl border border-emerald-200 bg-emerald-50/70 p-6 text-sm text-emerald-900 shadow-sm animate-pulse">
+        <div class="mb-4 rounded-2xl border border-emerald-200 bg-emerald-50/70 p-6 text-sm text-emerald-900 shadow-sm animate-pulse">
             <div class="flex items-center gap-2">
                 <span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>
                 <span class="font-extrabold uppercase tracking-wider text-xs text-emerald-800">Temporary {{ $credentials['audience'] }} password ready</span>
@@ -42,34 +42,31 @@
     @endif
 
     <!-- Profile Hero Card -->
-    <div class="mb-8">
-        <x-profile-hero 
-            :name="$student->user->fullName()" 
-            role="STUDENT" 
+    <div class="mb-4">
+        <x-profile-hero
+            :name="$student->user->fullName()"
+            role="STUDENT"
             :id="$student->admission_no"
             :avatar="$student->user->avatar_url"
-            :classDetails="$student->schoolClass->display_name ?? 'Class not assigned'" 
+            :classDetails="$student->schoolClass->display_name ?? 'Class not assigned'"
             :status="ucfirst($student->status ?? $student->user->status ?? 'active')"
         />
     </div>
 
-    <div class="grid gap-8 xl:grid-cols-[0.85fr,1.15fr]">
+    <div class="grid gap-4 xl:grid-cols-[0.85fr,1.15fr]">
         <!-- Left Side: Actions and Credentials Overview -->
-        <div class="space-y-8">
+        <div class="space-y-4">
             <!-- Record Details -->
-            <x-dashboard-card title="Record Status & Details" subtitle="System records and linked accounts overview.">
-                <div class="space-y-4 mt-4">
-                    <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/60 flex flex-col">
-                        <span class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Account Status</span>
-                        <div class="mt-2.5 flex items-center justify-between">
-                            <span class="text-sm font-bold text-slate-800">Current Status</span>
-                            <x-status-badge :status="ucfirst($student->status ?? $student->user->status ?? 'active')" />
-                        </div>
+            <x-dashboard-card title="Record Details">
+                <div class="student-profile-records space-y-2">
+                    <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 flex items-center justify-between gap-3">
+                        <span class="text-xs font-bold text-slate-600">Status</span>
+                        <x-status-badge :status="ucfirst($student->status ?? $student->user->status ?? 'active')" />
                     </div>
 
-                    <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/60 flex flex-col">
-                        <span class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Parent Account Mappings</span>
-                        <div class="mt-2.5 flex items-center justify-between">
+                    <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 flex flex-col">
+                        <span class="text-xs font-bold text-slate-600">Parent account</span>
+                        <div class="mt-1 flex flex-wrap items-center justify-between gap-2">
                             <span class="text-sm font-bold text-slate-800">{{ $student->parent->name ?? 'No linked parent account' }}</span>
                             @if($student->parent)
                                 <span class="text-xs font-semibold text-slate-500">{{ $student->parent->email }}</span>
@@ -77,16 +74,15 @@
                         </div>
                     </div>
 
-                    <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/60 flex flex-col">
-                        <span class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Academic Session</span>
-                        <div class="mt-2.5 flex items-center justify-between">
+                    <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 flex flex-col">
+                        <span class="text-xs font-bold text-slate-600">Academic session</span>
+                        <div class="mt-1 flex flex-wrap items-center justify-between gap-2">
                             <span class="text-sm font-bold text-slate-800">{{ $student->academicSession->name ?? 'Not assigned' }}</span>
-                            <span class="text-[10px] font-extrabold uppercase tracking-widest bg-blue-50 text-blue-600 px-2 py-0.5 border border-blue-100 rounded">Session</span>
                         </div>
                     </div>
 
-                    <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/60 flex flex-col">
-                        <span class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Admin-Visible Password</span>
+                    <div class="p-3 rounded-xl border border-slate-200 bg-slate-50 flex flex-col">
+                        <span class="text-xs font-bold text-slate-600">Temporary password</span>
                         @if ($student->user->temp_password_plaintext)
                             <div class="mt-3 font-mono text-sm font-extrabold text-blue-600 bg-blue-50/50 border border-blue-100 rounded-lg p-3 text-center">
                                 {{ $student->user->temp_password_plaintext }}
@@ -104,8 +100,8 @@
             </x-dashboard-card>
 
             <!-- Danger Zone & Operations -->
-            <x-dashboard-card title="Operational Controls" subtitle="Security updates and profile lifecycle operations.">
-                <div class="mt-4 space-y-4">
+            <x-dashboard-card title="Account Actions">
+                <div class="space-y-3">
                     <form method="POST" action="{{ route('admin.students.password.reset', $student) }}">
                         @csrf
                         <input type="hidden" name="redirect_to" value="profile">
@@ -143,11 +139,10 @@
         </div>
 
         <!-- Right Side: Edit Form Card -->
-        <div class="card bg-white border border-[#c8d6ea] rounded-[18px] p-6 shadow-[0_10px_25px_rgba(15,23,42,0.08)]" x-data="{ tab: 'identity' }">
+        <div class="student-profile-form card bg-white border border-[#c8d6ea] rounded-[18px] p-4 sm:p-5 shadow-[0_10px_25px_rgba(15,23,42,0.08)]" x-data="{ tab: 'identity' }">
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 pb-4 mb-6">
                 <div>
-                    <h3 class="display-font text-lg font-bold text-slate-900 leading-snug">Edit Student Profile Details</h3>
-                    <p class="text-xs font-semibold text-slate-500 mt-1">Configure full demographic, health, and guardian options.</p>
+                    <h3 class="display-font text-lg font-bold text-slate-900 leading-snug">Edit Details</h3>
                 </div>
                 <div class="flex flex-wrap gap-1.5 bg-slate-100/80 p-1 rounded-xl shrink-0">
                     <button type="button" @click="tab = 'identity'" class="px-3 py-1.5 rounded-lg text-xs font-bold transition duration-150" :class="tab === 'identity' ? 'bg-[#071833] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'">Identity</button>
@@ -242,7 +237,7 @@
                         <label class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Religion</label>
                         <input name="religion" value="{{ old('religion', $student->religion) }}" class="theme-input" />
                     </div>
-                    
+
                     <div class="flex flex-col gap-1.5 md:col-span-2">
                         <label class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Passport Photo</label>
                         <div class="p-4 rounded-xl border border-slate-200 bg-slate-50 flex items-center gap-4">
