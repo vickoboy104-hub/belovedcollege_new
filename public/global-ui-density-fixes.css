@@ -9,6 +9,86 @@
     padding: 1rem !important;
 }
 
+/* Compact record lists keep full text and actions available on demand. */
+.compact-record-list {
+    overflow: hidden;
+    border: 1px solid var(--theme-border-soft, #cbd5e1);
+    border-radius: 0.8rem;
+    background: var(--card-bg, #fff);
+}
+.compact-record + .compact-record { border-top: 1px solid var(--theme-border-soft, #d9e2ed); }
+.compact-record-summary {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) 7rem 6rem;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.7rem 0.9rem;
+    cursor: pointer;
+    list-style: none;
+}
+.compact-record-summary::-webkit-details-marker { display: none; }
+.compact-record-summary::marker { content: ''; }
+.compact-record-summary:hover, .compact-record[open] > .compact-record-summary {
+    background: var(--theme-surface-soft, #f0f5fb);
+}
+.compact-record-summary:focus-visible { outline: 2px solid #2563eb; outline-offset: -2px; }
+.compact-record-primary { min-width: 0; font-weight: 700; color: var(--theme-text, #17243a); }
+.compact-record-secondary, .compact-record-meta { min-width: 0; color: var(--theme-muted, #475569); }
+.compact-record-state, .compact-record-toggle { font-weight: 700; color: var(--theme-primary, #1d4ed8); text-align: right; }
+.compact-record-body {
+    display: grid;
+    gap: 0.7rem;
+    padding: 0.85rem 0.9rem;
+    border-top: 1px solid var(--theme-border-soft, #d9e2ed);
+}
+
+/* Shared admin and teacher workspaces: compact filters, forms and data tables. */
+.app-shell .admin-page-content { padding: clamp(0.8rem, 1.6vw, 1.25rem); gap: 1rem; }
+.app-shell .admin-page-header { gap: 0.8rem; }
+.app-shell .admin-page-header h1 { font-size: clamp(1.35rem, 2vw, 1.7rem); }
+.app-shell .admin-page-header .page-description { margin-top: 0.25rem; line-height: 1.4; }
+.app-shell .admin-toolbar-card, .app-shell .form-section { border-radius: 0.85rem; }
+.app-shell .admin-toolbar-card .section-header { margin-bottom: 0.6rem; }
+.app-shell .admin-table-scroll { margin-top: 0 !important; }
+.app-shell .admin-data-table thead th { height: auto !important; padding: 0.65rem 0.8rem !important; }
+.app-shell .admin-data-table tbody td { padding: 0.65rem 0.8rem !important; }
+.app-shell .admin-table-pagination { padding-block: 0.65rem; }
+html:not(.theme-dark-corporate):not(.theme-colourful-professional) .app-shell :is(.admin-toolbar-card, .form-section, .admin-table-card, .admin-workspace-card) {
+    border-color: #b8c9df !important;
+    box-shadow: 0 4px 16px rgba(13, 35, 70, 0.08) !important;
+}
+
+/* A compact three-column attendance sheet fits narrow screens. */
+.route-portal-index .attendance-table .admin-data-table { min-width: 0 !important; }
+.route-portal-index .attendance-table .admin-data-table td,
+.route-portal-index .attendance-table .admin-data-table th { white-space: normal !important; padding: 0.55rem !important; }
+.route-portal-index .attendance-table .admin-data-table td:first-child { white-space: nowrap !important; }
+
+/* Public information pages use the same measured gaps and panel separation. */
+.public-shell .mesh-card, .public-shell .section-card {
+    border: 1px solid #b8c9df;
+    box-shadow: 0 5px 18px rgba(13, 35, 70, 0.09);
+}
+.public-shell .mesh-card { padding: clamp(1rem, 2.2vw, 1.5rem); }
+.public-shell .section-card { padding: clamp(1rem, 2.2vw, 1.5rem); }
+.public-shell section.mx-auto[class*="py-16"] { padding-block: clamp(2rem, 4vw, 3rem); }
+.public-shell section.mx-auto[class*="pb-16"] { padding-bottom: clamp(2rem, 4vw, 3rem); }
+
+@media (max-width: 767px) {
+    .app-shell .admin-page-header { flex-direction: column; }
+    .app-shell .admin-page-header .page-actions { justify-content: flex-start; width: 100%; }
+    .app-shell .admin-toolbar-controls > * { min-width: 0; }
+    .route-portal-index .attendance-table .admin-data-table { font-size: 0.76rem !important; }
+    .public-shell .mesh-card, .public-shell .section-card { border-radius: 0.9rem; }
+}
+@media (max-width: 639px) {
+    .compact-record-summary { grid-template-columns: minmax(0, 1fr) auto; gap: 0.2rem 0.7rem; }
+    .compact-record-primary { grid-column: 1; }
+    .compact-record-state, .compact-record-toggle { grid-column: 2; grid-row: 1; }
+    .compact-record-secondary { grid-column: 1; }
+    .compact-record-meta { grid-column: 2; text-align: right; }
+}
+
 /* Give workspace cards a clear edge against pale page backgrounds. */
 html:not(.theme-dark-corporate):not(.theme-colourful-professional) .app-main .admin-panel.section-card-panel:not(.dashboard-dark-panel),
 html:not(.theme-dark-corporate):not(.theme-colourful-professional) .app-main .student-profile-form {
@@ -23,6 +103,10 @@ html:not(.theme-dark-corporate):not(.theme-colourful-professional) .app-main .st
 }
 
 .result-sheet-table tr:nth-child(even) { background: rgba(226, 234, 245, 0.35); }
+.app-shell .result-sheet-table { min-width: 0 !important; table-layout: fixed !important; }
+.app-shell .result-sheet-table tbody td { padding: 0.55rem 0.75rem !important; }
+.app-shell .result-sheet-table tbody td:first-child { white-space: normal !important; overflow-wrap: anywhere; }
+.app-shell .result-sheet-table tbody td:last-child { width: 5rem; text-align: right !important; }
 
 /* Preserve the dark palette for compact tables and profile details. */
 html.theme-dark-corporate .app-main :is(.result-sheet, .student-profile-records > div, .student-profile-form) {
