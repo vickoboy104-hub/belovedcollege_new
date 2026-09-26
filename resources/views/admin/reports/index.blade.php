@@ -96,7 +96,7 @@
     </div>
 
     @if ($activeReportClassPage === 'all' && $search === '')
-        <x-dashboard-card title="{{ $pageTitle }}" subtitle="Search above for the fastest access, or open a class category to browse its students.">
+        <x-dashboard-card title="{{ $pageTitle }}">
             <x-slot name="actions">
                 <div class="text-right">
                     <div class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Available Categories</div>
@@ -123,7 +123,7 @@
             </div>
         </x-dashboard-card>
     @else
-        <x-dashboard-card title="{{ $pageTitle }}" subtitle="Open a student directly to review scores, update remarks, publish, and print the selected term report.">
+        <x-dashboard-card title="{{ $pageTitle }}">
             <x-slot name="actions">
                 <div class="text-right">
                     <div class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Students Shown</div>
