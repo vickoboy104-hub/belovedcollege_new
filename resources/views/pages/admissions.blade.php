@@ -7,7 +7,7 @@
         $whatsappLink = $schoolSettings['whatsapp_link'] ?? "https://wa.me/{$whatsappDigits}";
     @endphp
     <section class="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
-        <div class="grid gap-8 lg:grid-cols-[1fr,0.9fr]">
+        <div class="grid gap-4 lg:grid-cols-[1fr,0.9fr]">
             <div class="mesh-card px-8 py-10 reveal-up">
                 <p class="section-kicker text-sm font-semibold uppercase tracking-[0.28em]">Admissions</p>
                 <h1 class="display-font mt-4 text-4xl font-bold text-slate-950">Give your child the foundation for a successful future.</h1>
@@ -25,17 +25,17 @@
             <div class="section-card reveal-up">
                 <h2 class="display-font text-2xl font-bold text-slate-950">Our Academic Program</h2>
                 <div class="mt-5 space-y-3">
-                    <div class="rounded-2xl border border-slate-200 px-4 py-4">
-                        <div class="font-semibold text-slate-900">Junior Secondary School</div>
-                        <div class="text-sm text-slate-500">JSS 1 - JSS 3</div>
+                    <div class="flex flex-wrap justify-between gap-2 border-b border-slate-200 py-2">
+                        <span class="font-semibold text-slate-900">Junior Secondary</span>
+                        <span class="text-sm text-slate-600">JSS 1–3</span>
                     </div>
-                    <div class="rounded-2xl border border-slate-200 px-4 py-4">
-                        <div class="font-semibold text-slate-900">Senior Secondary School</div>
-                        <div class="text-sm text-slate-500">SS 1 - SS 3</div>
+                    <div class="flex flex-wrap justify-between gap-2 border-b border-slate-200 py-2">
+                        <span class="font-semibold text-slate-900">Senior Secondary</span>
+                        <span class="text-sm text-slate-600">SS 1–3</span>
                     </div>
-                    <div class="rounded-2xl border border-slate-200 px-4 py-4">
-                        <div class="font-semibold text-slate-900">Senior Departments</div>
-                        <div class="text-sm text-slate-500">Science, Commercial, and Art</div>
+                    <div class="flex flex-wrap justify-between gap-2 py-2">
+                        <span class="font-semibold text-slate-900">Departments</span>
+                        <span class="text-sm text-slate-600">Science · Commercial · Art</span>
                     </div>
                 </div>
             </div>
@@ -45,8 +45,6 @@
     <section class="mx-auto max-w-6xl px-4 pb-16 sm:px-6 lg:px-8">
         <div class="grid gap-6 lg:grid-cols-2">
             @foreach ([
-                ['step' => 'Program', 'title' => 'Junior Secondary School', 'copy' => 'Students in JSS 1 to JSS 3 receive a strong academic foundation with disciplined learning and close teacher guidance.'],
-                ['step' => 'Program', 'title' => 'Senior Secondary School', 'copy' => 'Students in SS 1 to SS 3 are prepared for examinations, leadership, and future opportunities in higher education.'],
                 ['step' => 'Department', 'title' => 'Science Department', 'copy' => 'The science track prepares students for careers and university paths in medicine, engineering, and scientific research.'],
                 ['step' => 'Department', 'title' => 'Commercial Department', 'copy' => 'Students are guided in commerce-related subjects that prepare them for business, finance, and enterprise.'],
                 ['step' => 'Department', 'title' => 'Art Department', 'copy' => 'The art department supports students with interests in communication, law, humanities, social sciences, and the creative arts.'],
