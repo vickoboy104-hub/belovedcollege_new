@@ -206,82 +206,45 @@
 
         <!-- 3. LESSON NOTES SECTION -->
         <div x-show="activeSection === 'lessons'" x-cloak x-transition:enter="transition ease-out duration-250">
-            <x-dashboard-card title="Lesson Notes Library" subtitle="Explore curriculum notes and reference resources published by your teachers." icon="learning" accent="blue">
-                <div class="space-y-6">
+            <x-dashboard-card title="Lesson Notes" icon="learning" accent="blue">
+                <div class="compact-record-list">
                     @forelse ($lessons as $lesson)
-                        <article class="rounded-[18px] border border-slate-200 bg-white p-6 shadow-sm hover:border-blue-500 hover:shadow-md transition-all space-y-4">
-                            <div class="flex items-start justify-between gap-4 flex-wrap sm:flex-nowrap">
-                                <div>
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-blue-50 border border-blue-100 text-blue-700">
-                                        {{ $lesson->subject->name }}
-                                    </span>
-                                    <h4 class="display-font text-base font-extrabold text-slate-900 leading-snug mt-2">
-                                        {{ $lesson->title }}
-                                    </h4>
-                                    <p class="text-xs font-bold text-slate-500 mt-1 flex items-center gap-1">
-                                        <x-app-icon name="profile" class="h-3.5 w-3.5 text-slate-400" />
-                                        <span>Teacher: {{ $lesson->teacher->name }}</span>
-                                    </p>
-                                </div>
-                                <span class="text-xs font-semibold text-slate-400 bg-slate-50 border border-slate-150 px-2.5 py-1 rounded-[8px] shrink-0 self-start">
-                                    {{ $lesson->created_at?->format('M j, Y') }}
-                                </span>
-                            </div>
-
-                            @if ($lesson->summary)
-                                <p class="text-xs font-semibold text-slate-500 leading-relaxed bg-slate-50 border border-slate-100 p-3 rounded-[12px]">
-                                    {{ $lesson->summary }}
-                                </p>
-                            @endif
-
-                            <p class="text-sm text-slate-700 whitespace-pre-line leading-relaxed font-medium">
-                                {{ $lesson->body }}
-                            </p>
-
-                            @if ($lesson->video_path)
-                                <div class="max-w-md">
-                                    <video controls preload="metadata" class="w-full rounded-[14px] border border-slate-350 bg-slate-950 shadow-md">
+                        <details class="compact-record">
+                            <summary class="compact-record-summary">
+                                <span class="compact-record-primary">{{ $lesson->title }}</span>
+                                <span class="compact-record-secondary">{{ $lesson->subject->name }}</span>
+                                <span class="compact-record-meta">{{ $lesson->created_at?->format('M j, Y') }}</span>
+                                <span class="compact-record-toggle" aria-hidden="true">Details</span>
+                            </summary>
+                            <div class="compact-record-body">
+                                <p class="text-xs text-slate-600">{{ $lesson->teacher->name }}</p>
+                                @if ($lesson->summary)
+                                    <p class="text-sm text-slate-700">{{ $lesson->summary }}</p>
+                                @endif
+                                <p class="whitespace-pre-line text-sm text-slate-700">{{ $lesson->body }}</p>
+                                @if ($lesson->video_path)
+                                    <video controls preload="metadata" class="w-full max-w-md rounded-lg border border-slate-300 bg-slate-950">
                                         <source src="{{ asset($lesson->video_path) }}">
                                     </video>
-                                </div>
-                            @elseif ($lesson->video_url)
-                                <div>
-                                    <x-action-button :href="$lesson->video_url" target="_blank" variant="secondary" icon="video" class="!py-1.5 !px-3">
-                                        Watch Video Lesson
-                                    </x-action-button>
-                                </div>
-                            @endif
-
-                            @if (filled($lesson->note_images))
-                                <div class="grid gap-3 sm:grid-cols-2">
-                                    @foreach ($lesson->note_images as $image)
-                                        <a href="{{ asset($image) }}" target="_blank" class="overflow-hidden rounded-xl border border-slate-200 block shadow-sm hover:opacity-90 transition">
-                                            <img src="{{ asset($image) }}" alt="Lesson graphic aid" class="h-36 w-full object-cover" />
-                                        </a>
-                                    @endforeach
-                                </div>
-                            @endif
-
-                            <div class="border-t border-slate-100 pt-3 flex">
+                                @elseif ($lesson->video_url)
+                                    <a href="{{ $lesson->video_url }}" target="_blank" rel="noopener noreferrer" class="text-sm font-bold text-blue-700 underline">Watch video</a>
+                                @endif
+                                @if (filled($lesson->note_images))
+                                    <div class="grid gap-2 sm:grid-cols-2">
+                                        @foreach ($lesson->note_images as $image)
+                                            <a href="{{ asset($image) }}" target="_blank" rel="noopener noreferrer" class="block overflow-hidden rounded-lg border border-slate-200">
+                                                <img src="{{ asset($image) }}" alt="Lesson graphic aid" class="h-36 w-full object-cover" />
+                                            </a>
+                                        @endforeach
+                                    </div>
+                                @endif
                                 @if ($lesson->resource_link)
-                                    <a href="{{ $lesson->resource_link }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1 text-xs font-extrabold text-blue-600 hover:text-blue-700">
-                                        <span>Open Supporting Resource Link</span>
-                                        <span>&rarr;</span>
-                                    </a>
-                                @else
-                                    <button
-                                        type="button"
-                                        onclick="window.alert('No resources available yet. Your teacher has not uploaded any learning material.')"
-                                        class="inline-flex items-center gap-1 text-xs font-extrabold text-slate-500 hover:text-slate-700"
-                                    >
-                                        <span>Open Supporting Resource Link</span>
-                                        <span>&rarr;</span>
-                                    </button>
+                                    <a href="{{ $lesson->resource_link }}" target="_blank" rel="noopener noreferrer" class="text-sm font-bold text-blue-700 underline">Supporting resource</a>
                                 @endif
                             </div>
-                        </article>
+                        </details>
                     @empty
-                        <x-empty-state title="No lesson notes available yet" subtitle="When your course teachers publish lesson libraries, notes, and video attachments, they will appear here." icon="learning" />
+                        <x-empty-state title="No lesson notes available yet" icon="learning" />
                     @endforelse
                 </div>
             </x-dashboard-card>
@@ -289,64 +252,43 @@
 
         <!-- 4. ASSIGNMENTS SECTION -->
         <div x-show="activeSection === 'assignments'" x-cloak x-transition:enter="transition ease-out duration-250">
-            <x-dashboard-card title="Assignments & Tasks" subtitle="Submit homework, review guidelines, and track grading statuses." icon="assignments" accent="orange">
-                <div class="space-y-6">
+            <x-dashboard-card title="Assignments" icon="assignments" accent="orange">
+                <div class="compact-record-list">
                     @forelse ($assignments as $assignment)
-                        @php
-                            $hasSubmitted = $submissions->has($assignment->id);
-                        @endphp
-                        <article class="rounded-[18px] border border-slate-200 bg-white p-5 shadow-sm space-y-4">
-                            <div class="flex items-start justify-between gap-4 flex-wrap sm:flex-nowrap">
-                                <div>
-                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-orange-50 border border-orange-100 text-orange-700">
-                                        {{ $assignment->subject->name }}
-                                    </span>
-                                    <h4 class="display-font text-base font-extrabold text-slate-900 leading-snug mt-2">
-                                        {{ $assignment->title }}
-                                    </h4>
-                                    <p class="text-xs font-bold text-slate-400 mt-1">
-                                        Total Obtainable Marks: {{ number_format((float) $assignment->total_score, 2) }}
-                                    </p>
-                                </div>
-                                <div class="flex flex-col items-end gap-1.5 shrink-0 self-start">
-                                    <x-status-badge :status="$hasSubmitted ? 'submitted' : 'pending'" />
-                                    <span class="text-[10px] font-bold text-rose-600 uppercase">
-                                        Due: {{ optional($assignment->due_date)->format('M j, g:i A') ?: 'Open' }}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <p class="text-xs font-semibold text-slate-650 leading-relaxed whitespace-pre-line bg-slate-50 border border-slate-100 p-3 rounded-[12px]">
-                                {{ $assignment->instructions }}
-                            </p>
-
-                            @if (filled($assignment->attachment_images))
-                                <div class="grid gap-3 sm:grid-cols-2">
-                                    @foreach ($assignment->attachment_images as $image)
-                                        <a href="{{ asset($image) }}" target="_blank" class="overflow-hidden rounded-xl border border-slate-200 block shadow-sm hover:opacity-90 transition">
-                                            <img src="{{ asset($image) }}" alt="Assignment graphic attachment" class="h-32 w-full object-cover" />
-                                        </a>
-                                    @endforeach
-                                </div>
-                            @endif
-
-                            @if ($user->hasAnyRole(['student']))
-                                <form method="POST" action="{{ route('portal.assignments.submit', $assignment) }}" class="space-y-3 pt-3 border-t border-slate-100">
-                                    @csrf
-                                    <div>
-                                        <label class="block text-[10px] font-bold text-slate-700 uppercase tracking-wide mb-1">Your Submission Note / Written Answer</label>
-                                        <textarea name="content" rows="3" placeholder="{{ $hasSubmitted ? 'Update your submission content...' : 'Type your answer or reference notes here...' }}" class="theme-input w-full text-xs font-bold" required></textarea>
+                        @php $hasSubmitted = $submissions->has($assignment->id); @endphp
+                        <details class="compact-record">
+                            <summary class="compact-record-summary">
+                                <span class="compact-record-primary">{{ $assignment->title }}</span>
+                                <span class="compact-record-secondary">{{ $assignment->subject->name }}</span>
+                                <span class="compact-record-meta">{{ $assignment->due_date?->format('M j, Y') ?? 'Open' }}</span>
+                                <span class="compact-record-state">{{ $hasSubmitted ? 'Submitted' : 'Pending' }}</span>
+                            </summary>
+                            <div class="compact-record-body">
+                                <p class="whitespace-pre-line text-sm text-slate-700">{{ $assignment->instructions }}</p>
+                                <p class="text-xs text-slate-600">Total marks: {{ number_format((float) $assignment->total_score, 0) }} · Due: {{ $assignment->due_date?->format('M j, Y g:i A') ?? 'Open' }}</p>
+                                @if (filled($assignment->attachment_images))
+                                    <div class="grid gap-2 sm:grid-cols-2">
+                                        @foreach ($assignment->attachment_images as $image)
+                                            <a href="{{ asset($image) }}" target="_blank" rel="noopener noreferrer" class="block overflow-hidden rounded-lg border border-slate-200">
+                                                <img src="{{ asset($image) }}" alt="Assignment graphic attachment" class="h-32 w-full object-cover" />
+                                            </a>
+                                        @endforeach
                                     </div>
-                                    <div class="flex justify-end">
-                                        <x-action-button type="submit" :variant="$hasSubmitted ? 'secondary' : 'primary'" icon="save" class="!py-1.5 !px-3.5">
+                                @endif
+                                @if ($user->hasAnyRole(['student']))
+                                    <form method="POST" action="{{ route('portal.assignments.submit', $assignment) }}" class="space-y-2 border-t border-slate-200 pt-3">
+                                        @csrf
+                                        <label for="submission-{{ $assignment->id }}" class="block text-sm font-semibold text-slate-800">Written answer</label>
+                                        <textarea id="submission-{{ $assignment->id }}" name="content" rows="3" class="theme-input w-full text-sm" required></textarea>
+                                        <x-action-button type="submit" :variant="$hasSubmitted ? 'secondary' : 'primary'" icon="save">
                                             {{ $hasSubmitted ? 'Update Submission' : 'Submit Assignment' }}
                                         </x-action-button>
-                                    </div>
-                                </form>
-                            @endif
-                        </article>
+                                    </form>
+                                @endif
+                            </div>
+                        </details>
                     @empty
-                        <x-empty-state title="No active assignments" subtitle="When your subject teachers assign homework or schoolwork tasks, they will appear here." icon="assignments" />
+                        <x-empty-state title="No active assignments" icon="assignments" />
                     @endforelse
                 </div>
             </x-dashboard-card>
@@ -393,73 +335,44 @@
                 @php
                     $attemptsByAssessment = $cbtAttempts->keyBy('assessment_id');
                 @endphp
-                <x-dashboard-card title="CBT Exams and Tests" subtitle="Initiate active computer-based tests or review submission receipts." icon="portal" accent="purple">
-                    <p class="text-xs text-slate-500 mb-5 leading-relaxed">
-                        @if ($cbtEnabled)
-                            Select an available assessment below to begin. Timers, question navigation blocks, and instructions will launch in focus mode.
-                        @else
-                            CBT examination modules are currently deactivated by the administrator.
-                        @endif
-                    </p>
-
+                <x-dashboard-card title="CBT Exams and Tests" icon="portal" accent="purple">
                     @if ($cbtEnabled)
-                        <div class="space-y-4">
+                        <div class="compact-record-list">
                             @forelse ($cbtAssessments as $cbtAssessment)
                                 @php
                                     $attempt = $attemptsByAssessment->get($cbtAssessment->id);
                                     $hasStarted = $attempt && $attempt->status === 'in_progress';
-                                    $hasSubmitted = $attempt && $attempt->status !== 'in_progress';
                                 @endphp
-                                <article class="rounded-[18px] border border-slate-200 bg-slate-50/50 p-5 shadow-sm flex flex-col md:flex-row md:items-center md:justify-between gap-5 hover:border-purple-500 transition-all">
-                                    <div class="flex-1 space-y-3.5">
-                                        <div class="flex items-center gap-2 flex-wrap">
-                                            <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-bold bg-purple-50 border border-purple-100 text-purple-700">
-                                                {{ $cbtAssessment->subject->name }}
-                                            </span>
-                                            <span class="text-xs font-bold uppercase tracking-wider text-slate-500 bg-slate-100 border border-slate-200 rounded-full px-2.5 py-0.5">
-                                                {{ $cbtAssessment->cbtQuestions->count() }} Questions &bull; {{ $cbtAssessment->cbt_duration_minutes }} Mins
-                                            </span>
-                                            @if ($attempt)
-                                                <x-status-badge :status="$attempt->status === 'in_progress' ? 'pending' : 'submitted'" :label="$attempt->status === 'in_progress' ? 'In Progress' : 'Submitted'" />
+                                <div class="compact-record">
+                                    <div class="compact-record-summary">
+                                        <div class="min-w-0">
+                                            <span class="compact-record-primary block">{{ $cbtAssessment->title }}</span>
+                                            <span class="text-xs text-slate-600">{{ $cbtAssessment->subject->name }}</span>
+                                        </div>
+                                        <span class="compact-record-secondary">{{ $cbtAssessment->cbtQuestions->count() }} questions</span>
+                                        <span class="compact-record-meta">{{ $cbtAssessment->cbt_duration_minutes }} min</span>
+                                        <div class="compact-record-state">
+                                            @if (!$attempt || $hasStarted)
+                                                <x-action-button :href="route('portal.cbt.show', $cbtAssessment)" variant="primary" icon="play" class="!px-3 !py-1.5">
+                                                    {{ $attempt ? 'Resume' : 'Start' }}
+                                                </x-action-button>
                                             @else
-                                                <x-status-badge status="open" label="Ready to Start" />
-                                            @endif
-                                        </div>
-
-                                        <h4 class="display-font text-base font-extrabold text-slate-900 leading-snug">
-                                            {{ $cbtAssessment->title }}
-                                        </h4>
-
-                                        <div class="flex flex-wrap gap-x-6 gap-y-2 text-xs font-semibold text-slate-500">
-                                            <span>Teacher: {{ $cbtAssessment->teacher->fullName() }}</span>
-                                            <span>&bull;</span>
-                                            <span>Due: {{ $cbtAssessment->cbt_ends_at?->format('M j, Y g:i A') ?? 'Open' }}</span>
-                                            @if ($attempt && ($attempt->status === 'graded' || ($attempt->status === 'submitted' && $cbtAssessment->cbt_show_results)))
-                                                <span>&bull;</span>
-                                                <span class="text-purple-700 font-bold">
-                                                    CBT Grade: {{ number_format((float) $attempt->total_score, 2) }} / {{ number_format((float) $cbtAssessment->total_score, 2) }}
-                                                </span>
+                                                <span class="text-xs font-bold text-emerald-700">Submitted</span>
                                             @endif
                                         </div>
                                     </div>
-
-                                    <div class="shrink-0 flex items-center">
-                                        @if (!$attempt || $hasStarted)
-                                            <x-action-button :href="route('portal.cbt.show', $cbtAssessment)" variant="primary" icon="play" class="w-full md:w-auto">
-                                                {{ $attempt ? 'Resume Exam' : 'Start Assessment' }}
-                                            </x-action-button>
-                                        @else
-                                            <span class="inline-flex items-center gap-1.5 text-xs font-extrabold text-emerald-600 bg-emerald-50 border border-emerald-100 px-4 py-2.5 rounded-[12px] shadow-sm select-none">
-                                                <x-app-icon name="check-circle" class="h-4 w-4" />
-                                                <span>Exam Answer Receipt Logged</span>
-                                            </span>
-                                        @endif
-                                    </div>
-                                </article>
+                                    @if ($attempt && ($attempt->status === 'graded' || ($attempt->status === 'submitted' && $cbtAssessment->cbt_show_results)))
+                                        <p class="border-t border-slate-200 px-3 py-2 text-xs text-slate-600">
+                                            Score: {{ number_format((float) $attempt->total_score, 2) }} / {{ number_format((float) $cbtAssessment->total_score, 2) }}
+                                        </p>
+                                    @endif
+                                </div>
                             @empty
-                                <x-empty-state title="No active CBT assessments available" subtitle="Your assigned curriculum classes do not have any pending computer-based exams currently active." icon="portal" />
+                                <x-empty-state title="No active CBT assessments" icon="portal" />
                             @endforelse
                         </div>
+                    @else
+                        <p class="text-sm text-slate-600">CBT is currently unavailable.</p>
                     @endif
                 </x-dashboard-card>
             @else
@@ -720,22 +633,21 @@
 
         <!-- 8. ATTENDANCE LOG SECTION -->
         <div x-show="activeSection === 'attendance'" x-cloak x-transition:enter="transition ease-out duration-250">
-            <x-dashboard-card title="Attendance History Sheet" subtitle="View chronological attendance record logs and teacher comments." icon="clock" accent="purple">
-                <x-data-table :headers="['Date', 'Status', 'Comment']" class="attendance-table">
+            <x-dashboard-card title="Attendance" icon="clock" accent="purple">
+                <x-data-table :headers="['Date', 'Status', 'Comment']" minWidth="0" :stickyEdges="false" class="attendance-table">
                     @forelse ($attendance as $entry)
                         @php
                             $isPresent = strtolower($entry->status->label()) === 'present';
                         @endphp
                         <tr class="hover:bg-slate-50/80 transition duration-150">
                             <td class="font-bold text-slate-900 whitespace-nowrap">
-                                {{ $entry->attendance_date->format('M j, Y') }}
-                                <span class="ml-2 text-xs font-semibold text-slate-500">{{ $entry->attendance_date->format('l') }}</span>
+                                {{ $entry->attendance_date->format('j M Y') }}
                             </td>
                             <td class="whitespace-nowrap">
                                 <x-status-badge :status="$isPresent ? 'present' : 'absent'" />
                             </td>
                             <td class="attendance-comment text-xs font-semibold text-slate-500 italic">
-                                {!! $entry->note ? '&ldquo;' . e($entry->note) . '&rdquo;' : '<span class="text-slate-350 font-normal">No teacher comment registered.</span>' !!}
+                                {{ $entry->note ?: '—' }}
                             </td>
                         </tr>
                     @empty
