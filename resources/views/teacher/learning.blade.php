@@ -1,31 +1,17 @@
 <x-app-layout>
     <x-slot name="header">
-        <x-page-header title="Lessons, Assignments, & Grading Workspace" eyebrow="Teacher Portal">
+        <x-page-header title="Teaching Workspace" eyebrow="Teacher Portal">
             <x-slot name="description">
                 @if ($classTeacherMode)
-                    Scoped class teacher account for {{ $managedClasses->pluck('display_name')->join(', ') }}.
+                    Assigned classes: {{ $managedClasses->pluck('display_name')->join(', ') }}.
                 @else
-                    Manage course note libraries, build CBT exams, assign schoolwork, and log dynamic grades.
+                    Lessons, assignments, exams and grades.
                 @endif
             </x-slot>
         </x-page-header>
     </x-slot>
 
     <div class="space-y-5">
-        @if ($classTeacherMode)
-            <div class="card bg-white border border-[#c8d6ea] rounded-[18px] p-6 shadow-[0_10px_25px_rgba(15,23,42,0.08)]">
-                <div class="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-                    <div>
-                        <h2 class="display-font text-lg font-bold text-slate-900 leading-snug">Class Teacher Responsibilities</h2>
-                        <p class="text-xs font-semibold text-slate-500 mt-1 leading-relaxed max-w-xl">You hold primary administrative responsibility over student attendance sheets, cumulative score compilations, homework submissions, and final term reviews in your assigned classes.</p>
-                    </div>
-                    <div class="rounded-xl border border-slate-100 bg-slate-50 px-5 py-3 text-left lg:text-right">
-                        <div class="text-[9px] font-extrabold uppercase tracking-wider text-slate-400">Assigned Classes</div>
-                        <div class="mt-1.5 text-sm font-black text-slate-800 tracking-tight">{{ $managedClasses->pluck('display_name')->join(', ') }}</div>
-                    </div>
-                </div>
-            </div>
-        @endif
 
         <div>
             @if ($activeTeachingSection === 'publish-lesson')
