@@ -51,6 +51,7 @@
     <link rel="stylesheet" href="{{ asset('theme-variants.css') }}?v=20260714-theme-variants-1">
     <link rel="stylesheet" href="{{ asset('theme-public-variants.css') }}?v=20260714-theme-public-variants-1">
     <link rel="stylesheet" href="{{ asset('ui-contrast-audit.css') }}?v=20260827-ui-contrast-audit-2">
+    <link rel="stylesheet" href="{{ asset('global-ui-density-fixes.css') }}?v=20260926-global-ui-1">
 </head>
 <body class="antialiased">
     @php
