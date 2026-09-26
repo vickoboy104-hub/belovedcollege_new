@@ -14,23 +14,18 @@
     @endphp
 
     <x-slot name="header">
-        <x-page-header title="Staff management" eyebrow="Administration" description="This workspace includes professional school-office views for payroll, departmental metrics, and class allocations in addition to the staff directory.">
+        <x-page-header title="Staff" eyebrow="Administration">
             <x-slot name="actions">
-                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
                     <x-action-button 
                         variant="success" 
                         icon="plus" 
-                        class="!rounded-3xl !py-4 !px-6 shadow-xl shadow-emerald-900/10"
+                        class="!rounded-xl !py-2 !px-4"
                         x-on:click="$dispatch('open-modal', 'register-staff-modal')"
                     >
                         Register Staff Member
                     </x-action-button>
 
-                    <div class="rounded-3xl brand-gradient px-5 py-4 text-white shadow-xl shadow-slate-900/10 sm:px-6 sm:py-5 flex flex-col justify-center min-w-[200px]">
-                        <div class="text-[10px] font-extrabold uppercase tracking-[0.25em] text-white/70">Total Active Staff</div>
-                        <div class="display-font mt-1.5 text-xl font-black tracking-tight">{{ $staffWorkspaceStats['active_count'] }} Active</div>
-                        <div class="mt-0.5 text-xs font-bold text-white/80 uppercase tracking-wider">Out of {{ $staffWorkspaceStats['staff_count'] }} Total</div>
-                    </div>
                 </div>
             </x-slot>
         </x-page-header>
@@ -55,7 +50,7 @@
     @endif
 
     <!-- Workspace Stats Cards Grid -->
-    <div class="metrics-grid metrics-grid-5 mb-8">
+    <div class="metrics-grid metrics-grid-5 mb-4">
         <x-stat-card label="Staff" :value="$staffWorkspaceStats['staff_count']" accent="blue" icon="staff" />
         <x-stat-card label="Active" :value="$staffWorkspaceStats['active_count']" accent="green" icon="staff" />
         <x-stat-card label="On Payroll" :value="$staffWorkspaceStats['salary_count']" accent="purple" icon="staff" />
@@ -63,14 +58,14 @@
         <x-stat-card label="Class Teachers" :value="$staffWorkspaceStats['class_teachers']" accent="blue" icon="classes" />
     </div>
 
-    <div class="grid gap-8">
+    <div class="grid gap-4">
         <!-- Filter Card -->
         @if ($activeStaffView !== 'class-allocation')
             <x-filter-card 
                 :action="route('admin.staff.index')" 
                 method="GET" 
                 :title="$activeStaffView === 'payroll' ? 'Payroll Search' : 'Staff search directory'"
-                description="Search staff records by name, email, employee ID, role, or department.">
+                description="Search by name, employee ID or department.">
                 <input type="hidden" name="view" value="{{ $activeStaffView }}" />
                 <input name="search" value="{{ $search }}" placeholder="Search by name or staff details..." class="theme-input flex-1" />
                 <select name="department" class="theme-input lg:w-56">
