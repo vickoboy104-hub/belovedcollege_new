@@ -80,7 +80,6 @@
             <x-page-header
                 title="Student Management"
                 eyebrow="Administration"
-                description="Manage student records, class placement, guardians, and billing status."
             >
                 <x-slot name="actions">
                     <x-action-button type="button" variant="secondary" icon="download" onclick="window.print()">Export</x-action-button>
