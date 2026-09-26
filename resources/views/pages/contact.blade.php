@@ -8,7 +8,7 @@
         $whatsappLink = $schoolSettings['whatsapp_link'] ?? "https://wa.me/{$whatsappDigits}";
     @endphp
     <section class="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
-        <div class="grid gap-8 lg:grid-cols-[0.92fr,1.08fr]">
+        <div class="grid gap-4 lg:grid-cols-[0.92fr,1.08fr]">
             <div class="mesh-card px-8 py-10 reveal-up">
                 <p class="section-kicker text-sm font-semibold uppercase tracking-[0.28em]">Contact the school</p>
                 <h1 class="display-font mt-4 text-4xl font-bold text-slate-950">Admissions, enquiries, and parent support.</h1>
