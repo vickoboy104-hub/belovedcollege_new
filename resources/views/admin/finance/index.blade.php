@@ -1,7 +1,7 @@
 <x-portal-layout>
     <x-slot name="header">
         <x-page-header 
-            title="Finance" 
+            title="Finance"
             eyebrow="Finance desk"
         />
     </x-slot>
