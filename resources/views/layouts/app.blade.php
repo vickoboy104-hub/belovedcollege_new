@@ -34,7 +34,7 @@
     <link rel="stylesheet" href="{{ asset('table-consistency.css') }}?v=20260720-global-table-consistency-1">
     <link rel="stylesheet" href="{{ asset('ui-contrast-audit.css') }}?v=20260827-ui-contrast-audit-2">
     <link rel="stylesheet" href="{{ asset('payment-selection.css') }}?v=20260827-payment-flow-1">
-    <link rel="stylesheet" href="{{ asset('global-ui-density-fixes.css') }}?v=20260924-compact-results-1">
+    <link rel="stylesheet" href="{{ asset('global-ui-density-fixes.css') }}?v=20260926-global-ui-1">
     <link rel="stylesheet" href="{{ asset('staff-workflow-efficiency.css') }}?v=20260831-staff-workflow-1">
     <link rel="stylesheet" href="{{ asset('teacher-submissions-workflow.css') }}?v=20260831-submissions-workflow-2">
     @if (request()->routeIs('admin.reports.index'))

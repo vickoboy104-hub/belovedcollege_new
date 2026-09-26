@@ -10,9 +10,9 @@
         <h1>
             {{ $title }}
         </h1>
-        @if($description)
+        @if($description || isset($descriptionSlot))
             <p class="page-description">
-                {{ $description }}
+                {{ $description ?? $descriptionSlot }}
             </p>
         @endif
     </div>

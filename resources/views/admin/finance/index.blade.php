@@ -1,8 +1,7 @@
 <x-portal-layout>
     <x-slot name="header">
         <x-page-header 
-            title="Create fee items, issue invoices, and record payments" 
-            description="Manage and track all student billings, fee catalog, payments and collections."
+            title="Finance"
             eyebrow="Finance desk"
         />
     </x-slot>
