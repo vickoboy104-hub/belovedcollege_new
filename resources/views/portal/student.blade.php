@@ -239,7 +239,15 @@
                                     </div>
                                 @endif
                                 @if ($lesson->resource_link)
-                                    <a href="{{ $lesson->resource_link }}" target="_blank" rel="noopener noreferrer" class="text-sm font-bold text-blue-700 underline">Supporting resource</a>
+                                    <a href="{{ $lesson->resource_link }}" target="_blank" rel="noopener noreferrer" class="inline-flex items-center gap-1.5 text-sm font-bold text-blue-700 underline">
+                                        <x-app-icon name="link" class="h-4 w-4" />
+                                        <span>Open Supporting Resource Link</span>
+                                    </a>
+                                @else
+                                    <button type="button" onclick="window.alert('No resources available yet. Your teacher has not uploaded any learning material.')" class="inline-flex items-center gap-1.5 text-sm font-bold text-slate-500 hover:text-slate-700">
+                                        <x-app-icon name="link" class="h-4 w-4" />
+                                        <span>Open Supporting Resource Link</span>
+                                    </button>
                                 @endif
                             </div>
                         </details>
@@ -261,7 +269,7 @@
                                 <span class="compact-record-primary">{{ $assignment->title }}</span>
                                 <span class="compact-record-secondary">{{ $assignment->subject->name }}</span>
                                 <span class="compact-record-meta">{{ $assignment->due_date?->format('M j, Y') ?? 'Open' }}</span>
-                                <span class="compact-record-state">{{ $hasSubmitted ? 'Submitted' : 'Pending' }}</span>
+                                <span class="compact-record-state"><x-status-badge :status="$hasSubmitted ? 'submitted' : 'pending'" /></span>
                             </summary>
                             <div class="compact-record-body">
                                 <p class="whitespace-pre-line text-sm text-slate-700">{{ $assignment->instructions }}</p>
@@ -357,7 +365,7 @@
                                                     {{ $attempt ? 'Resume' : 'Start' }}
                                                 </x-action-button>
                                             @else
-                                                <span class="text-xs font-bold text-emerald-700">Submitted</span>
+                                                <x-status-badge status="submitted" label="Submitted" />
                                             @endif
                                         </div>
                                     </div>
