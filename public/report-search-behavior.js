@@ -29,10 +29,9 @@
         if (!document.body.classList.contains('route-admin-reports-index')) return;
 
         const input = neutraliseForcedSearch();
-        const form = document.getElementById('report-student-search-form');
         const dataElement = document.getElementById('report-student-search-data');
 
-        if (!input || !form || !dataElement || input.dataset.optionalSearchInitialised === 'true') return;
+        if (!input || !dataElement || input.dataset.optionalSearchInitialised === 'true') return;
         input.dataset.optionalSearchInitialised = 'true';
 
         let records = [];
@@ -43,12 +42,12 @@
         }
 
         document.getElementById('report-student-options')?.remove();
-        document.querySelector('[data-report-open-link]')?.remove();
+        const openLink = document.querySelector('[data-report-open-link]');
 
         const searchFieldWrapper = input.closest('div');
         const helperText = searchFieldWrapper?.querySelector('p');
         if (helperText) {
-            helperText.textContent = 'Type freely and click Search. Student suggestions are optional and open only when you choose to browse them.';
+            helperText.textContent = 'Type freely and click Search. Student suggestions are optional, and an Open Report link appears once the text points at exactly one student.';
         }
 
         const normalize = (value) => String(value || '')
@@ -57,7 +56,7 @@
             .replace(/\s+/g, ' ')
             .trim();
 
-        const getMatches = () => {
+        const matchingRecords = () => {
             const query = normalize(input.value);
             const words = query.split(' ').filter(Boolean);
 
@@ -73,8 +72,42 @@
                 ].join(' '));
 
                 return words.every((word) => haystack.includes(word));
-            }).slice(0, 20);
+            });
         };
+
+        const getMatches = () => matchingRecords().slice(0, 20);
+
+        const exactRecord = () => {
+            const query = normalize(input.value);
+            if (!query) return null;
+
+            return records.find((record) => [
+                record.label,
+                record.name,
+                record.studentId,
+                record.admissionNo,
+            ].some((candidate) => normalize(candidate) === query)) || null;
+        };
+
+        const resolvedRecord = () => {
+            const exact = exactRecord();
+            if (exact) return exact;
+
+            const matches = matchingRecords();
+            return normalize(input.value) && matches.length === 1 ? matches[0] : null;
+        };
+
+        const updateOpenLink = () => {
+            if (!openLink) return;
+
+            const record = resolvedRecord();
+            openLink.hidden = !record;
+
+            if (record) openLink.href = record.url;
+            else openLink.removeAttribute('href');
+        };
+
+        input.addEventListener('input', updateOpenLink);
 
         if (searchFieldWrapper && records.length > 0) {
             const picker = document.createElement('details');
@@ -114,6 +147,7 @@
                     button.addEventListener('click', () => {
                         input.value = record.studentId || record.admissionNo || record.name || '';
                         picker.open = false;
+                        updateOpenLink();
                         input.focus();
                     });
 
@@ -136,6 +170,9 @@
                 if (event.key === 'Escape') picker.open = false;
             });
         }
+
+        /* The field can arrive pre-filled from a previous search, so resolve once up front. */
+        updateOpenLink();
 
         /* Class/category navigation must browse independently of any search text. */
         document.querySelectorAll('a[href]').forEach((anchor) => {

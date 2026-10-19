@@ -15,10 +15,12 @@ class ReportSearchLayoutTest extends TestCase
         $this->assertIsString($css);
         $this->assertIsString($layout);
         $this->assertIsString($reportIndex);
-        $this->assertStringContainsString('route-admin-reports-index #report-student-search-form', $css);
+        $this->assertStringContainsString('route-admin-reports-index #report-student-search', $css);
         $this->assertStringContainsString('height: 2.75rem !important', $css);
         $this->assertStringContainsString('max-height: 2.75rem !important', $css);
         $this->assertStringContainsString('report-search-controls.css', $layout);
-        $this->assertStringContainsString('id="report-student-search-form"', $reportIndex);
+        $this->assertStringNotContainsString('id="report-student-search-form"', $reportIndex);
+        $this->assertStringNotContainsString('#report-student-search-form', $css);
+        $this->assertStringContainsString(':action="$currentIndexRoute"', $reportIndex);
     }
 }

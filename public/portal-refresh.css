@@ -2824,6 +2824,19 @@ body,
     display: none !important;
 }
 
+.app-shell .admin-toolbar-controls a[data-report-open-link][hidden] {
+    /* The quick-search script reveals this link only when the text resolves to one student,
+       and the button's own inline-flex utility would out-rank the bare [hidden] attribute. */
+    display: none !important;
+}
+
+/* A third button will not fit the single track this toolbar gives its action group, so the
+   whole group takes its own row the moment the direct link appears instead of squeezing
+   every label into a clipped fragment. */
+.app-shell .admin-toolbar-controls > .admin-report-actions:has([data-report-open-link]:not([hidden])) {
+    grid-column: 1 / -1 !important;
+}
+
 .app-shell .table-toolbar > input {
     min-width: min(100%, 320px) !important;
 }
