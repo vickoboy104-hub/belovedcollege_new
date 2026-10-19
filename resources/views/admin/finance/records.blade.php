@@ -81,10 +81,10 @@
                             @click="selectedClassId = {{ $class->id }}; syncDefaults(); showMobileDetails = true"
                             class="rounded-xl border p-4 text-left transition duration-200 active:scale-[0.98]"
                             :class="selectedClassId === {{ $class->id }} ? 'border-transparent text-white shadow-md' : 'border-[#c8d6ea] bg-white text-slate-900 hover:border-blue-300'"
-                            :style="selectedClassId === {{ $class->id }} ? 'background-color: var(--theme-primary, #071833);' : ''"
+                            :style="selectedClassId === {{ $class->id }} ? 'background-color:#071833;' : ''"
                         >
                             <div class="font-bold text-sm" :class="selectedClassId === {{ $class->id }} ? 'text-white' : 'text-slate-900'">{{ $class->display_name }}</div>
-                            <div class="mt-1 text-xs opacity-80" :class="selectedClassId === {{ $class->id }} ? 'text-blue-100' : 'text-slate-500'">Open fee list &rarr;</div>
+                            <div class="mt-1 text-xs opacity-90" :class="selectedClassId === {{ $class->id }} ? 'text-white' : 'text-slate-500'">Open fee list &rarr;</div>
                         </button>
                     @endforeach
                 </div>

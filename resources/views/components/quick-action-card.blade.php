@@ -18,33 +18,24 @@
 
 <a href="{{ $resolvedUrl }}"
    data-tone="{{ $tone }}"
-   {{ $attributes->merge(['class' => 'quick-action-card flex flex-col justify-between gap-5 rounded-[18px] p-5 transition-all duration-200 hover:-translate-y-0.5']) }}
-   style="background: {{ $tc['grad'] }} !important; border: 1px solid {{ $tc['border'] }} !important; box-shadow: 0 8px 20px rgba(0,0,0,0.14);">
+   {{ $attributes->merge(['class' => 'quick-action-card']) }}
+   style="background: {{ $tc['grad'] }} !important; border: 1px solid {{ $tc['border'] }} !important; display: flex; align-items: center; gap: 0.75rem; min-height: 44px; padding: 0.7rem 0.85rem; border-radius: 14px; box-shadow: none; transition: transform 0.15s ease, border-color 0.15s ease; text-decoration: none;">
 
-    <div class="space-y-4">
-        {{-- Icon --}}
-        <div class="quick-action-card-icon" style="width:2.4rem; height:2.4rem; border-radius:0.75rem; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:{{ $tc['iconBg'] }}; color:{{ $tc['iconFg'] }}; border:1px solid {{ $tc['border'] }};">
-            <x-app-icon :name="$icon" class="h-5 w-5" />
-        </div>
+    <span class="quick-action-card-icon" style="width:1.85rem; height:1.85rem; border-radius:0.55rem; display:flex; align-items:center; justify-content:center; flex-shrink:0; background:{{ $tc['iconBg'] }}; color:{{ $tc['iconFg'] }}; border:1px solid {{ $tc['border'] }};">
+        <x-app-icon :name="$icon" class="h-4 w-4" />
+    </span>
 
-        <div class="space-y-1">
-            <h3 class="display-font text-base font-extrabold tracking-tight leading-snug quick-action-card-title"
-                style="color: var(--dashboard-quick-action-text, var(--dashboard-card-text, var(--theme-text-dark-card, #ffffff)));">
-                {{ $title }}
-            </h3>
-            <p class="text-xs font-semibold leading-relaxed quick-action-card-desc"
-               style="color: var(--dashboard-quick-action-text-muted, var(--dashboard-card-text-muted, rgba(255,255,255,0.72)));">
-                {{ $description }}
-            </p>
-        </div>
-    </div>
-
-    {{-- Arrow pointer --}}
-    <div class="text-right">
-        <span class="text-xs font-bold inline-flex items-center gap-1 quick-action-card-link"
-              style="color: {{ $tc['iconFg'] }};">
-            <span>Explore</span>
-            <span class="transform transition-transform duration-150">→</span>
+    <span style="min-width:0; flex:1 1 auto;">
+        <span class="display-font quick-action-card-title"
+              style="display:block; font-size:0.875rem; font-weight:800; line-height:1.25; letter-spacing:-0.01em; color: var(--dashboard-quick-action-text, var(--dashboard-card-text, var(--theme-text-dark-card, #ffffff)));">
+            {{ $title }}
         </span>
-    </div>
+        <span class="quick-action-card-desc"
+              style="display:block; margin-top:0.1rem; font-size:0.75rem; font-weight:600; line-height:1.45; color: var(--dashboard-quick-action-text-muted, var(--dashboard-card-text-muted, rgba(255,255,255,0.72)));">
+            {{ $description }}
+        </span>
+    </span>
+
+    <span class="quick-action-card-link" aria-hidden="true"
+          style="flex-shrink:0; font-size:0.875rem; font-weight:800; color: {{ $tc['iconFg'] }};">→</span>
 </a>

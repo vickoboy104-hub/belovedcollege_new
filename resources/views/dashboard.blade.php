@@ -52,8 +52,7 @@
 
     <!-- Main Grid Section -->
     <div class="dashboard-main-grid mt-4 grid items-start gap-4 lg:grid-cols-[1.25fr,0.95fr]">
-        <x-section-card class="dashboard-dark-panel dashboard-quick-actions-panel" title="Quick actions" icon="dashboard" tone="blue"
-                        style="background: var(--dashboard-quick-action-bg, var(--theme-secondary)); border:1px solid rgba(255,255,255,0.09); box-shadow:0 20px 48px rgba(2,6,23,0.22); --panel-title-color:#ffffff; --panel-desc-color:rgba(226,232,240,0.82); --panel-content-color:#ffffff;">
+        <x-section-card class="dashboard-dark-panel dashboard-quick-actions-panel" title="Quick actions" icon="dashboard" tone="blue">
             <div class="mt-4 grid gap-4 md:grid-cols-2">
                 @foreach ($quickAccessCards as $card)
                     <x-quick-action-card 
@@ -67,15 +66,13 @@
             </div>
         </x-section-card>
 
-        <x-dashboard-card class="dashboard-dark-panel dashboard-announcements-panel" title="Latest announcements" subtitle="Recent publications across the school network" icon="announcement" accent="gold"
-                          style="background: var(--dashboard-announcement-bg, var(--theme-secondary)); border:1px solid var(--theme-border-soft, rgba(255,255,255,0.09)); box-shadow:0 20px 48px rgba(2,6,23,0.22); --panel-title-color:var(--theme-text-dark-card, #ffffff); --panel-desc-color:var(--theme-text-muted, rgba(226,232,240,0.82)); --panel-content-color:var(--theme-text-dark-card, #ffffff);">
+        <x-dashboard-card class="dashboard-dark-panel dashboard-announcements-panel" title="Latest announcements" subtitle="Recent publications across the school network" icon="announcement" accent="gold">
             <div class="mt-4 space-y-4">
                 @forelse ($announcements as $announcement)
-                    <article class="rounded-[16px] p-4 hover:shadow-md transition duration-200"
-                             style="background: var(--theme-card-announcement, rgba(255,255,255,0.05)); border:1px solid var(--theme-border-soft, rgba(255,255,255,0.1));">
+                    <article class="announcement-item rounded-[16px] p-4 hover:shadow-md transition duration-200">
                         <x-status-badge :status="$announcement->category ?? 'General'" class="scale-90 origin-left" />
-                        <h3 class="mt-2.5 display-font text-base font-extrabold leading-snug" style="color:var(--theme-text-dark-card, #ffffff);">{{ $announcement->title }}</h3>
-                        <p class="mt-2 text-xs font-semibold leading-relaxed" style="color:var(--theme-text-muted, rgba(226,232,240,0.80));">{{ $announcement->excerpt ?: \Illuminate\Support\Str::limit($announcement->body, 120) }}</p>
+                        <h3 class="mt-2.5 display-font text-base font-extrabold leading-snug">{{ $announcement->title }}</h3>
+                        <p class="mt-2 text-xs font-semibold leading-relaxed">{{ $announcement->excerpt ?: \Illuminate\Support\Str::limit($announcement->body, 120) }}</p>
                     </article>
                 @empty
                     <x-empty-state title="No Announcements Yet" description="When administrators publish updates, they will appear here." icon="announcement" />
@@ -87,19 +84,19 @@
     <!-- Finance Operational Picture: leadership/accounting roles only -->
     @if ($financeSnapshot)
         <div class="mt-8">
-            <x-section-card class="dashboard-dark-panel dashboard-finance-panel" title="Operational payment picture" subtitle="School finance board" icon="finance" tone="gold"
-                        style="background: var(--dashboard-finance-bg, var(--theme-secondary)); border:1px solid var(--theme-border-soft, rgba(255,255,255,0.09)); box-shadow:0 20px 48px rgba(2,6,23,0.22); --panel-title-color:var(--theme-text-dark-card, #ffffff); --panel-desc-color:var(--theme-text-muted, rgba(226,232,240,0.82)); --panel-content-color:var(--theme-text-dark-card, #ffffff);">
+            <x-section-card class="dashboard-dark-panel dashboard-finance-panel" title="Operational payment picture" subtitle="School finance board" icon="finance" tone="gold">
                 <x-slot name="actions">
-                    <x-action-button variant="secondary" :href="route('admin.finance.records', ['section' => 'payment-summary'])" icon="finance-records">
-                        Open Finance Records
-                    </x-action-button>
+                    <div class="flex flex-wrap gap-2">
+                        <x-action-button variant="secondary" :href="route('admin.finance.records', ['section' => 'class-bills'])" icon="finance-records">
+                            View class billing
+                        </x-action-button>
+                        <x-action-button variant="secondary" :href="route('admin.finance.records', ['section' => 'payment-summary'])" icon="finance-records">
+                            Open Finance Records
+                        </x-action-button>
+                    </div>
                 </x-slot>
 
-                <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
-                    <x-stat-card label="Students" :value="$financeSnapshot['students']" accent="blue" :link="route('admin.finance.records', ['section' => 'class-bills'])" linkText="View class billing">
-                        {{ $financeSnapshot['classes'] }} class{{ $financeSnapshot['classes'] === 1 ? '' : 'es' }}
-                    </x-stat-card>
-
+                <div class="grid gap-4 md:grid-cols-3">
                     <x-stat-card label="Total billed" :value="$compactMoney((float) $financeSnapshot['totalBilled'])" accent="gold" />
 
                     <x-stat-card label="Total collected" :value="$compactMoney((float) $financeSnapshot['totalCollected'])" accent="green" />

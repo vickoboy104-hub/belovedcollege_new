@@ -39,7 +39,8 @@
     border-left: 1px solid var(--theme-border, rgba(203, 213, 225, 0.95)) !important;
 }
 
-.admin-data-table.has-multiple-row-actions .table-action-column {
+.admin-data-table.has-multiple-row-actions .table-action-column,
+.admin-data-table.has-multiple-row-actions.has-sticky-actions :is(thead th, tbody td):last-child:not([colspan]) {
     width: 10.5rem !important;
     min-width: 10.5rem !important;
     max-width: 10.5rem !important;
@@ -110,6 +111,13 @@ html.theme-dark-corporate .admin-data-table tbody tr:focus-within .table-action-
     justify-content: center !important;
     gap: 0.35rem !important;
     width: 100% !important;
+    /* A percentage width resolves against the table column, which the buttons'
+       own min-content width keeps too wide; cap it so wrapping can engage. */
+    max-width: 8.5rem !important;
+}
+
+.admin-data-table.has-multiple-row-actions .table-action-column .table-action-group {
+    max-width: 10.5rem !important;
 }
 
 .admin-data-table .table-action-column :is(.table-view-btn, .table-delete-btn, .table-toggle-btn, .table-mini-link, .btn) {

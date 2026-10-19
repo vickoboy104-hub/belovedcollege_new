@@ -3003,6 +3003,12 @@ body,
     min-width: 280px !important;
 }
 
+/* Inside a shared data table the actions column is a fixed 136/168px pinned
+   cell, so the blanket 280px floor must not apply or the buttons overflow it. */
+.app-shell .admin-data-table .table-action-column .table-action-group {
+    min-width: 0 !important;
+}
+
 .app-shell .table-mini-link {
     display: inline-flex !important;
     align-items: center !important;
@@ -3169,7 +3175,8 @@ body,
 }
 
 .app-shell .landing-slide-body {
-    display: grid !important;
+    /* No !important on display: Alpine's x-show sets it inline to collapse the slide. */
+    display: grid;
     grid-template-columns: minmax(0, 1.35fr) minmax(260px, 0.65fr) !important;
     gap: 18px !important;
     padding: 18px !important;
@@ -3183,7 +3190,8 @@ body,
 }
 
 .app-shell .landing-slide-fields label {
-    display: flex !important;
+    /* display stays non-important so Alpine's x-show can hide the custom-link rows. */
+    display: flex;
     flex-direction: column !important;
     gap: 6px !important;
     margin: 0 !important;

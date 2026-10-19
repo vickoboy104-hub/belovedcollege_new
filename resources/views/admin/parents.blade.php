@@ -111,6 +111,26 @@
                         </td>
                     </tr>
                 @endforelse
+                <x-slot name="paginationSlot">
+                    <div class="admin-table-footer">
+                        <div class="admin-table-count">
+                            @if ($parentRows->total() > 0)
+                                Showing {{ $parentRows->firstItem() }}-{{ $parentRows->lastItem() }} of {{ $parentRows->total() }} parents
+                            @else
+                                No parent records
+                            @endif
+                        </div>
+                        @if ($parentRows->hasPages())
+                            <div class="admin-pagination">
+                                <a class="admin-page-btn {{ $parentRows->onFirstPage() ? 'is-disabled' : '' }}" href="{{ $parentRows->previousPageUrl() ?: '#' }}">Previous</a>
+                                @for ($page = 1; $page <= $parentRows->lastPage(); $page++)
+                                    <a class="admin-page-btn {{ $page === $parentRows->currentPage() ? 'is-active' : '' }}" href="{{ $parentRows->url($page) }}">{{ $page }}</a>
+                                @endfor
+                                <a class="admin-page-btn {{ $parentRows->hasMorePages() ? '' : 'is-disabled' }}" href="{{ $parentRows->nextPageUrl() ?: '#' }}">Next</a>
+                            </div>
+                        @endif
+                    </div>
+                </x-slot>
             </x-data-table>
         </div>
 
@@ -192,6 +212,25 @@
             @empty
                 <x-empty-state title="No parent records found" description="Search returned no parent or guardian records matching those parameters." icon="parents" />
             @endforelse
+
+            <div class="admin-table-footer mt-4">
+                <div class="admin-table-count">
+                    @if ($parentRows->total() > 0)
+                        Showing {{ $parentRows->firstItem() }}-{{ $parentRows->lastItem() }} of {{ $parentRows->total() }} parents
+                    @else
+                        No parent records
+                    @endif
+                </div>
+                @if ($parentRows->hasPages())
+                    <div class="admin-pagination">
+                        <a class="admin-page-btn {{ $parentRows->onFirstPage() ? 'is-disabled' : '' }}" href="{{ $parentRows->previousPageUrl() ?: '#' }}">Previous</a>
+                        @for ($page = 1; $page <= $parentRows->lastPage(); $page++)
+                            <a class="admin-page-btn {{ $page === $parentRows->currentPage() ? 'is-active' : '' }}" href="{{ $parentRows->url($page) }}">{{ $page }}</a>
+                        @endfor
+                        <a class="admin-page-btn {{ $parentRows->hasMorePages() ? '' : 'is-disabled' }}" href="{{ $parentRows->nextPageUrl() ?: '#' }}">Next</a>
+                    </div>
+                @endif
+            </div>
         </div>
     </section>
 

@@ -96,7 +96,7 @@
                                 <p class="text-xs font-semibold text-slate-400 mt-1">Manage departmental groups, active assignments, and payroll accounts.</p>
                             </div>
                             <div class="bg-blue-50 text-blue-700 px-4 py-3 rounded-2xl border border-blue-100 shrink-0 text-center">
-                                <div class="text-[9px] font-extrabold uppercase tracking-wider text-blue-500">Active Count</div>
+                                <div class="text-[9px] font-extrabold uppercase tracking-wider text-blue-700">Active Count</div>
                                 <div class="display-font text-2xl font-black mt-0.5">{{ $staff->count() }}</div>
                             </div>
                         </div>

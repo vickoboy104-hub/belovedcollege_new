@@ -46,12 +46,12 @@
     @include('partials.theme-head')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @include('partials.theme-overrides')
-    <link rel="stylesheet" href="{{ asset('portal-refresh.css') }}?v=20260706-overflow-fix">
+    <link rel="stylesheet" href="{{ asset('portal-refresh.css') }}?v=20261019-phase2-admin-2">
     <link rel="stylesheet" href="{{ asset('ui-stability.css') }}?v=20260710-ui-audit-1">
     <link rel="stylesheet" href="{{ asset('theme-variants.css') }}?v=20260714-theme-variants-1">
     <link rel="stylesheet" href="{{ asset('theme-public-variants.css') }}?v=20260714-theme-public-variants-1">
     <link rel="stylesheet" href="{{ asset('ui-contrast-audit.css') }}?v=20260827-ui-contrast-audit-2">
-    <link rel="stylesheet" href="{{ asset('global-ui-density-fixes.css') }}?v=20260926-global-ui-1">
+    <link rel="stylesheet" href="{{ asset('global-ui-density-fixes.css') }}?v=20261019-phase2-admin-2">
 </head>
 <body class="antialiased">
     @php
