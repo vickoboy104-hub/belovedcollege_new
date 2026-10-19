@@ -728,8 +728,7 @@
     gap: 20px;
 }
 
-.admin-toolbar-controls,
-.directory-toolbar {
+.admin-toolbar-controls {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -738,21 +737,12 @@
     min-width: min(100%, 560px);
 }
 
-.directory-toolbar {
-    justify-content: flex-start;
-    min-width: 0;
-}
-
-.directory-toolbar .theme-input,
-.directory-toolbar input,
-.directory-toolbar select,
 .admin-toolbar-controls .theme-input,
 .admin-toolbar-controls input,
 .admin-toolbar-controls select {
     min-width: 180px;
 }
 
-.directory-toolbar input[name="search"],
 .admin-toolbar-controls input[name="search"] {
     min-width: min(100%, 280px);
     flex: 1 1 280px;
@@ -1725,14 +1715,12 @@ body.entity-preview-open {
         flex-direction: column;
     }
 
-    .admin-toolbar-controls,
-    .directory-toolbar {
+    .admin-toolbar-controls {
         width: 100%;
         justify-content: stretch;
     }
 
-    .admin-toolbar-controls > *,
-    .directory-toolbar > * {
+    .admin-toolbar-controls > * {
         flex: 1 1 180px;
     }
 }
@@ -2096,17 +2084,10 @@ body.entity-preview-open {
         font-size: 0.72rem !important;
     }
 
-    .app-shell .admin-toolbar-layout,
-    .app-shell .directory-toolbar {
+    .app-shell .admin-toolbar-layout {
         gap: 0.65rem !important;
     }
 
-    .app-shell .directory-toolbar {
-        display: grid;
-        grid-template-columns: 1fr;
-    }
-
-    .app-shell .directory-toolbar > *,
     .app-shell .admin-toolbar-controls > * {
         min-width: 0 !important;
         width: 100%;
@@ -2830,7 +2811,6 @@ body,
 }
 
 .app-shell .table-toolbar,
-.app-shell .directory-toolbar,
 .app-shell .admin-toolbar-controls {
     display: grid !important;
     grid-template-columns: minmax(260px, 1fr) repeat(auto-fit, minmax(150px, max-content)) !important;
@@ -2838,8 +2818,7 @@ body,
     gap: 12px !important;
 }
 
-.app-shell .table-toolbar > input,
-.app-shell .directory-toolbar > input {
+.app-shell .table-toolbar > input {
     min-width: min(100%, 320px) !important;
 }
 
@@ -3359,7 +3338,6 @@ body,
     }
 
     .app-shell .table-toolbar,
-    .app-shell .directory-toolbar,
     .app-shell .admin-toolbar-controls {
         grid-template-columns: 1fr !important;
     }

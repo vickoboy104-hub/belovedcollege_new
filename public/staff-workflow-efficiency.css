@@ -253,6 +253,23 @@
     box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
 }
 
+/* Below the tablet breakpoint the save bar is docked above the fixed portal nav.
+   position:sticky cannot do this here: the nearest clip/scroll ancestor is the
+   document body, so a sticky "bottom" offset is measured against the end of the
+   document and the bar never leaves its flow position. */
+@media (max-width: 1023px) {
+    .workflow-sticky-footer {
+        position: fixed;
+        inset-inline: 0.75rem;
+        bottom: calc(0.55rem + var(--mobile-bottom-nav-height, 70px));
+        z-index: 50;
+    }
+
+    .workflow-bulk-panel:has(.workflow-sticky-footer) {
+        padding-bottom: 6.5rem;
+    }
+}
+
 /* Reduce unnecessarily tall teacher operational cards while keeping touch targets. */
 .route-teacher-learning .card[class*="p-6"],
 .route-teacher-learning .rounded-\[18px\][class*="p-5"],

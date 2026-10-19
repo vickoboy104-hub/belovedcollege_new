@@ -441,7 +441,6 @@
     .beloved-band-btn,
     .theme-button,
     .theme-button-secondary {
-        min-height: 2.42rem !important;
         border-radius: var(--ui-radius-sm) !important;
         padding: 0.68rem 1rem !important;
         font-size: 0.78rem !important;
