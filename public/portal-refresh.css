@@ -2813,7 +2813,7 @@ body,
 .app-shell .table-toolbar,
 .app-shell .admin-toolbar-controls {
     display: grid !important;
-    grid-template-columns: minmax(260px, 1fr) repeat(auto-fit, minmax(150px, max-content)) !important;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)) !important;
     align-items: center !important;
     gap: 12px !important;
 }
@@ -4465,6 +4465,17 @@ main.portal-main {
     color: #0f172a !important;
 }
 
+/* Public events sidebar CTA: the surface list repaints this box white but the
+   theme sheet still paints its text white, so the heading was invisible. */
+.public-shell .beloved-events-cta-box h3,
+.public-content-shell .beloved-events-cta-box h3 {
+    color: #0f172a !important;
+}
+.public-shell .beloved-events-cta-box p,
+.public-content-shell .beloved-events-cta-box p {
+    color: #334155 !important;
+}
+
 /* Public section titles: always dark readable headings */
 .public-shell .beloved-sec-title,
 .public-content-shell .beloved-sec-title {
@@ -4670,4 +4681,109 @@ button[type="submit"].theme-button {
 }
 .badge-neutral, .badge-draft, .badge-inactive {
     background: #f1f5f9 !important; color: #475569 !important; border-color: #cbd5e1 !important;
+}
+
+/* ─── Public site pass ───────────────────────────────────────────────────── */
+
+/* The utility strip is a fixed brand surface, but a light theme variant was
+   painting it white while the contact text stayed 78% white, so the school
+   phone and address were invisible. */
+.public-shell .classic-topbar {
+    background: #08243f !important;
+    color: rgba(255, 255, 255, 0.82) !important;
+}
+
+.public-shell .classic-topbar a {
+    color: rgba(255, 255, 255, 0.82) !important;
+}
+
+.public-shell .classic-topbar a:hover {
+    color: #ffffff !important;
+}
+
+.public-shell .classic-topbar .public-staff-login-button {
+    background: rgba(255, 255, 255, 0.14) !important;
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    color: #ffffff !important;
+}
+
+/* Gold kickers and rating stars measured 1.6:1 on the light sections. */
+.public-shell :is(.beloved-eyebrow, .beloved-testi-card__stars) {
+    color: #b45309 !important;
+}
+
+/* The slide picker rendered 16px-tall buttons. */
+.public-shell .beloved-slider-labels button {
+    min-height: 44px;
+    padding: 0 0.5rem;
+    font-size: 0.75rem !important;
+}
+
+.public-shell .nav-brand-subtitle {
+    font-size: 0.75rem !important;
+}
+
+/* At 390px the tagline lost its last four characters to an ellipsis; tightening
+   the tracking rather than hiding it keeps the brand line complete. */
+@media (max-width: 480px) {
+    .public-shell .nav-brand-subtitle {
+        font-size: 0.62rem !important;
+        letter-spacing: 0.04em !important;
+    }
+}
+
+@media (max-width: 1024px) {
+    .public-shell .public-nav-pill {
+        min-height: 44px !important;
+    }
+}
+
+/* Page-level click/tap targets. theme-overrides.blade.php caps these at 2.42rem
+   with !important, so the mirror of the .app-shell rule needs both the higher
+   specificity and the important flag. */
+.public-shell :is(.theme-button, .theme-button-secondary, .beloved-btn, .beloved-band-btn) {
+    min-height: 44px !important;
+}
+
+.public-shell select.theme-input {
+    min-height: 44px;
+}
+
+/* The newsletter row is hand-styled in app.css, not a theme-button. */
+.public-shell .beloved-newsletter-band__form :is(button, input) {
+    min-height: 44px;
+}
+
+/* Utility-strip links render at 17px because the strip is a thin band. Give them
+   a 24px inline-flex box on a pointer and the full touch floor below 1024px. */
+.public-shell :is(.classic-topbar__contacts, .classic-topbar__links) a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 24px;
+}
+
+@media (max-width: 1024px) {
+    .public-shell :is(.classic-topbar__contacts, .classic-topbar__links) a {
+        min-height: 44px;
+    }
+}
+
+/* The slide arrows are plain buttons in a 36px box; the pause control is hidden,
+   so it must not be dragged up to the touch floor. */
+.public-shell .beloved-slider-arrows button:not(.beloved-slider-pause) {
+    min-height: 44px;
+    min-width: 44px;
+}
+
+/* The pause control is a text pill, so it only needs the height floor. */
+@media (max-width: 1024px) {
+    .public-shell .beloved-slider-pause {
+        min-height: 44px;
+    }
+}
+
+.public-shell .public-brand-link,
+.public-shell .hamburger-button {
+    min-height: 44px;
+    min-width: 44px;
 }

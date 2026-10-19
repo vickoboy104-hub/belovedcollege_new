@@ -433,6 +433,13 @@ html.theme-dark-corporate .app-shell .announcement-item h3 {
     height: 44px !important;
 }
 
+/* The drawer toggle renders at 2.45rem in app.css; min-height raises the box
+   without touching the icon geometry inside it. */
+.app-shell .hamburger-button {
+    min-height: 44px;
+    min-width: 44px;
+}
+
 .app-shell .app-sidebar-child-link,
 .app-shell .metric-link {
     display: flex;

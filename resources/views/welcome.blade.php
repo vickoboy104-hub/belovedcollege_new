@@ -189,10 +189,13 @@
                             <span></span>
                             {{ $slide['eyebrow'] }}
                         </div>
-                        <h1 class="beloved-slide__title">
+                        {{-- Only the first slide owns the page heading; the other
+                             four are alternate states of the same hero. --}}
+                        @php $titleTag = $index === 0 ? 'h1' : 'h2'; @endphp
+                        <{{ $titleTag }} class="beloved-slide__title">
                             {{ $slide['title'] }}<br>
                             <em>{{ $slide['emphasis'] }}</em>
-                        </h1>
+                        </{{ $titleTag }}>
                         <p class="beloved-slide__sub">{{ $slide['text'] }}</p>
                         <div class="beloved-slide__actions">
                             <a href="{{ $slide['primary_link'] }}" class="beloved-btn beloved-btn--gold">

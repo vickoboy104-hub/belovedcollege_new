@@ -71,6 +71,16 @@
     color: var(--theme-primary, #1d4ed8) !important;
 }
 
+/* Result checker is a standalone page, so the portal touch-target rules never
+   reach it and theme-overrides caps its submit button at 2.42rem. */
+.result-checker-page :is(.theme-button, .theme-button-secondary) {
+    min-height: 44px !important;
+}
+
+.result-checker-page select.theme-input {
+    min-height: 44px;
+}
+
 /* Public home program/department image labels sit over photography. Give the
    pill an opaque-enough surface and dark text in light themes so PROGRAM,
    DEPARTMENT, PORTAL and VALUES remain readable regardless of the image. */

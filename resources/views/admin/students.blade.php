@@ -147,13 +147,6 @@
             <div class="student-directory-shell">
                 @if ($activeStudentView === 'directory')
                     <div>
-                        <div class="section-header mb-4">
-                            <div>
-                                <h2 class="section-title">Student Directory</h2>
-                                <p class="section-description">Search, filter, and manage registered students.</p>
-                            </div>
-                        </div>
-
                         <div class="desktop-only-table">
                             <x-data-table :headers="['Student', 'Admission No', 'Student ID', 'Class', 'Guardian', 'Phone', 'Status', 'Actions']">
                                 @forelse ($students as $student)

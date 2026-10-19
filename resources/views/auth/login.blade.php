@@ -30,8 +30,8 @@
 
 <x-guest-layout>
     <div class="auth-login-header">
-        <p class="auth-form-kicker">{{ $config['title'] }}</p>
-        <h1 class="display-font mt-3 text-3xl font-bold text-slate-950">{{ $config['title'] }}</h1>
+        {{-- The guest layout already owns the page <h1>; this card is its section. --}}
+        <h2 class="display-font mt-3 text-3xl font-bold text-slate-950">{{ $config['title'] }}</h2>
         <p class="mt-3 text-sm leading-7 text-slate-600">{{ $config['subtitle'] }}</p>
 
         <div class="auth-segment mt-5">
