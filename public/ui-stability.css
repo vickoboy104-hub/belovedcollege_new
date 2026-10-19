@@ -122,7 +122,16 @@ iframe {
 .page-header > :first-child,
 .page-header-content > :first-child {
     min-width: 0;
-    flex: 1 1 24rem;
+    flex: 1 1 auto;
+}
+
+/* The 24rem basis only makes sense while the header is a row; below 1024px it becomes a 384px-tall title block. */
+@media (min-width: 1024px) {
+    .admin-page-header > :first-child,
+    .page-header > :first-child,
+    .page-header-content > :first-child {
+        flex-basis: 24rem;
+    }
 }
 
 .page-actions,
