@@ -45,7 +45,7 @@
 /* Shared admin and teacher workspaces: compact filters, forms and data tables. */
 .app-shell .admin-page-content { padding: clamp(0.8rem, 1.6vw, 1.25rem); gap: 1rem; }
 .app-shell .admin-page-header { gap: 0.8rem; }
-.app-shell .admin-page-header h1 { font-size: clamp(1.35rem, 2vw, 1.7rem); }
+.app-shell .admin-page-header h1 { font-size: clamp(1.15rem, 1.6vw, 1.4rem); }
 .app-shell .admin-page-header .page-description { margin-top: 0.25rem; line-height: 1.4; }
 .app-shell .admin-toolbar-card, .app-shell .form-section { border-radius: 0.85rem; }
 .app-shell .admin-toolbar-card .section-header { margin-bottom: 0.6rem; }
@@ -512,4 +512,79 @@ html.theme-dark-corporate .app-shell main :is([class*="text-slate-300"], [class*
 .app-shell .app-sidebar-link > span[class*="transition-transform"] {
     flex: 0 0 auto;
     margin-right: 0 !important;
+}
+
+/* ─── Labels-only density pass ────────────────────────────────────────────────
+   The helper prose that used to fill these boxes is gone, so headers, cards,
+   forms and controls shrink to the label and data that remain. */
+.app-shell .admin-page-content { padding: clamp(0.55rem, 1.1vw, 0.9rem); gap: 0.7rem; }
+.app-shell .admin-page-header { gap: 0.6rem; }
+.app-shell .admin-page-header .page-meta {
+    margin: 0.16rem 0 0;
+    font-size: 0.76rem;
+    font-weight: 700;
+    line-height: 1.35;
+    color: var(--theme-muted, #5b6b82);
+}
+.app-shell .page-actions { gap: 0.45rem; }
+
+.app-shell :is(.admin-panel.section-card-panel, .form-section, .admin-toolbar-card,
+    .admin-table-card, .admin-workspace-card) { border-radius: 0.85rem !important; }
+.app-shell .admin-panel.section-card-panel { padding: 0.8rem 0.9rem !important; }
+.app-shell .form-section { padding: 0.85rem 0.9rem !important; }
+.app-shell .admin-toolbar-card { padding: 0.7rem 0.85rem !important; }
+
+.app-shell .section-header { align-items: center; gap: 0.6rem; }
+.app-shell .section-card-panel > .section-header {
+    padding-bottom: 0.45rem !important;
+    margin-bottom: 0.6rem !important;
+}
+.app-shell .form-section-header { padding-bottom: 0.45rem; margin-bottom: 0.7rem; }
+.app-shell .section-title { font-size: 0.98rem; line-height: 1.25; }
+.app-shell .section-header .icon-box {
+    width: 1.9rem !important;
+    height: 1.9rem !important;
+    border-radius: 0.55rem !important;
+}
+.app-shell .section-header .icon-box .app-icon { width: 1rem; height: 1rem; }
+
+.app-shell .form-stack { gap: 0.7rem; }
+.app-shell .form-grid { gap: 0.7rem; }
+.app-shell .form-group { gap: 0.28rem; }
+.app-shell .form-actions { padding-top: 0.6rem; margin-top: 0.7rem; gap: 0.45rem; }
+.app-shell :is(.form-group label, .form-label) { font-size: 11px; }
+
+.app-shell :is(.table-toolbar, .admin-toolbar-controls) {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)) !important;
+    gap: 0.5rem !important;
+}
+.app-shell .quick-action-card { min-height: 0 !important; padding: 0.55rem 0.65rem !important; }
+.app-shell .metric-card { min-height: 0 !important; padding: 0.8rem 0.9rem !important; }
+.app-shell .empty-state { padding: 1.1rem 0.9rem !important; border-radius: 0.8rem !important; }
+.app-shell .empty-state-icon {
+    width: 2.4rem;
+    height: 2.4rem;
+    margin-bottom: 0.55rem;
+    border-radius: 0.7rem;
+}
+.app-shell .empty-state-icon .app-icon { width: 1.05rem; height: 1.05rem; }
+.app-shell .empty-state h3 { font-size: 0.92rem; }
+.app-shell :is(.admin-data-table thead th, .admin-data-table tbody td) { padding: 0.5rem 0.65rem !important; }
+
+/* Search / Open Report / Reset is wider than one 390px grid track, so the group
+   takes its own row and each label keeps its full text. */
+@media (max-width: 639px) {
+    .app-shell .admin-toolbar-controls > .report-quick-search-field {
+        grid-column: 1 / -1 !important;
+    }
+    .app-shell .admin-toolbar-controls > .admin-report-actions {
+        grid-column: 1 / -1 !important;
+        display: flex !important;
+        gap: 0.4rem !important;
+    }
+    .app-shell .admin-report-actions > :is(a, button) {
+        flex: 1 1 auto !important;
+        padding-inline: 0.55rem !important;
+        font-size: 0.74rem !important;
+    }
 }

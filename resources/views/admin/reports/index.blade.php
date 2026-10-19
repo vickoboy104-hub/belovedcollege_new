@@ -40,7 +40,7 @@
 
     <div class="mb-8">
         <x-filter-card title="Find a student report instantly" :action="$currentIndexRoute">
-            <div class="flex flex-col gap-1.5 md:col-span-2">
+            <div class="report-quick-search-field flex flex-col gap-1.5 md:col-span-2">
                 <label for="report-student-search" class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Student quick search</label>
                 <input
                     id="report-student-search"
