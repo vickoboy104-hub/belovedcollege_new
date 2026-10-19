@@ -21,7 +21,7 @@
     @include('partials.theme-head')
     @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/print.css'])
     @include('partials.theme-overrides')
-    <link rel="stylesheet" href="{{ asset('portal-refresh.css') }}?v=20261019-phase4-public-3">
+    <link rel="stylesheet" href="{{ asset('portal-refresh.css') }}?v=20261019-gap1-tablet-6">
     <link rel="stylesheet" href="{{ asset('ui-stability.css') }}?v=20260710-ui-audit-1">
     <link rel="stylesheet" href="{{ asset('table-usability.css') }}?v=20260714-sticky-actions-2">
     <link rel="stylesheet" href="{{ asset('interface-corrections.css') }}?v=20260712-dashboard-table-1">
