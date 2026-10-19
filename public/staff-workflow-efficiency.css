@@ -62,19 +62,6 @@
     padding: 0.65rem 0.75rem;
 }
 
-.workflow-helper {
-    font-size: 0.76rem;
-    font-weight: 650;
-    line-height: 1.4;
-    color: #64748b;
-}
-
-.workflow-helper-block {
-    border: 1px solid #dbe4f0;
-    background: #f8fafc;
-    border-radius: 0.75rem;
-    padding: 0.65rem 0.75rem;
-}
 
 .workflow-quick-actions {
     display: flex;

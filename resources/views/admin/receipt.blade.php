@@ -46,7 +46,6 @@
         <div class="mb-6 flex flex-wrap items-center justify-between gap-4 no-print bg-white/80 backdrop-blur border border-[#c8d6ea] rounded-2xl px-6 py-4.5 shadow-sm">
             <div>
                 <h2 class="font-bold text-slate-900 text-sm">Official Receipt Ready</h2>
-                <p class="text-xs text-slate-500 mt-0.5">Click Print below to generate a hardcopy or download a PDF.</p>
             </div>
             <div class="flex flex-wrap gap-2.5">
                 <button type="button" onclick="openPrintSettings('#main-print-card', { itemsPerPage: 1, duplicate: true })" class="ps-trigger-btn">

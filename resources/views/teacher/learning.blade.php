@@ -349,7 +349,7 @@
                         <input type="checkbox" name="cbt_show_results" value="1" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
                         <div>
                             <p class="text-slate-800 font-extrabold">Instant Results Release</p>
-                            <p class="text-slate-500 font-medium text-[10px] mt-0.5">Let students view their scored objective answers immediately after final submission.</p>
+
                         </div>
                     </label>
                     <x-slot name="actions">

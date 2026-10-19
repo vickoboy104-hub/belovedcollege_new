@@ -306,7 +306,6 @@
                 <div x-data="{ selectedClassId: '{{ $classes->first()?->id ?? '' }}' }" class="space-y-6">
                     <div class="card bg-white border border-[#c8d6ea] rounded-[18px] p-6 shadow-[0_10px_25px_rgba(15,23,42,0.08)]">
                         <h3 class="display-font text-lg font-bold text-slate-900 leading-snug">Existing class setups</h3>
-                        <p class="text-xs font-semibold text-slate-400 mt-1 mb-4">Configure class directories, edit room slots, and update assigned educational managers.</p>
                         
                         <!-- Premium Class Selector Tabs -->
                         <div class="flex flex-wrap gap-2 pt-4 border-t border-slate-100">

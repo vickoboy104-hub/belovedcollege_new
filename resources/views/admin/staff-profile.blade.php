@@ -143,7 +143,6 @@
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 pb-4 mb-6">
                 <div>
                     <h3 class="display-font text-lg font-bold text-slate-900 leading-snug">Edit Staff Profile Details</h3>
-                    <p class="text-xs font-semibold text-slate-500 mt-1">Configure identity, roles, qualifications, and system privileges.</p>
                 </div>
                 <div class="flex flex-wrap gap-1.5 bg-slate-100/80 p-1 rounded-xl shrink-0">
                     <button type="button" @click="tab = 'identity'" class="px-3 py-1.5 rounded-lg text-xs font-bold transition duration-150" :class="tab === 'identity' ? 'bg-[#071833] text-white shadow-sm' : 'text-slate-600 hover:text-slate-900'">Identity</button>

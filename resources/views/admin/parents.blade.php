@@ -34,7 +34,6 @@
         <div class="section-header border-b border-slate-100 pb-5 mb-4">
             <div>
                 <h2 class="section-title">Parent directory</h2>
-                <p class="section-description">Each parent account shows contact details, linked children, and class spread across families.</p>
             </div>
         </div>
 

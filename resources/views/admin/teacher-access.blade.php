@@ -35,7 +35,6 @@
                     <div class="mb-3 flex items-start justify-between gap-3">
                         <div>
                             <h4 class="text-sm font-extrabold text-slate-900">Teachers</h4>
-                            <p class="mt-1 text-xs text-slate-500">Select individual teachers or apply the permission to every active teacher.</p>
                         </div>
                         <span class="rounded-full bg-white px-2.5 py-1 text-[10px] font-black text-slate-500 shadow-sm">{{ $teachers->count() }}</span>
                     </div>
@@ -79,7 +78,6 @@
                     <div class="mb-3 flex items-start justify-between gap-3">
                         <div>
                             <h4 class="text-sm font-extrabold text-slate-900">Classes</h4>
-                            <p class="mt-1 text-xs text-slate-500">Choose the class groups where the selected teachers may work.</p>
                         </div>
                         <span class="rounded-full bg-white px-2.5 py-1 text-[10px] font-black text-slate-500 shadow-sm">{{ $classes->count() }}</span>
                     </div>
@@ -108,7 +106,6 @@
                     <div class="mb-3 flex items-start justify-between gap-3">
                         <div>
                             <h4 class="text-sm font-extrabold text-slate-900">Subjects</h4>
-                            <p class="mt-1 text-xs text-slate-500">Select as many subjects as the teacher or teacher group should manage.</p>
                         </div>
                         <span class="rounded-full bg-white px-2.5 py-1 text-[10px] font-black text-slate-500 shadow-sm">{{ $subjects->count() }}</span>
                     </div>

@@ -59,7 +59,6 @@
                         <option value="{{ $studentOption['label'] }}">{{ $studentOption['className'] }}</option>
                     @endforeach
                 </datalist>
-                <p class="text-[11px] font-semibold text-slate-500">Type freely and click Search, or open a matching report directly from the suggestion list.</p>
             </div>
 
             <div class="flex flex-col gap-1.5">

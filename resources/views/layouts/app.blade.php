@@ -35,10 +35,10 @@
     <link rel="stylesheet" href="{{ asset('ui-contrast-audit.css') }}?v=20261019-phase4-targets-1">
     <link rel="stylesheet" href="{{ asset('payment-selection.css') }}?v=20260827-payment-flow-1">
     <link rel="stylesheet" href="{{ asset('global-ui-density-fixes.css') }}?v=20261019-phase4-targets-2">
-    <link rel="stylesheet" href="{{ asset('staff-workflow-efficiency.css') }}?v=20261019-footer-nav-offset-1">
+    <link rel="stylesheet" href="{{ asset('staff-workflow-efficiency.css') }}?v=20261019-labels-only-1">
     <link rel="stylesheet" href="{{ asset('teacher-submissions-workflow.css') }}?v=20261019-phase3-targets-1">
     @if (request()->routeIs('admin.reports.index'))
-        <script src="{{ asset('report-search-behavior.js') }}?v=20261019-open-report-restore-2"></script>
+        <script src="{{ asset('report-search-behavior.js') }}?v=20261019-labels-only-1"></script>
     @endif
 </head>
 @php
@@ -102,7 +102,7 @@
     @endif
     @if (request()->routeIs('teacher.*'))
         <script src="{{ asset('teacher-access-filter.js') }}?v=20260714-teacher-access-1"></script>
-        <script src="{{ asset('staff-workflow-efficiency.js') }}?v=20260831-staff-workflow-1"></script>
+        <script src="{{ asset('staff-workflow-efficiency.js') }}?v=20261019-labels-only-1"></script>
         <script src="{{ asset('teacher-submissions-workflow.js') }}?v=20260831-submissions-workflow-2"></script>
     @endif
     @isset($paymentGatewayCatalog)

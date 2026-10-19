@@ -45,7 +45,6 @@
                 <div class="auth-copy-body">
                     <p class="auth-kicker">School Portal</p>
                     <h1 class="display-font mt-4 text-4xl font-bold leading-tight" style="color: var(--theme-text-dark-card, #ffffff);">A secure workspace for learning, teaching, and school records.</h1>
-                    <p class="mt-5 max-w-xl text-sm leading-7" style="color: rgba(255,255,255,0.74);">Students and staff can sign in to continue from the right portal. Guest visitors can return to the school website for admissions, contact, and public information.</p>
                     <div class="mt-8 flex flex-wrap gap-3">
                         <a href="{{ route('home') }}" class="auth-copy-link">School Website</a>
                         <a href="{{ route('contact') }}" class="auth-copy-link">Contact Office</a>

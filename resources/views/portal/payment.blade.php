@@ -43,7 +43,6 @@
                 <div>
                     <p class="text-[10px] font-black uppercase tracking-[0.18em] text-amber-300">Financial account</p>
                     <h2 class="mt-1 text-lg font-black !text-white">Choose what you want to pay</h2>
-                    <p class="mt-1 text-xs font-semibold text-slate-200">One fee or several fees can be settled in one checkout.</p>
                 </div>
                 <div class="rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 sm:text-right">
                     <p class="text-[10px] font-black uppercase tracking-wider text-slate-200">Outstanding Balance</p>
@@ -68,7 +67,6 @@
                     <div class="mb-3 flex items-center justify-between gap-3">
                         <div>
                             <h3 class="text-sm font-black text-[#071833]">Select fees</h3>
-                            <p class="mt-1 text-xs font-semibold text-slate-500">Tap the items you want to settle now.</p>
                         </div>
                         <button type="button" class="text-xs font-black text-blue-700" @click="selectedInvoices = selectedInvoices.length === Object.keys(totals).length ? [] : Object.keys(totals)">
                             <span x-text="selectedInvoices.length === Object.keys(totals).length ? 'Clear all' : 'Select all'"></span>
@@ -112,7 +110,7 @@
                 </div>
 
                 <div x-show="step === 2" x-cloak x-transition.opacity>
-                    <div class="mb-4"><h3 class="text-sm font-black text-[#071833]">Choose Payment Method</h3><p class="mt-1 text-xs font-semibold text-slate-500">Choose how you want to pay. The school selects the secure provider in the background.</p></div>
+                    <div class="mb-4"><h3 class="text-sm font-black text-[#071833]">Choose Payment Method</h3></div>
                     <div class="grid gap-3 sm:grid-cols-2">
                         @foreach ($paymentMethods as $paymentMethod)
                             @php
@@ -157,7 +155,7 @@
         </section>
 
         <section class="rounded-[20px] border border-slate-200 bg-white p-5 shadow-sm">
-            <div class="mb-4"><h3 class="text-sm font-black text-[#071833]">Recent receipts</h3><p class="mt-1 text-xs font-semibold text-slate-500">Confirmed transactions for this student only.</p></div>
+            <div class="mb-4"><h3 class="text-sm font-black text-[#071833]">Recent receipts</h3></div>
             <div class="grid gap-3 sm:grid-cols-2">
                 @forelse ($payments->filter(fn ($payment) => $payment->status->value === 'paid')->take(6) as $payment)
                     <a href="{{ route('payments.receipt', $payment) }}" target="_blank" class="rounded-xl border border-slate-200 p-4 transition hover:border-blue-300 hover:bg-blue-50/30"><div class="flex items-center justify-between gap-3"><span class="text-sm font-black text-[#071833]">NGN {{ number_format((float) $payment->amount, 2) }}</span><span class="text-xs font-black text-blue-700">Receipt →</span></div><p class="mt-1 text-[10px] font-semibold text-slate-500">{{ $payment->channel ? str($payment->channel)->replace('-', ' ')->title() : $payment->provider->label() }} • {{ $payment->paid_at?->format('d M Y') }}</p></a>

@@ -92,7 +92,6 @@
                         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 pb-5">
                             <div>
                                 <h2 class="display-font text-xl font-bold text-slate-900 leading-snug">Staff directory by department</h2>
-                                <p class="text-xs font-semibold text-slate-400 mt-1">Manage departmental groups, active assignments, and payroll accounts.</p>
                             </div>
                             <div class="bg-blue-50 text-blue-700 px-4 py-3 rounded-2xl border border-blue-100 shrink-0 text-center">
                                 <div class="text-[9px] font-extrabold uppercase tracking-wider text-blue-700">Active Count</div>
@@ -252,7 +251,6 @@
                         <div class="flex items-center justify-between gap-4 border-b border-slate-100 pb-4">
                             <div>
                                 <h2 class="display-font text-xl font-bold text-slate-900 leading-snug">Payroll administration desk</h2>
-                                <p class="text-xs font-semibold text-slate-400 mt-1">Summary billing, salaries setup, and monthly school budget metrics.</p>
                             </div>
                             <x-status-badge status="Active" />
                         </div>
@@ -393,7 +391,6 @@
                         <div class="flex items-center justify-between gap-4 border-b border-slate-100 pb-4">
                             <div>
                                 <h2 class="display-font text-xl font-bold text-slate-900 leading-snug">Class teacher allocation</h2>
-                                <p class="text-xs font-semibold text-slate-400 mt-1">Review assigned class teachers, capacities, and classrooms.</p>
                             </div>
                             <x-action-button variant="secondary" :href="route('admin.academics', ['section' => 'class-setup'])">Class Setup</x-action-button>
                         </div>

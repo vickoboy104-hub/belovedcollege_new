@@ -511,7 +511,6 @@
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h2 class="display-font text-2xl font-bold text-slate-950">Payment Channels & Providers Breakdown</h2>
-                    <p class="text-sm text-slate-500 mt-1">Monitor daily collection patterns, gateway provider volume, and payment channels.</p>
                 </div>
                 <x-action-button href="{{ route('admin.finance', ['section' => 'record-payment']) }}" variant="secondary" icon="finance">
                     Record new payment

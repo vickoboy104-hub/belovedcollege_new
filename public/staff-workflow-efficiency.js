@@ -44,13 +44,13 @@
         return select;
     };
 
-    const updateSectionHeading = (form, title, description) => {
+    const updateSectionHeading = (form, title) => {
         const section = form.closest('.form-section');
         if (!section) return null;
         const heading = section.querySelector('.form-section-header .section-title');
         const copy = section.querySelector('.form-section-header .section-description');
         if (heading) heading.textContent = title;
-        if (copy) copy.textContent = description;
+        if (copy) copy.remove();
         return section;
     };
 
@@ -154,8 +154,7 @@
         form.dataset.bulkEnhanced = '1';
         const section = updateSectionHeading(
             form,
-            'Class Attendance Register',
-            'Choose a class and date, mark the whole roster on one screen, then save once.'
+            'Class Attendance Register'
         );
         if (!section) return false;
 
@@ -187,14 +186,13 @@
         panel.append(toolbar);
 
         const quickBar = element('div', 'workflow-quickbar');
-        const helper = element('div', 'workflow-helper', 'Tip: mark everyone Present first, then change only the exceptions.');
         const actions = element('div', 'workflow-quick-actions');
         const allPresent = element('button', 'workflow-secondary-button', 'Mark all Present');
         allPresent.type = 'button';
         const allAbsent = element('button', 'workflow-secondary-button', 'Mark all Absent');
         allAbsent.type = 'button';
         actions.append(allPresent, allAbsent);
-        quickBar.append(helper, actions);
+        quickBar.append(actions);
         panel.append(quickBar);
 
         const summary = element('div', 'workflow-summary');
@@ -342,8 +340,7 @@
         form.dataset.bulkEnhanced = '1';
         const section = updateSectionHeading(
             form,
-            'Class Score Sheet',
-            'Choose one assessment, enter scores for the whole class, and save all entered rows together.'
+            'Class Score Sheet'
         );
         if (!section) return false;
         form.hidden = true;
@@ -366,8 +363,6 @@
         toolbar.append(assessmentWrap, searchWrap);
         panel.append(toolbar);
 
-        const helper = element('div', 'workflow-helper workflow-helper-block', 'Enter only the rows you want to save. Blank rows are left unchanged. Use Tab or Enter to move quickly through scores.');
-        panel.append(helper);
 
         const summary = element('div', 'workflow-summary');
         panel.append(summary);

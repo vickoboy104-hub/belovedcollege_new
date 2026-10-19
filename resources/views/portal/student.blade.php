@@ -410,7 +410,6 @@
                         <div>
                             <p class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-amber-300">Financial account</p>
                             <h2 class="display-font mt-1 text-lg font-black !text-white">Make a payment</h2>
-                            <p class="mt-1 text-xs font-semibold text-slate-200">Select only the school fees you want to pay now.</p>
                         </div>
                         <div class="rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 sm:text-right">
                             <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-200">Outstanding balance</p>
@@ -450,7 +449,6 @@
                             <div class="mb-3 flex items-end justify-between gap-3">
                                 <div>
                                     <h3 class="text-sm font-black text-[#071833]">Choose what you want to pay</h3>
-                                    <p class="mt-0.5 text-xs font-semibold text-slate-600">You can select one or several unpaid items.</p>
                                 </div>
                                 <button
                                     type="button"
@@ -488,7 +486,6 @@
                                 @empty
                                     <div class="px-5 py-10 text-center">
                                         <p class="text-sm font-black text-[#071833]">No fee items available</p>
-                                        <p class="mt-1 text-xs font-semibold text-slate-500">New invoices will appear here when the school creates them.</p>
                                     </div>
                                 @endforelse
                             </div>
@@ -516,7 +513,6 @@
                         <div x-show="paymentStep === 2" x-cloak x-transition.opacity>
                             <div class="mb-4">
                                 <h3 class="text-sm font-black text-[#071833]">How would you like to pay?</h3>
-                                <p class="mt-0.5 text-xs font-semibold text-slate-600">The secure gateway will show the payment channels available to you.</p>
                             </div>
 
                             <div class="grid gap-3 sm:grid-cols-2">
@@ -527,7 +523,7 @@
                                         <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-lg text-white">💳</span>
                                         <span>
                                             <span class="block text-sm font-black text-[#071833]">Card, bank or USSD</span>
-                                            <span class="mt-1 block text-xs font-semibold leading-relaxed text-slate-600">Continue securely with the school's Paystack checkout.</span>
+
                                         </span>
                                     </span>
                                 </label>
@@ -539,7 +535,7 @@
                                         <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-lg text-white">📱</span>
                                         <span>
                                             <span class="block text-sm font-black text-[#071833]">Wallet payment</span>
-                                            <span class="mt-1 block text-xs font-semibold leading-relaxed text-slate-600">Pay through the configured PalmPay wallet gateway.</span>
+
                                         </span>
                                     </span>
                                 </label>
@@ -615,7 +611,7 @@
                             <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-lg">🧾</span>
                             <div>
                                 <h3 class="text-sm font-black text-[#071833]">Recent receipts</h3>
-                                <p class="mt-0.5 text-xs font-semibold text-slate-600">Confirmed payments for this student account.</p>
+
                             </div>
                         </div>
                         <div class="space-y-2.5">
@@ -630,7 +626,7 @@
                             @empty
                                 <div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center">
                                     <p class="text-sm font-black text-[#071833]">No confirmed receipts yet</p>
-                                    <p class="mt-1 text-xs font-semibold text-slate-500">Successful payments will appear here automatically.</p>
+
                                 </div>
                             @endforelse
                         </div>

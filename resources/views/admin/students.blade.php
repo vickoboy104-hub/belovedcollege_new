@@ -136,7 +136,6 @@
                     <div class="section-header">
                         <div>
                             <h2 class="section-title">Class Billing Summary</h2>
-                            <p class="section-description">Review class-level billing collections, total exposure, and current collection ratios.</p>
                         </div>
                         <x-action-button variant="secondary" :href="route('admin.finance.records', ['section' => 'class-bills'])">Open Finance Records</x-action-button>
                     </div>
@@ -332,7 +331,6 @@
                     <div class="section-header">
                         <div>
                             <h2 class="section-title">New Student Intake</h2>
-                            <p class="section-description">Recently admitted students for the current school cycle.</p>
                         </div>
                     </div>
 
@@ -387,7 +385,6 @@
                     <div class="section-header mb-4">
                         <div>
                             <h2 class="section-title">Inactive Student Records</h2>
-                            <p class="section-description">Controlled access to deactivated student records.</p>
                         </div>
                     </div>
 
@@ -443,7 +440,6 @@
                     <div class="section-header">
                         <div>
                             <h2 class="section-title">Sibling Families</h2>
-                            <p class="section-description">Families with more than one child linked to the same parent account.</p>
                         </div>
                     </div>
 
@@ -500,7 +496,6 @@
                     <div class="section-header mb-4">
                         <div>
                             <h2 class="section-title">Student Debtors</h2>
-                            <p class="section-description">Outstanding fees shown directly in student management for quick follow-up.</p>
                         </div>
                     </div>
 
@@ -637,7 +632,6 @@
                     <div>
                         <p class="eyebrow">Student Intake</p>
                         <h2 class="section-title mt-1">Register New Student</h2>
-                        <p class="section-description">Capture personal, admission, guardian, login, and health details in a full-width form.</p>
                     </div>
                     <button type="button" class="admin-icon-button" x-on:click="registrationOpen = false" aria-label="Close drawer">
                         <x-app-icon name="x" />
@@ -650,7 +644,6 @@
                             <div class="section-header">
                                 <div>
                                     <h3 class="section-title">Personal Information</h3>
-                                    <p class="section-description">Basic identity and student contact details.</p>
                                 </div>
                             </div>
                             <div class="form-grid mt-4">
@@ -701,7 +694,6 @@
                             <div class="section-header">
                                 <div>
                                     <h3 class="section-title">Class & Admission</h3>
-                                    <p class="section-description">Assign class placement, official admission number, and student ID.</p>
                                 </div>
                             </div>
                             <div class="form-grid mt-4">
@@ -747,7 +739,6 @@
                             <div class="section-header">
                                 <div>
                                     <h3 class="section-title">Guardian Information</h3>
-                                    <p class="section-description">Parent portal mapping and emergency contact details.</p>
                                 </div>
                             </div>
                             <div class="form-grid mt-4">
@@ -794,7 +785,6 @@
                             <div class="section-header">
                                 <div>
                                     <h3 class="section-title">Medical & Status</h3>
-                                    <p class="section-description">Health notes and upload requirements for the student record.</p>
                                 </div>
                             </div>
                             <div class="form-grid mt-4">

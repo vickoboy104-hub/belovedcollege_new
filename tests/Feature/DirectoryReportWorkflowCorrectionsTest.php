@@ -31,7 +31,8 @@ class DirectoryReportWorkflowCorrectionsTest extends TestCase
         $this->assertStringContainsString("removeAttribute('list')", $script);
         $this->assertStringContainsString("removeAttribute('autofocus')", $script);
         $this->assertStringContainsString("removeAttribute('data-report-search-input')", $script);
-        $this->assertStringContainsString('Browse student suggestions (optional)', $script);
+        $this->assertStringContainsString('report-suggestion-picker', $script);
+        $this->assertStringContainsString("'Student suggestions'", $script);
         $this->assertStringContainsString("url.searchParams.delete('search')", $script);
     }
 

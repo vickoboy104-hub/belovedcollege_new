@@ -24,7 +24,6 @@
             <div class="border-b border-slate-100 pb-4 mb-6">
                 <span class="text-xs font-extrabold uppercase tracking-wider text-slate-400">School Office Areas</span>
                 <h2 class="display-font mt-1 text-2xl font-bold text-slate-900 leading-snug">Dedicated management portals</h2>
-                <p class="text-xs font-semibold text-slate-500 mt-1">Each workspace features customized search filters, class groupings, and dedicated profile actions.</p>
             </div>
 
             <div class="grid gap-6 md:grid-cols-3">
@@ -35,7 +34,6 @@
                             <x-app-icon name="student" class="w-5 h-5" />
                         </div>
                         <h3 class="display-font mt-4 text-xl font-bold text-slate-900">Student Profiles</h3>
-                        <p class="text-xs text-slate-600 mt-2 leading-relaxed">Register new intakes, update sibling lists, configure class billings, and search dynamic rosters.</p>
                     </div>
                     <div class="mt-6 pt-4 border-t border-slate-150 flex items-center justify-between">
                         <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-450">{{ $studentCount }} Records</span>
@@ -50,7 +48,6 @@
                             <x-app-icon name="parents" class="w-5 h-5" />
                         </div>
                         <h3 class="display-font mt-4 text-xl font-bold text-slate-900">Guardians &amp; Sibling</h3>
-                        <p class="text-xs text-slate-600 mt-2 leading-relaxed">Monitor parent portals, track contact details, check linked children lists, and verify active coverages.</p>
                     </div>
                     <div class="mt-6 pt-4 border-t border-slate-150 flex items-center justify-between">
                         <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-450">{{ $parentCount }} Linked</span>
@@ -65,7 +62,6 @@
                             <x-app-icon name="staff" class="w-5 h-5" />
                         </div>
                         <h3 class="display-font mt-4 text-xl font-bold text-slate-900">Staff Directories</h3>
-                        <p class="text-xs text-slate-600 mt-2 leading-relaxed">Organize educational staff, assign class teachers, setup monthly salaries, and edit profiles.</p>
                     </div>
                     <div class="mt-6 pt-4 border-t border-slate-150 flex items-center justify-between">
                         <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-450">{{ $staffCount }} Profiles</span>
@@ -86,15 +82,12 @@
                 <div class="space-y-4">
                     <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:border-[#fbbf24] transition duration-200">
                         <div class="font-bold text-slate-800 text-sm">Full student records tracking</div>
-                        <p class="text-xs text-slate-500 mt-1 leading-relaxed">Admissions registration, parent association links, class assignment updates, and medical data files.</p>
                     </div>
                     <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:border-[#fbbf24] transition duration-200">
                         <div class="font-bold text-slate-800 text-sm">Automated guardian mappings</div>
-                        <p class="text-xs text-slate-500 mt-1 leading-relaxed">Family profile cards, linking multiple children to a single guardian account, and tracing billing balances.</p>
                     </div>
                     <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/50 hover:bg-white hover:border-[#fbbf24] transition duration-200">
                         <div class="font-bold text-slate-800 text-sm">Staff &amp; Academic structure depts</div>
-                        <p class="text-xs text-slate-500 mt-1 leading-relaxed">Dedicated teacher directories, employee record numbers, designation titles, and academic qualifications.</p>
                     </div>
                 </div>
             </div>
