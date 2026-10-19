@@ -6,8 +6,6 @@ FROM mcr.microsoft.com/devcontainers/base:1-ubuntu-24.04
 ENV DEBIAN_FRONTEND=noninteractive
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
-ARG NODE_VERSION=22.23.2
-
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         ca-certificates \
@@ -48,12 +46,17 @@ post_max_size = 64M\n\
 max_execution_time = 120\n' > /etc/php/8.3/cli/conf.d/99-beloved.ini
 
 # Node.js is installed from nodejs.org so the version is pinned and the image
-# needs no external devcontainer feature at build time.
-RUN curl -fsSL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz" -o /tmp/node.tar.xz \
-    && rm -f /usr/local/bin/node /usr/local/bin/npm /usr/local/bin/npx \
+# needs no external devcontainer feature at build time. Any nvm build that the
+# base image ships is removed first so exactly one `node` is on PATH.
+ARG NODE_VERSION=22.23.2
+RUN rm -rf /usr/local/share/nvm /root/.nvm /home/vscode/.nvm \
+    && rm -f /usr/local/bin/node /usr/local/bin/npm /usr/local/bin/npx /usr/local/bin/nvm \
+    && curl -fsSL "https://nodejs.org/dist/v${NODE_VERSION}/node-v${NODE_VERSION}-linux-x64.tar.xz" -o /tmp/node.tar.xz \
     && tar -xJf /tmp/node.tar.xz -C /usr/local --strip-components=1 --no-same-owner \
     && rm -f /tmp/node.tar.xz \
     && node --version \
     && npm --version
+
+ENV PATH=/usr/local/bin:${PATH}
 
 WORKDIR /workspaces

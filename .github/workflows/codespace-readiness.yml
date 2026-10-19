@@ -115,7 +115,7 @@ jobs:
             set -euo pipefail
             php -v | head -1
             composer --version
-            node --version
+            node --version | grep -Eq '^v22\.' || { echo "Expected Node 22, got $(node --version) from $(command -v node)"; exit 1; }
             npm --version
             for extension in bcmath curl gd intl mbstring "Zend OPcache" pdo_sqlite sqlite3 xml zip; do
               php -m | grep -Fixq "$extension" || { echo "Missing PHP extension: $extension"; exit 1; }
