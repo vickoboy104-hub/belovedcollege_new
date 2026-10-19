@@ -21,24 +21,24 @@
     @include('partials.theme-head')
     @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/css/print.css'])
     @include('partials.theme-overrides')
-    <link rel="stylesheet" href="{{ asset('portal-refresh.css') }}?v=20260706-overflow-fix">
+    <link rel="stylesheet" href="{{ asset('portal-refresh.css') }}?v=20261019-open-report-restore-2">
     <link rel="stylesheet" href="{{ asset('ui-stability.css') }}?v=20260710-ui-audit-1">
     <link rel="stylesheet" href="{{ asset('table-usability.css') }}?v=20260714-sticky-actions-2">
     <link rel="stylesheet" href="{{ asset('interface-corrections.css') }}?v=20260712-dashboard-table-1">
     <link rel="stylesheet" href="{{ asset('mobile-interface.css') }}?v=20260713-mobile-audit-1">
     <link rel="stylesheet" href="{{ asset('mobile-interface-fixes.css') }}?v=20260713-mobile-audit-2">
     <link rel="stylesheet" href="{{ asset('student-actions-overlay.css') }}?v=20260719-student-directory-essential-columns-1">
-    <link rel="stylesheet" href="{{ asset('report-search-controls.css') }}?v=20260719-report-search-optional-1">
+    <link rel="stylesheet" href="{{ asset('report-search-controls.css') }}?v=20261019-open-report-restore-2">
     <link rel="stylesheet" href="{{ asset('theme-variants.css') }}?v=20260714-theme-variants-1">
     <link rel="stylesheet" href="{{ asset('theme-settings-presets.css') }}?v=20260714-theme-settings-presets-1">
-    <link rel="stylesheet" href="{{ asset('table-consistency.css') }}?v=20260720-global-table-consistency-1">
-    <link rel="stylesheet" href="{{ asset('ui-contrast-audit.css') }}?v=20260827-ui-contrast-audit-2">
+    <link rel="stylesheet" href="{{ asset('table-consistency.css') }}?v=20261019-phase2-admin-9">
+    <link rel="stylesheet" href="{{ asset('ui-contrast-audit.css') }}?v=20261019-phase4-targets-1">
     <link rel="stylesheet" href="{{ asset('payment-selection.css') }}?v=20260827-payment-flow-1">
-    <link rel="stylesheet" href="{{ asset('global-ui-density-fixes.css') }}?v=20260831-density-navigation-1">
+    <link rel="stylesheet" href="{{ asset('global-ui-density-fixes.css') }}?v=20261019-phase4-targets-2">
     <link rel="stylesheet" href="{{ asset('staff-workflow-efficiency.css') }}?v=20261019-footer-nav-offset-1">
-    <link rel="stylesheet" href="{{ asset('teacher-submissions-workflow.css') }}?v=20260831-submissions-workflow-2">
+    <link rel="stylesheet" href="{{ asset('teacher-submissions-workflow.css') }}?v=20261019-phase3-targets-1">
     @if (request()->routeIs('admin.reports.index'))
-        <script src="{{ asset('report-search-behavior.js') }}?v=20260719-report-search-optional-2"></script>
+        <script src="{{ asset('report-search-behavior.js') }}?v=20261019-open-report-restore-2"></script>
     @endif
 </head>
 @php
@@ -92,7 +92,7 @@
     <script src="{{ asset('sidebar-scroll-persistence.js') }}?v=20260711-sidebar-scroll-1"></script>
     <script src="{{ asset('table-consistency.js') }}?v=20260720-global-table-consistency-1"></script>
     <script src="{{ asset('resource-link-guard.js') }}?v=20260827-resource-fallback-1"></script>
-    <script src="{{ asset('portal-navigation-hardening.js') }}?v=20260831-density-navigation-1"></script>
+    <script src="{{ asset('portal-navigation-hardening.js') }}?v=20260924-compact-results-1"></script>
     @if (auth()->user()?->hasAnyRole(['admin', 'principal']))
         <script
             src="{{ asset('admin-navigation-shortcuts.js') }}?v=20260714-admin-shortcuts-1"

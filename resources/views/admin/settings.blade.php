@@ -142,6 +142,8 @@
     @endphp
 
     <div x-data="{ activeSection: @js($activeSettingsSection) }" class="grid gap-8">
+        <x-section-nav :items="$settingsNavItems" :active="$activeSettingsSection" />
+
         <!-- 1. Foundation settings -->
         <div x-show="activeSection === 'website-foundation'" class="space-y-6">
             <x-form-card
@@ -1395,7 +1397,7 @@
                     <!-- Paystack integration -->
                     <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50 space-y-4">
                         <div class="flex items-center gap-3 border-b border-slate-200 pb-2">
-                            <div class="w-8 h-8 rounded-lg bg-teal-50 flex items-center justify-center text-teal-600 font-bold shrink-0">P</div>
+                            <div class="w-8 h-8 rounded-lg bg-teal-50 flex items-center justify-center text-teal-800 font-bold shrink-0">P</div>
                             <h4 class="text-sm font-bold text-slate-900 uppercase tracking-wider">Paystack Credentials</h4>
                         </div>
                         <div class="space-y-3">

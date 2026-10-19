@@ -39,55 +39,53 @@
     @endphp
 
     <div class="mb-8">
-        <x-filter-card title="Find a student report instantly" subtitle="Start typing a name, student ID, or admission number. Select a suggestion or press Enter to open a single matching report immediately.">
-            <form id="report-student-search-form" method="GET" action="{{ $currentIndexRoute }}" class="grid gap-4 md:grid-cols-4 items-end">
-                <div class="flex flex-col gap-1.5 md:col-span-2">
-                    <label for="report-student-search" class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Student quick search</label>
-                    <input
-                        id="report-student-search"
-                        type="search"
-                        name="search"
-                        value="{{ $search }}"
-                        placeholder="Type student name, student ID, or admission number"
-                        class="theme-input"
-                        list="report-student-options"
-                        autocomplete="off"
-                        autofocus
-                        data-report-search-input
-                    />
-                    <datalist id="report-student-options">
-                        @foreach ($quickReportStudents as $studentOption)
-                            <option value="{{ $studentOption['label'] }}">{{ $studentOption['className'] }}</option>
-                        @endforeach
-                    </datalist>
-                    <p class="text-[11px] font-semibold text-slate-500">Choosing an exact suggestion opens that student’s report without another search step.</p>
-                </div>
+        <x-filter-card title="Find a student report instantly" subtitle="Search by name, student ID, or admission number. When the text matches one student, an Open Report link appears." :action="$currentIndexRoute">
+            <div class="flex flex-col gap-1.5 md:col-span-2">
+                <label for="report-student-search" class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Student quick search</label>
+                <input
+                    id="report-student-search"
+                    type="search"
+                    name="search"
+                    value="{{ $search }}"
+                    placeholder="Type student name, student ID, or admission number"
+                    class="theme-input"
+                    list="report-student-options"
+                    autocomplete="off"
+                    autofocus
+                    data-report-search-input
+                />
+                <datalist id="report-student-options">
+                    @foreach ($quickReportStudents as $studentOption)
+                        <option value="{{ $studentOption['label'] }}">{{ $studentOption['className'] }}</option>
+                    @endforeach
+                </datalist>
+                <p class="text-[11px] font-semibold text-slate-500">Type freely and click Search, or open a matching report directly from the suggestion list.</p>
+            </div>
 
-                <div class="flex flex-col gap-1.5">
-                    <label class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Academic term</label>
-                    <select name="term_id" class="theme-input" data-report-term-select>
-                        @foreach ($terms as $term)
-                            <option value="{{ $term->id }}" @selected($selectedTerm?->id === $term->id)>{{ $term->name }} - {{ $term->academicSession->name ?? 'No session' }}</option>
-                        @endforeach
-                    </select>
-                </div>
+            <div class="flex flex-col gap-1.5">
+                <label class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Academic term</label>
+                <select name="term_id" class="theme-input" data-report-term-select>
+                    @foreach ($terms as $term)
+                        <option value="{{ $term->id }}" @selected($selectedTerm?->id === $term->id)>{{ $term->name }} - {{ $term->academicSession->name ?? 'No session' }}</option>
+                    @endforeach
+                </select>
+            </div>
 
-                <div class="flex flex-wrap items-center gap-2">
-                    <x-action-button variant="primary" type="submit" class="flex-1 justify-center py-2.5 !rounded-xl text-xs font-bold">
-                        Search
-                    </x-action-button>
-                    <a
-                        href="#"
-                        class="theme-button-secondary hidden flex-1 justify-center py-2.5 !rounded-xl text-xs font-bold"
-                        data-report-open-link
-                    >
-                        Open Report
-                    </a>
-                    <x-action-button variant="secondary" :href="$currentIndexRoute" class="flex-1 justify-center py-2.5 !rounded-xl text-xs font-bold">
-                        Reset
-                    </x-action-button>
-                </div>
-            </form>
+            <div class="admin-report-actions flex flex-wrap items-center gap-2">
+                <x-action-button variant="primary" type="submit" class="flex-1 justify-center py-2.5 !rounded-xl text-xs font-bold">
+                    Search
+                </x-action-button>
+                <a
+                    class="btn btn-secondary inline-flex items-center justify-center gap-2 flex-1 py-2.5 !rounded-xl text-xs font-bold"
+                    data-report-open-link
+                    hidden
+                >
+                    Open Report
+                </a>
+                <x-action-button variant="secondary" :href="$currentIndexRoute" class="flex-1 justify-center py-2.5 !rounded-xl text-xs font-bold">
+                    Reset
+                </x-action-button>
+            </div>
         </x-filter-card>
     </div>
 
@@ -96,7 +94,7 @@
     </div>
 
     @if ($activeReportClassPage === 'all' && $search === '')
-        <x-dashboard-card title="{{ $pageTitle }}" subtitle="Search above for the fastest access, or open a class category to browse its students.">
+        <x-dashboard-card title="{{ $pageTitle }}">
             <x-slot name="actions">
                 <div class="text-right">
                     <div class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Available Categories</div>
@@ -123,7 +121,7 @@
             </div>
         </x-dashboard-card>
     @else
-        <x-dashboard-card title="{{ $pageTitle }}" subtitle="Open a student directly to review scores, update remarks, publish, and print the selected term report.">
+        <x-dashboard-card title="{{ $pageTitle }}">
             <x-slot name="actions">
                 <div class="text-right">
                     <div class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Students Shown</div>
@@ -146,7 +144,7 @@
                     <tr>
                         <td>
                             <div class="table-person">
-                                <div class="table-avatar">{{ substr($student->user->first_name, 0, 1) }}{{ substr($student->user->last_name, 0, 1) }}</div>
+                                <x-person-avatar :user="$student->user" />
                                 <div class="table-person-text">
                                     <strong>{{ $student->user->fullName() }}</strong>
                                     <span>{{ $student->user->email ?: 'No email' }}</span>
@@ -175,93 +173,4 @@
     @endif
 
     <script type="application/json" id="report-student-search-data">{!! json_encode($quickReportStudents, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) !!}</script>
-    <script>
-        (() => {
-            const input = document.querySelector('[data-report-search-input]');
-            const openLink = document.querySelector('[data-report-open-link]');
-            const form = document.getElementById('report-student-search-form');
-            const dataElement = document.getElementById('report-student-search-data');
-            const termSelect = document.querySelector('[data-report-term-select]');
-
-            if (!input || !openLink || !form || !dataElement) return;
-
-            let records = [];
-            try {
-                records = JSON.parse(dataElement.textContent || '[]');
-            } catch (error) {
-                records = [];
-            }
-
-            const normalize = (value) => String(value || '')
-                .toLowerCase()
-                .replace(/[—–-]+/g, ' ')
-                .replace(/\s+/g, ' ')
-                .trim();
-
-            const matchingRecords = (value) => {
-                const query = normalize(value);
-                if (!query) return [];
-                const words = query.split(' ').filter(Boolean);
-
-                return records.filter((record) => {
-                    const haystack = normalize([
-                        record.label,
-                        record.name,
-                        record.studentId,
-                        record.admissionNo,
-                        record.className,
-                    ].join(' '));
-
-                    return words.every((word) => haystack.includes(word));
-                });
-            };
-
-            const exactRecord = (value) => {
-                const query = normalize(value);
-                if (!query) return null;
-
-                return records.find((record) => [
-                    record.label,
-                    record.name,
-                    record.studentId,
-                    record.admissionNo,
-                ].some((candidate) => normalize(candidate) === query)) || null;
-            };
-
-            const resolvedRecord = () => {
-                const exact = exactRecord(input.value);
-                if (exact) return exact;
-
-                const matches = matchingRecords(input.value);
-                return matches.length === 1 ? matches[0] : null;
-            };
-
-            const updateOpenLink = () => {
-                const record = resolvedRecord();
-                openLink.classList.toggle('hidden', !record);
-                openLink.href = record ? record.url : '#';
-                return record;
-            };
-
-            input.addEventListener('input', updateOpenLink);
-            input.addEventListener('change', () => {
-                const record = updateOpenLink();
-                if (record && exactRecord(input.value)) {
-                    window.location.assign(record.url);
-                }
-            });
-
-            input.addEventListener('keydown', (event) => {
-                if (event.key !== 'Enter') return;
-                const record = resolvedRecord();
-                if (!record) return;
-
-                event.preventDefault();
-                window.location.assign(record.url);
-            });
-
-            termSelect?.addEventListener('change', () => form.requestSubmit());
-            updateOpenLink();
-        })();
-    </script>
 </x-app-layout>

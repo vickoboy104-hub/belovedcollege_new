@@ -2,13 +2,12 @@
 
 @section('content')
     <section class="mx-auto max-w-6xl px-4 py-16 sm:px-6 lg:px-8">
-        <div class="grid gap-8 lg:grid-cols-[1.05fr,0.95fr]">
+        <div class="grid gap-4 lg:grid-cols-[1.05fr,0.95fr]">
             <div class="mesh-card px-8 py-10 reveal-up">
                 <p class="section-kicker text-sm font-semibold uppercase tracking-[0.28em]">About Us</p>
                 <h1 class="display-font mt-4 text-4xl font-bold text-slate-950">{{ $schoolSettings['school_name'] ?? 'BELOVED SCHOOLS' }}</h1>
                 <p class="mt-5 text-lg leading-8 text-slate-600">Raising disciplined, knowledgeable, and Godly students for a purposeful future.</p>
                 <p class="mt-5 text-sm leading-7 text-slate-600">BELOVED SCHOOLS was established in 2006 with a divine vision to impact the lives of young people through quality education and strong spiritual guidance. Located at Ayeteju Street, Ore, Ondo State, the school has grown into a respected institution known for discipline, excellence, and moral uprightness.</p>
-                <p class="mt-4 text-sm leading-7 text-slate-600">From the beginning, the mission has been clear: to raise a generation of students who are not only academically sound but also morally grounded and God-fearing. The founders believed that education should shape both the mind and character, and this belief continues to guide the school today.</p>
             </div>
 
             <div class="section-card reveal-up">

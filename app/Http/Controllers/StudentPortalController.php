@@ -56,7 +56,7 @@ class StudentPortalController extends Controller
             ->get();
 
         $results = AssessmentResult::query()
-            ->with('assessment.subject', 'assessment.term')
+            ->with('assessment.subject', 'assessment.term', 'assessment.schoolClass')
             ->where('student_id', $student->id)
             ->latest()
             ->get();

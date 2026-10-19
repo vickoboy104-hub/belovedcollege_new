@@ -35,6 +35,25 @@ class DirectoryReportWorkflowCorrectionsTest extends TestCase
         $this->assertStringContainsString("url.searchParams.delete('search')", $script);
     }
 
+    public function test_quick_search_opens_the_matching_report_without_a_placeholder_link(): void
+    {
+        $blade = file_get_contents(resource_path('views/admin/reports/index.blade.php'));
+        $script = file_get_contents(public_path('report-search-behavior.js'));
+
+        $this->assertIsString($blade);
+        $this->assertIsString($script);
+
+        /* A nested <form> is dropped by the HTML parser, which is what left both quick-search
+           implementations bailing on a null form lookup. */
+        $this->assertStringNotContainsString('<form', $blade);
+        $this->assertStringNotContainsString('href="#"', $blade);
+        $this->assertStringContainsString('data-report-open-link', $blade);
+
+        $this->assertStringContainsString('openLink.hidden = !record;', $script);
+        $this->assertStringContainsString('openLink.href = record.url;', $script);
+        $this->assertStringNotContainsString("document.querySelector('[data-report-open-link]')?.remove()", $script);
+    }
+
     public function test_modern_print_uses_the_screen_faithful_preview_match_stylesheet(): void
     {
         $middleware = file_get_contents(app_path('Http/Middleware/InjectReportPrintAssets.php'));

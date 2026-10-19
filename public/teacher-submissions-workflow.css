@@ -229,6 +229,14 @@ body.teacher-submissions-enhanced .teacher-submissions-original-table {
     border-radius: .6rem !important;
 }
 
+/* Dense on a pointer, but this is a page-level control, so it clears the
+   44px touch floor on tablet/mobile instead of inheriting the table density. */
+@media (max-width: 1024px) {
+    .app-shell .submission-review-meta-actions .table-view-btn {
+        min-height: 44px !important;
+    }
+}
+
 .submission-grade-box {
     align-self: center;
     display: grid;

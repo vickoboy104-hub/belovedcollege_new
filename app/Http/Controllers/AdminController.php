@@ -20,6 +20,7 @@ use App\Models\User;
 use App\Services\PromotionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Pagination\LengthAwarePaginator;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Collection;
@@ -275,11 +276,22 @@ class AdminController extends Controller
             'studentsWithoutPortalParent' => Student::query()->whereNull('parent_user_id')->count(),
         ];
 
+        $perPage = 15;
+        $page = max(1, (int) $request->integer('page', 1));
+        $parentTotal = $parentRows->count();
+
+        $parentRows = new LengthAwarePaginator(
+            $parentRows->forPage($page, $perPage)->values(),
+            $parentTotal,
+            $perPage,
+            $page,
+            ['path' => $request->url(), 'query' => $request->query()]
+        );
+
         return view('admin.parents', compact('parentRows', 'search', 'summary'));
     }
 
-    public function students(Request $request, ?string $classSlug = null): View
-    {
+    public function students(Request $request, ?string $classSlug = null): View    {
         $classSlug = $classSlug ?: trim((string) $request->string('classSlug'));
         $classSlug = $classSlug !== '' ? $classSlug : null;
         $search = trim((string) $request->string('search'));

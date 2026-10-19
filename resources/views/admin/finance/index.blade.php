@@ -1,8 +1,7 @@
 <x-portal-layout>
     <x-slot name="header">
         <x-page-header 
-            title="Create fee items, issue invoices, and record payments" 
-            description="Manage and track all student billings, fee catalog, payments and collections."
+            title="Finance"
             eyebrow="Finance desk"
         />
     </x-slot>
@@ -414,6 +413,7 @@
                             'title' => $invoice->student->user->fullName(),
                             'subtitle' => 'Invoice '.$invoice->invoice_no.' - '.($invoice->feeItem->name ?? 'Direct invoice'),
                             'avatar' => substr($invoice->student->user->first_name, 0, 1).substr($invoice->student->user->last_name, 0, 1),
+                            'avatarUrl' => $invoice->student->user->avatar_url,
                             'profileUrl' => route('admin.students.show', $invoice->student),
                             'ctaLabel' => 'View Full Details',
                             'fields' => [
@@ -431,7 +431,7 @@
                     <tr class="hover:bg-slate-50/80 transition duration-150">
                         <td>
                             <div class="table-person">
-                                <div class="table-avatar">{{ $invoicePreview['avatar'] }}</div>
+                                <x-person-avatar :user="$invoice->student->user" />
                                 <div class="table-person-text">
                                     <strong>{{ $invoice->student->user->fullName() }}</strong>
                                     <span>{{ $invoice->student->admission_no ?: 'Pending' }}</span>

@@ -844,6 +844,12 @@
     .app-shell main p,
     .app-shell main .text-sm {
         line-height: 1.5 !important;
+    }
+
+    /* Muted body copy, but never over text that explicitly sets its own colour. */
+    .app-shell .app-header-card p:not([class*="text-"]),
+    .app-shell main p:not([class*="text-"]),
+    .app-shell main .text-sm:not([class*="text-white"]):not([class*="text-slate-"]):not([class*="text-blue-"]):not([class*="text-rose-"]):not([class*="text-emerald-"]):not([class*="text-amber-"]):not([class*="text-indigo-"]):not([class*="text-[#"]) {
         color: var(--theme-muted) !important;
     }
 
@@ -1284,7 +1290,7 @@
 
     /* Button System Redesign */
     .app-shell .theme-button,
-    .app-shell button[type="submit"]:not(.app-sidebar-logout):not(.theme-button-secondary),
+    .app-shell button[type="submit"]:not(.app-sidebar-logout):not(.app-topbar-logout):not(.theme-button-secondary),
     .app-shell button.bg-slate-900,
     .app-shell button.bg-blue-600 {
         min-height: 2.45rem !important;
@@ -1300,7 +1306,7 @@
     }
 
     .app-shell .theme-button:hover,
-    .app-shell button[type="submit"]:not(.app-sidebar-logout):not(.theme-button-secondary):hover,
+    .app-shell button[type="submit"]:not(.app-sidebar-logout):not(.app-topbar-logout):not(.theme-button-secondary):hover,
     .app-shell button.bg-slate-900:hover,
     .app-shell button.bg-blue-600:hover {
         background: #0b1f3a !important;
@@ -1338,8 +1344,10 @@
         transform: translateY(-1px) !important;
     }
 
+    /* Secondary-button defaults. Buttons that declare their own surface
+       (bg-* utility or an inline/Alpine :style) keep it instead. */
     .app-shell .theme-button-secondary,
-    .app-shell button.border {
+    .app-shell button.border:not([class*="bg-"]):not([style*="background"]) {
         min-height: 2.45rem !important;
         background: #ffffff !important;
         border: 1.5px solid #0b5ed7 !important;
@@ -1353,7 +1361,7 @@
     }
 
     .app-shell .theme-button-secondary:hover,
-    .app-shell button.border:hover {
+    .app-shell button.border:not([class*="bg-"]):not([style*="background"]):hover {
         background: #f0f6ff !important;
         border-color: #1d4ed8 !important;
         color: #1d4ed8 !important;
@@ -1369,6 +1377,13 @@
         border-radius: 14px !important;
         overflow: hidden !important;
         border: 1px solid #cbd6ea !important;
+    }
+
+    /* overflow on the table makes it its own scrollport, which silently disables
+       the pinned first/last columns inside .admin-table-scroll. */
+    .app-shell .admin-table-scroll table {
+        border-radius: 0 !important;
+        overflow: visible !important;
     }
 
     .app-shell table th {

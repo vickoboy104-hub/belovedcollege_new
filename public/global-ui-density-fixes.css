@@ -9,6 +9,123 @@
     padding: 1rem !important;
 }
 
+/* Compact record lists keep full text and actions available on demand. */
+.compact-record-list {
+    overflow: hidden;
+    border: 1px solid var(--theme-border-soft, #cbd5e1);
+    border-radius: 0.8rem;
+    background: var(--card-bg, #fff);
+}
+.compact-record + .compact-record { border-top: 1px solid var(--theme-border-soft, #d9e2ed); }
+.compact-record-summary {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) 7rem 6rem;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.7rem 0.9rem;
+    cursor: pointer;
+    list-style: none;
+}
+.compact-record-summary::-webkit-details-marker { display: none; }
+.compact-record-summary::marker { content: ''; }
+.compact-record-summary:hover, .compact-record[open] > .compact-record-summary {
+    background: var(--theme-surface-soft, #f0f5fb);
+}
+.compact-record-summary:focus-visible { outline: 2px solid #2563eb; outline-offset: -2px; }
+.compact-record-primary { min-width: 0; font-weight: 700; color: var(--theme-text, #17243a); }
+.compact-record-secondary, .compact-record-meta { min-width: 0; color: var(--theme-muted, #475569); }
+.compact-record-state, .compact-record-toggle { font-weight: 700; color: var(--theme-primary, #1d4ed8); text-align: right; }
+.compact-record-body {
+    display: grid;
+    gap: 0.7rem;
+    padding: 0.85rem 0.9rem;
+    border-top: 1px solid var(--theme-border-soft, #d9e2ed);
+}
+
+/* Shared admin and teacher workspaces: compact filters, forms and data tables. */
+.app-shell .admin-page-content { padding: clamp(0.8rem, 1.6vw, 1.25rem); gap: 1rem; }
+.app-shell .admin-page-header { gap: 0.8rem; }
+.app-shell .admin-page-header h1 { font-size: clamp(1.35rem, 2vw, 1.7rem); }
+.app-shell .admin-page-header .page-description { margin-top: 0.25rem; line-height: 1.4; }
+.app-shell .admin-toolbar-card, .app-shell .form-section { border-radius: 0.85rem; }
+.app-shell .admin-toolbar-card .section-header { margin-bottom: 0.6rem; }
+.app-shell .admin-table-scroll { margin-top: 0 !important; }
+.app-shell .admin-data-table thead th { height: auto !important; padding: 0.65rem 0.8rem !important; }
+.app-shell .admin-data-table tbody td { padding: 0.65rem 0.8rem !important; }
+.app-shell .admin-table-pagination { padding-block: 0.65rem; }
+html:not(.theme-dark-corporate):not(.theme-colourful-professional) .app-shell :is(.admin-toolbar-card, .form-section, .admin-table-card, .admin-workspace-card) {
+    border-color: #b8c9df !important;
+    box-shadow: 0 4px 16px rgba(13, 35, 70, 0.08) !important;
+}
+
+/* A compact three-column attendance sheet fits narrow screens. */
+.route-portal-index .attendance-table .admin-data-table { min-width: 0 !important; }
+.route-portal-index .attendance-table .admin-data-table td,
+.route-portal-index .attendance-table .admin-data-table th { white-space: normal !important; padding: 0.55rem !important; }
+.route-portal-index .attendance-table .admin-data-table td:first-child { white-space: nowrap !important; }
+
+/* Public information pages use the same measured gaps and panel separation. */
+.public-shell .mesh-card, .public-shell .section-card {
+    border: 1px solid #b8c9df;
+    box-shadow: 0 5px 18px rgba(13, 35, 70, 0.09);
+}
+.public-shell .mesh-card { padding: clamp(1rem, 2.2vw, 1.5rem); }
+.public-shell .section-card { padding: clamp(1rem, 2.2vw, 1.5rem); }
+.public-shell section.mx-auto[class*="py-16"] { padding-block: clamp(2rem, 4vw, 3rem); }
+.public-shell section.mx-auto[class*="pb-16"] { padding-bottom: clamp(2rem, 4vw, 3rem); }
+
+@media (max-width: 767px) {
+    .app-shell .admin-page-header { flex-direction: column; }
+    .app-shell .admin-page-header .page-actions { justify-content: flex-start; width: 100%; }
+    .app-shell .admin-toolbar-controls > * { min-width: 0; }
+    .route-portal-index .attendance-table .admin-data-table { font-size: 0.76rem !important; }
+    .public-shell .mesh-card, .public-shell .section-card { border-radius: 0.9rem; }
+}
+@media (max-width: 639px) {
+    .compact-record-summary { grid-template-columns: minmax(0, 1fr) auto; gap: 0.2rem 0.7rem; }
+    .compact-record-primary { grid-column: 1; }
+    .compact-record-state, .compact-record-toggle { grid-column: 2; grid-row: 1; }
+    .compact-record-secondary { grid-column: 1; }
+    .compact-record-meta { grid-column: 2; text-align: right; }
+}
+
+/* Give workspace cards a clear edge against pale page backgrounds. */
+html:not(.theme-dark-corporate):not(.theme-colourful-professional) .app-main .admin-panel.section-card-panel:not(.dashboard-dark-panel),
+html:not(.theme-dark-corporate):not(.theme-colourful-professional) .app-main .student-profile-form {
+    background: #fff;
+    border: 1px solid #b8c9df;
+    box-shadow: 0 6px 22px rgba(13, 35, 70, 0.1);
+}
+
+html:not(.theme-dark-corporate):not(.theme-colourful-professional) .app-main .student-profile-records > div {
+    background: #f0f5fb;
+    border-color: #cfdbeb;
+}
+
+.result-sheet-table tr:nth-child(even) { background: rgba(226, 234, 245, 0.35); }
+.app-shell .result-sheet-table { min-width: 0 !important; table-layout: fixed !important; }
+.app-shell .result-sheet-table tbody td { padding: 0.55rem 0.75rem !important; }
+.app-shell .result-sheet-table tbody td:first-child { white-space: normal !important; overflow-wrap: anywhere; }
+.app-shell .result-sheet-table tbody td:last-child { width: 5rem; text-align: right !important; }
+
+/* Preserve the dark palette for compact tables and profile details. */
+html.theme-dark-corporate .app-main :is(.result-sheet, .student-profile-records > div, .student-profile-form) {
+    background: var(--card-bg, #182b46) !important;
+    border-color: var(--theme-border-color, #38516e) !important;
+}
+html.theme-dark-corporate .app-main .result-sheet-title {
+    background: #263a56 !important;
+    color: #f8fafc !important;
+    border-color: #38516e !important;
+}
+html.theme-dark-corporate .app-main .result-sheet-table tr { border-color: #38516e !important; }
+
+@media (max-width: 639px) {
+    .result-sheet-table td { padding: 0.55rem 0.7rem; }
+    .result-sheet-table td:last-child { width: 4.75rem; }
+    .student-profile-form .flex.flex-wrap.gap-1\.5 { width: 100%; }
+}
+
 .admin-panel.section-card-panel > .section-header {
     margin-bottom: 0.9rem !important;
     padding-bottom: 0.75rem !important;
@@ -221,4 +338,178 @@
     .route-portal-index [x-show="activeSection === 'lessons'"] article[class*="rounded-[18px]"] {
         padding: 0.7rem !important;
     }
+}
+
+/* ==========================================================================
+   Phase 2 admin maturity pass (2026-10-19)
+   Measured in a real browser at 1440 / 768 / 390 across every admin screen.
+   Fixes invisible primary buttons, panel text that collapsed to white-on-white,
+   and controls that rendered below the 44px touch-target floor.
+   ========================================================================== */
+
+/* Primary buttons inherited --theme-secondary, which site settings can store as
+   a light colour, leaving white label text on a white surface. The scrim keeps
+   the configured hue but guarantees the label stays AA-readable. */
+.app-shell .theme-button:not(.theme-button-secondary):not(.theme-mobile-button) {
+    background-color: var(--theme-secondary, #082a5e) !important;
+    background-image: linear-gradient(150deg, rgba(2, 6, 23, 0.78), rgba(2, 6, 23, 0.86)) !important;
+    border-color: rgba(2, 6, 23, 0.9) !important;
+    color: #ffffff !important;
+}
+
+/* The dashboard panels hard-code their text tokens to the dark-card white, but
+   the workspace normalises every admin card to a white surface, so the titles,
+   quick-action labels and the collection-rate readout rendered white on white.
+   Tokens now follow the surface the panel actually lands on. */
+.app-shell main .dashboard-dark-panel {
+    --panel-title-color: #0f172a;
+    --panel-desc-color: #475569;
+    --panel-content-color: #0f172a;
+}
+
+.app-shell .quick-action-card-title {
+    color: #0f172a !important;
+}
+
+.app-shell .quick-action-card-desc {
+    color: #475569 !important;
+}
+
+.app-shell :is(.quick-action-card-link, .quick-action-card-icon) {
+    color: var(--theme-primary, #1d4ed8) !important;
+}
+
+.app-shell .dashboard-announcements-panel .announcement-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+}
+
+.app-shell .announcement-item h3 {
+    color: #0f172a;
+}
+
+.app-shell .announcement-item p {
+    color: #475569;
+}
+
+html.theme-dark-corporate .app-shell main .dashboard-dark-panel {
+    --panel-title-color: #ffffff;
+    --panel-desc-color: rgba(226, 232, 240, 0.82);
+    --panel-content-color: #ffffff;
+}
+
+html.theme-dark-corporate .app-shell .quick-action-card-title {
+    color: #ffffff !important;
+}
+
+html.theme-dark-corporate .app-shell .quick-action-card-desc {
+    color: rgba(226, 232, 240, 0.85) !important;
+}
+
+html.theme-dark-corporate .app-shell .announcement-item {
+    background: rgba(255, 255, 255, 0.06);
+    border-color: rgba(255, 255, 255, 0.12);
+}
+
+html.theme-dark-corporate .app-shell .announcement-item h3 {
+    color: #ffffff;
+}
+
+/* --- 44px touch targets ------------------------------------------------- */
+.app-shell :is(.btn, .theme-button, .theme-button-secondary, .admin-page-btn,
+    .app-sidebar-child-link, .app-topbar-brand, .app-topbar-logout, .app-topbar-search,
+    .metric-link, .class-chip) {
+    min-height: 44px !important;
+}
+
+/* Primary submit controls must clear 44px everywhere; theme-overrides caps
+   them at 2.45rem, so repeat its specificity and win on source order. */
+.app-shell button[type="submit"]:not(.app-sidebar-logout):not(.theme-button-secondary):not(.table-mini-link):not(.table-view-btn),
+.app-shell .theme-button {
+    min-height: 44px !important;
+}
+
+.app-shell .btn {
+    height: 44px !important;
+}
+
+/* The drawer toggle renders at 2.45rem in app.css; min-height raises the box
+   without touching the icon geometry inside it. */
+.app-shell .hamburger-button {
+    min-height: 44px;
+    min-width: 44px;
+}
+
+.app-shell .app-sidebar-child-link,
+.app-shell .metric-link {
+    display: flex;
+    align-items: center;
+}
+
+/* Profile / settings tab strips rendered 28px tall. */
+.app-shell button[class*="rounded-lg"][class*="text-xs"][class*="font-bold"] {
+    min-height: 44px !important;
+    padding-top: 0.5rem !important;
+    padding-bottom: 0.5rem !important;
+}
+
+/* Dense table action buttons stay compact on a pointer, grow on touch widths. */
+@media (max-width: 1024px) {
+    .app-shell :is(.table-view-btn, .table-mini-link, .mobile-record-action, .table-toggle-btn) {
+        min-height: 44px !important;
+        padding-top: 0.6rem;
+        padding-bottom: 0.6rem;
+    }
+}
+
+/* --- Small-text cleanup -------------------------------------------------- */
+/* 9-11px microcopy is below the documented type scale floor (0.75rem). */
+.app-shell :is([class*="text-[9px]"], [class*="text-[10px]"], [class*="text-[11px]"]),
+.app-shell div[class*="text-[9px]"] {
+    font-size: 0.75rem !important;
+}
+
+/* Faint slate-300/400 captions failed AA (2.9:1) on the white admin surfaces. */
+.app-shell main :is([class*="text-slate-300"], [class*="text-slate-400"]) {
+    color: #475569 !important;
+}
+
+html.theme-dark-corporate .app-shell main :is([class*="text-slate-300"], [class*="text-slate-400"]) {
+    color: #cbd5e1 !important;
+}
+
+/* Required-field markers used rose-500 (3.67:1 on white). */
+.app-shell label .text-rose-500,
+.app-shell .text-rose-500 {
+    color: #be123c !important;
+}
+
+/* Chrome micro-labels sat below the documented 0.75rem type-scale floor.
+   span.* outranks the theme override that pins pill badges to 0.7rem. */
+.app-shell :is(.app-sidebar-label, .nav-brand-subtitle, kbd),
+.app-shell :is(span.status-badge, span.app-topbar-avatar),
+.mobile-bottom-nav-text {
+    font-size: 0.75rem !important;
+}
+
+/* Teacher workflow panels are page-level actions, not dense table controls,
+   so they clear the 44px target floor at every width. */
+.app-shell :is(.workflow-primary-button, .workflow-secondary-button, .submission-filter-btn) {
+    min-height: 44px !important;
+}
+
+/* Collapsible sidebar parents wrap icon+label in a flex div and add a chevron,
+   which left "Learning Workspace" 13px short of its natural width. */
+.app-shell .app-sidebar-link.justify-between {
+    gap: 0.5rem !important;
+}
+
+.app-shell .app-sidebar-link > div {
+    gap: 0.5rem !important;
+    min-width: 0;
+}
+
+.app-shell .app-sidebar-link > span[class*="transition-transform"] {
+    flex: 0 0 auto;
+    margin-right: 0 !important;
 }

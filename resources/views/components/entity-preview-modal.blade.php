@@ -46,7 +46,17 @@
             const open = (payload) => {
                 const data = payload || {};
 
-                setText(avatar, data.avatar || 'BS');
+                avatar.replaceChildren();
+                if (typeof data.avatarUrl === 'string' && /^\/private-media\/users\/\d+\/avatar$/.test(data.avatarUrl)) {
+                    const image = document.createElement('img');
+                    image.src = data.avatarUrl;
+                    image.alt = '';
+                    image.className = 'h-full w-full rounded-[inherit] object-cover';
+                    image.addEventListener('error', () => setText(avatar, data.avatar || 'BS'), { once: true });
+                    avatar.append(image);
+                } else {
+                    setText(avatar, data.avatar || 'BS');
+                }
                 setText(title, data.title || 'Record preview');
                 setText(subtitle, data.subtitle || data.type || 'Beloved Schools');
 

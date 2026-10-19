@@ -46,11 +46,12 @@
     @include('partials.theme-head')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @include('partials.theme-overrides')
-    <link rel="stylesheet" href="{{ asset('portal-refresh.css') }}?v=20260706-overflow-fix">
+    <link rel="stylesheet" href="{{ asset('portal-refresh.css') }}?v=20261019-open-report-restore-2">
     <link rel="stylesheet" href="{{ asset('ui-stability.css') }}?v=20260710-ui-audit-1">
     <link rel="stylesheet" href="{{ asset('theme-variants.css') }}?v=20260714-theme-variants-1">
     <link rel="stylesheet" href="{{ asset('theme-public-variants.css') }}?v=20260714-theme-public-variants-1">
-    <link rel="stylesheet" href="{{ asset('ui-contrast-audit.css') }}?v=20260827-ui-contrast-audit-2">
+    <link rel="stylesheet" href="{{ asset('ui-contrast-audit.css') }}?v=20261019-phase4-targets-1">
+    <link rel="stylesheet" href="{{ asset('global-ui-density-fixes.css') }}?v=20261019-phase2-admin-2">
 </head>
 <body class="antialiased">
     @php
@@ -117,7 +118,7 @@
                             <span class="hamburger-line"></span>
                         </button>
 
-                        <a href="{{ route('home') }}" class="flex min-w-0 items-center gap-3">
+                        <a href="{{ route('home') }}" class="public-brand-link flex min-w-0 items-center gap-3">
                             <x-application-logo class="h-10 w-10 shrink-0 sm:h-11 sm:w-11" />
                             <div class="nav-brand-copy">
                                 <div class="nav-brand-title display-font text-sm font-bold" style="color: var(--theme-text, #0f172a);">{{ $schoolSettings['school_name'] ?? 'BELOVED SCHOOLS' }}</div>

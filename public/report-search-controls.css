@@ -1,20 +1,4 @@
 /* Compact the report-directory lookup and keep student suggestions strictly optional. */
-.route-admin-reports-index #report-student-search-form {
-    align-items: end !important;
-    grid-auto-rows: min-content !important;
-    gap: 0.75rem !important;
-    min-height: 0 !important;
-}
-
-.route-admin-reports-index #report-student-search-form > div {
-    align-self: end !important;
-    height: auto !important;
-    min-height: 0 !important;
-    max-height: none !important;
-}
-
-.route-admin-reports-index #report-student-search-form input[type="search"],
-.route-admin-reports-index #report-student-search-form select,
 .route-admin-reports-index #report-student-search {
     box-sizing: border-box !important;
     display: block !important;
@@ -26,32 +10,8 @@
     padding-top: 0.6rem !important;
     padding-bottom: 0.6rem !important;
     line-height: 1.2 !important;
-}
-
-.route-admin-reports-index #report-student-search-form input[type="search"] {
     appearance: auto !important;
     resize: none !important;
-}
-
-.route-admin-reports-index #report-student-search-form .flex.flex-wrap {
-    min-height: 2.75rem !important;
-    align-items: stretch !important;
-}
-
-.route-admin-reports-index #report-student-search-form .flex.flex-wrap > * {
-    min-height: 2.75rem !important;
-    max-height: 2.75rem !important;
-}
-
-.route-admin-reports-index .admin-toolbar-card:has(#report-student-search-form) {
-    padding-top: 1rem !important;
-    padding-bottom: 1rem !important;
-}
-
-.route-admin-reports-index .admin-toolbar-controls:has(#report-student-search-form),
-.route-admin-reports-index .admin-toolbar-layout:has(#report-student-search-form) {
-    min-height: 0 !important;
-    align-items: end !important;
 }
 
 .route-admin-reports-index .report-suggestion-picker {
@@ -138,26 +98,7 @@
     padding: 0.75rem;
 }
 
-@media (min-width: 1024px) {
-    .route-admin-reports-index #report-student-search-form {
-        grid-template-columns: minmax(18rem, 1fr) 13.25rem minmax(17rem, auto) !important;
-    }
-
-    .route-admin-reports-index #report-student-search-form > div:first-child {
-        grid-column: auto !important;
-    }
-}
-
 @media (max-width: 1023px) {
-    .route-admin-reports-index #report-student-search-form input[type="search"],
-    .route-admin-reports-index #report-student-search-form select,
-    .route-admin-reports-index #report-student-search {
-        height: 2.75rem !important;
-        min-height: 2.75rem !important;
-        max-height: 2.75rem !important;
-        flex-basis: 2.75rem !important;
-    }
-
     .route-admin-reports-index .report-suggestion-panel {
         position: static;
         margin-top: 0.4rem;
