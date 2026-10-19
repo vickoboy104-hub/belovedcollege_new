@@ -55,7 +55,6 @@ class DashboardPerformanceTest extends TestCase
             ];
         });
         $response->assertViewHas('financeSnapshot', null);
-        $response->assertSee('Your personal academic account summary');
         $response->assertDontSee('Operational payment picture');
         $response->assertDontSee('Active Invoices');
         $response->assertDontSee('Payments Logged');
@@ -79,7 +78,6 @@ class DashboardPerformanceTest extends TestCase
             ];
         });
         $response->assertViewHas('financeSnapshot', null);
-        $response->assertSee('Your teaching workload');
         $response->assertDontSee('Operational payment picture');
         $response->assertDontSee('Active Invoices');
         $response->assertDontSee('Payments Logged');
@@ -102,6 +100,7 @@ class DashboardPerformanceTest extends TestCase
                 'Collection Rate',
             ];
         });
-        $response->assertSee('Finance activity and collection information');
+        $response->assertDontSee('Lessons Published');
+        $response->assertDontSee('Assignments Created');
     }
 }

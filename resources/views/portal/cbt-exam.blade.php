@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <x-page-header :title="$assessment->title" eyebrow="Student CBT Portal">
-            <x-slot name="description">
+            <x-slot name="meta">
                 {{ $assessment->subject->name }} &bull; {{ $student->schoolClass->name ?? 'Class pending assignment' }} &bull; {{ $assessment->teacher->fullName() }}
             </x-slot>
             <x-slot name="actions">

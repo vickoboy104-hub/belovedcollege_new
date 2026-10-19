@@ -103,7 +103,6 @@
                     :action="$activeClassRoute"
                     method="GET"
                     :title="$toolbarTitle"
-                    :description="$toolbarDescription"
                 >
                     <input type="hidden" name="view" value="{{ $activeStudentView }}" />
                     <input name="search" value="{{ $search }}" placeholder="Search by name, admission number, student ID, guardian, or phone" class="theme-input" />
@@ -211,7 +210,7 @@
                                 @empty
                                 <tr>
                                     <td colspan="8">
-                                            <x-empty-state title="No students found" description="Adjust the search, class, or status filters to broaden the directory." icon="student" />
+                                            <x-empty-state title="No students found" icon="student" />
                                         </td>
                                     </tr>
                                 @endforelse
@@ -313,7 +312,7 @@
                                     </div>
                                 </article>
                             @empty
-                                <x-empty-state title="No students found" description="Adjust filters or search query." icon="student" />
+                                <x-empty-state title="No students found" icon="student" />
                             @endforelse
                         </div>
 
@@ -378,7 +377,7 @@
                         @empty
                             <tr>
                                 <td colspan="7">
-                                    <x-empty-state title="No new intake students found" description="Newly admitted students will appear here after registration." icon="student" />
+                                    <x-empty-state title="No new intake students found" icon="student" />
                                 </td>
                             </tr>
                         @endforelse
@@ -434,7 +433,7 @@
                         @empty
                             <tr>
                                 <td colspan="6">
-                                    <x-empty-state title="No inactive students found" description="There are no inactive or deactivated student records on file." icon="student" />
+                                    <x-empty-state title="No inactive students found" icon="student" />
                                 </td>
                             </tr>
                         @endforelse
@@ -491,7 +490,7 @@
                         @empty
                             <tr>
                                 <td colspan="6">
-                                    <x-empty-state title="No sibling families found" description="Search returned no parent accounts with multiple registered children." icon="parents" />
+                                    <x-empty-state title="No sibling families found" icon="parents" />
                                 </td>
                             </tr>
                         @endforelse
@@ -552,7 +551,7 @@
                         @empty
                             <tr>
                                 <td colspan="5">
-                                    <x-empty-state title="No student debtors found" description="There are no students with active debt outstanding in this workspace." icon="finance" />
+                                    <x-empty-state title="No student debtors found" icon="finance" />
                                 </td>
                             </tr>
                         @endforelse
@@ -603,7 +602,7 @@
                         @empty
                             <tr>
                                 <td colspan="7">
-                                    <x-empty-state title="No class billing data" description="There is no active invoice or fee data on file for classes in the current term." icon="finance" />
+                                    <x-empty-state title="No class billing data" icon="finance" />
                                 </td>
                             </tr>
                         @endforelse

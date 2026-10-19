@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <x-page-header title="People Hub" eyebrow="Administration" description="Manage students, parents, and staff from dedicated workspaces while keeping the rest of your custom website features untouched.">
+        <x-page-header title="People Hub" eyebrow="Administration">
             <x-slot name="actions">
                 <x-action-button variant="secondary" :href="route('admin.parents.index')">Parents</x-action-button>
                 <x-action-button variant="secondary" :href="route('admin.staff.index')">Staff</x-action-button>

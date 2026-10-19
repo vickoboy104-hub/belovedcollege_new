@@ -64,8 +64,7 @@
             <x-filter-card 
                 :action="route('admin.staff.index')" 
                 method="GET" 
-                :title="$activeStaffView === 'payroll' ? 'Payroll Search' : 'Staff search directory'"
-                description="Search by name, employee ID or department.">
+                :title="$activeStaffView === 'payroll' ? 'Payroll Search' : 'Staff search directory'">
                 <input type="hidden" name="view" value="{{ $activeStaffView }}" />
                 <input name="search" value="{{ $search }}" placeholder="Search by name or staff details..." class="theme-input flex-1" />
                 <select name="department" class="theme-input lg:w-56">
@@ -80,7 +79,7 @@
                 </div>
             </x-filter-card>
         @else
-            <x-dashboard-card title="Class allocation status" subtitle="Allocations of teachers to class records across primary and secondary divisions." icon="classes" accent="blue" />
+            <x-dashboard-card title="Class allocation status" icon="classes" accent="blue" />
         @endif
 
     <!-- Main Body Panel -->
@@ -243,7 +242,7 @@
                                 </div>
                             </div>
                         @empty
-                            <x-empty-state title="No staff records" description="Department directory returned no staff profiles matching the search queries." icon="staff" />
+                            <x-empty-state title="No staff records" icon="staff" />
                         @endforelse
                     </div>
 
@@ -384,7 +383,7 @@
                                 </div>
                             </div>
                         @empty
-                            <x-empty-state title="No payroll data found" description="Payroll search query returned no active salary configurations." icon="finance" />
+                            <x-empty-state title="No payroll data found" icon="finance" />
                         @endforelse
                     </div>
 
@@ -434,7 +433,6 @@
             method="POST" 
             enctype="multipart/form-data" 
             title="Register staff member" 
-            description="Create staff profiles separate from student records. Maintain active departments, roles, qualifications, and payroll salary settings." 
             class="w-full"
             x-data="{
                 firstName: '',

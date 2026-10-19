@@ -1,6 +1,5 @@
 <x-dashboard-card
     title="Danger Zone: Delete Account"
-    subtitle="Permanently delete your account and all associated school records."
     icon="trash"
     accent="red"
 >

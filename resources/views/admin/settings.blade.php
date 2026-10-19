@@ -3,7 +3,6 @@
         <x-page-header
             title="School Settings"
             eyebrow="Administration"
-            description="Manage your school information, website portal, theme customizer, landing builder, media sliders, payment gateways, and view user contact messages."
         />
     </x-slot>
 
@@ -151,7 +150,6 @@
                 method="POST"
                 enctype="multipart/form-data"
                 title="Website Foundation"
-                description="Configure essential school parameters, administrative contacts, outgoing SMTP email servers, and brand logos."
             >
                 <input type="hidden" name="group" value="school">
                 <input type="hidden" name="settings_section" value="website-foundation">
@@ -317,7 +315,6 @@
                 action="{{ route('admin.settings.update') }}"
                 method="POST"
                 title="Website Theme Colors"
-                description="Select a style scheme for the public website, admin portal, staff portal, student portal, buttons, navigation accents, and page surfaces."
             >
                 <input type="hidden" name="group" value="school">
                 <input type="hidden" name="settings_section" value="theme-colors">
@@ -423,7 +420,6 @@
                 method="POST"
                 enctype="multipart/form-data"
                 title="Public Landing Builder"
-                description="Manage and structure slide outlines, parent testimonials, metrics, and core headings of the frontend admissions page."
             >
                 <input type="hidden" name="group" value="school">
                 <input type="hidden" name="settings_section" value="landing-builder">
@@ -756,7 +752,6 @@
                 method="POST"
                 enctype="multipart/form-data"
                 title="Homepage Media Resources"
-                description="Upload banner videos, sliders background layers, and landing gallery items directly to the portal."
             >
                 <input type="hidden" name="group" value="school">
                 <input type="hidden" name="settings_section" value="homepage-media">
@@ -884,7 +879,6 @@
                 method="POST"
                 enctype="multipart/form-data"
                 title="Portal Interface Background"
-                description="Upload a bespoke, high-resolution visual backdrop that renders behind administrative dashboards, academic outlines, and settings panels."
             >
                 <input type="hidden" name="group" value="school">
                 <input type="hidden" name="settings_section" value="workspace-backgrounds">
@@ -923,7 +917,6 @@
                 method="POST"
                 enctype="multipart/form-data"
                 title="Admissions Site Backgrounds"
-                description="Upload wide-view parallax background layers and scrolling sections designed to decorate the frontend public admissions template."
             >
                 <input type="hidden" name="group" value="school">
                 <input type="hidden" name="settings_section" value="site-backgrounds">
@@ -989,7 +982,6 @@
                 method="POST"
                 enctype="multipart/form-data"
                 title="Website Welcome Pop-up"
-                description="Toggle, edit, and custom-theme the interactive greeting banner presented to new public homepage visitors."
             >
                 <input type="hidden" name="group" value="school">
                 <input type="hidden" name="settings_section" value="welcome-popup">
@@ -1046,7 +1038,6 @@
                 method="POST"
                 enctype="multipart/form-data"
                 title="Gallery Asset Quick Uploader"
-                description="Upload custom graphics directly to the gallery folders in case the large website settings form timeouts."
             >
                 <input type="hidden" name="group" value="school">
                 <input type="hidden" name="settings_section" value="gallery-uploader">
@@ -1081,7 +1072,6 @@
                 action="{{ route('admin.settings.update') }}"
                 method="POST"
                 title="Homepage Copy & Typography"
-                description="Refine text templates, highlight blurbs, key academic outlines, and founder address templates displayed on public directories."
             >
                 <input type="hidden" name="group" value="school">
                 <input type="hidden" name="settings_section" value="homepage-text">
@@ -1231,7 +1221,6 @@
                 method="POST"
                 enctype="multipart/form-data"
                 title="Hero and Highlight Wallpapers (Group A)"
-                description="Upload custom graphic backdrop layers designed to enhance individual highlights, metrics tiles, and homepage overview widgets."
             >
                 <input type="hidden" name="group" value="school">
                 <input type="hidden" name="settings_section" value="box-backgrounds-a">
@@ -1317,7 +1306,6 @@
                 method="POST"
                 enctype="multipart/form-data"
                 title="Academic, Founders and Sections Wallpapers (Group B)"
-                description="Upload custom graphic backdrop layers designed to enhance individual academic class widgets, founder profiles, and news blocks."
             >
                 <input type="hidden" name="group" value="school">
                 <input type="hidden" name="settings_section" value="box-backgrounds-b">
@@ -1388,7 +1376,6 @@
                 action="{{ route('admin.settings.update') }}"
                 method="POST"
                 title="Payment Gateways Integration"
-                description="Configure integration parameters for secure automated Paystack, PalmPay, and manual bank transfers."
             >
                 <input type="hidden" name="group" value="payments">
                 <input type="hidden" name="settings_section" value="payment-settings">
@@ -1484,7 +1471,6 @@
         <div x-show="activeSection === 'contact-messages'">
             <x-dashboard-card
                 title="Recent Public Contact Messages"
-                subtitle="View the latest queries submitted by visitors and prospective parents."
                 icon="message-square"
                 accent="blue"
             >
@@ -1504,7 +1490,6 @@
                     @empty
                         <x-empty-state
                             title="No Incoming Messages"
-                            description="Public contact form submissions will appear here once prospective visitors submit them."
                             icon="mail"
                         />
                     @endforelse

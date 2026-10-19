@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <x-page-header title="Guardian and family records" eyebrow="Parents management" description="Manage parent contacts, linked children, billing follow-up, and family portal records." />
+        <x-page-header title="Guardian and family records" eyebrow="Parents management" />
     </x-slot>
 
     @if (session('generated_parent_credentials'))
@@ -107,7 +107,7 @@
                 @empty
                     <tr>
                         <td colspan="6">
-                            <x-empty-state title="No parent records found" description="Search returned no parent or guardian records matching those parameters." icon="parents" />
+                            <x-empty-state title="No parent records found" icon="parents" />
                         </td>
                     </tr>
                 @endforelse
@@ -210,7 +210,7 @@
                     </div>
                 </article>
             @empty
-                <x-empty-state title="No parent records found" description="Search returned no parent or guardian records matching those parameters." icon="parents" />
+                <x-empty-state title="No parent records found" icon="parents" />
             @endforelse
 
             <div class="admin-table-footer mt-4">

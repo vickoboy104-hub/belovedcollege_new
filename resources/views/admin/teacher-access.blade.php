@@ -3,7 +3,6 @@
         <x-page-header
             title="Teacher Subject Access"
             eyebrow="Academic Permissions"
-            description="Grant or remove exact subject-and-class permissions. Teachers only see and manage the combinations listed here."
         >
             <x-slot name="actions">
                 <x-action-button variant="secondary" :href="route('admin.academics', ['section' => 'class-setup'])">
@@ -29,7 +28,6 @@
             :action="route('admin.teacher-access.store')"
             method="POST"
             title="Grant teaching permissions"
-            description="Choose one or many teachers, one or many classes, and multiple subjects. Every selected combination takes effect immediately."
             x-data="{ allTeachers: {{ old('all_teachers') ? 'true' : 'false' }} }"
         >
             <div class="grid gap-5 xl:grid-cols-3">
@@ -150,7 +148,6 @@
 
         <x-filter-card
             title="Current teacher permissions"
-            description="Search by teacher, email, class, subject, or subject code. Revoked permissions can be restored without recreating them."
         >
             <form method="GET" action="{{ route('admin.teacher-access.index') }}" class="grid gap-3 md:grid-cols-[minmax(0,1fr)_12rem_auto] md:items-end">
                 <div class="space-y-1.5">
@@ -172,7 +169,7 @@
             </form>
         </x-filter-card>
 
-        <x-dashboard-card title="Permission register" subtitle="Select any visible rows and remove or restore them together. Every row remains an exact teacher, class, and subject authorization." icon="learning" accent="blue">
+        <x-dashboard-card title="Permission register" icon="learning" accent="blue">
             <form
                 id="teacher-access-bulk-form"
                 method="POST"
@@ -247,7 +244,6 @@
                         <td colspan="7">
                             <x-empty-state
                                 title="No teacher permissions found"
-                                description="Grant teachers access to classes and subjects using the form above."
                                 icon="learning"
                             />
                         </td>

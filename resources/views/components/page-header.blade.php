@@ -1,4 +1,4 @@
-@props(['title', 'description' => null, 'eyebrow' => null])
+@props(['title', 'eyebrow' => null])
 
 <div {{ $attributes->merge(['class' => 'admin-page-header']) }}>
     <div>
@@ -10,11 +10,11 @@
         <h1>
             {{ $title }}
         </h1>
-        @if($description || isset($descriptionSlot))
-            <p class="page-description">
-                {{ $description ?? $descriptionSlot }}
+        @isset($meta)
+            <p class="page-meta">
+                {{ $meta }}
             </p>
-        @endif
+        @endisset
     </div>
     @if(isset($actions))
         <div class="page-actions">

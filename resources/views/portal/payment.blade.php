@@ -12,7 +12,7 @@
     @endphp
 
     <x-slot name="header">
-        <x-page-header title="Make Payment" :description="'Hi '.$student->user->first_name.' — choose what you want to pay.'" eyebrow="Student Billing">
+        <x-page-header title="Make Payment" eyebrow="Student Billing">
             <x-slot name="actions">
                 <a href="{{ route('portal.index', $children->isNotEmpty() ? ['student' => $student->id] : []) }}" class="rounded-xl border border-slate-300 bg-white px-4 py-2 text-xs font-black text-slate-700">Back to portal</a>
             </x-slot>

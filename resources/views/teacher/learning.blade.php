@@ -1,13 +1,11 @@
 <x-app-layout>
     <x-slot name="header">
         <x-page-header title="Teaching Workspace" eyebrow="Teacher Portal">
-            <x-slot name="description">
-                @if ($classTeacherMode && $managedClasses->isNotEmpty())
-                    Assigned classes: {{ $managedClasses->pluck('display_name')->join(', ') }}.
-                @else
-                    Lessons, assignments, exams and grades.
-                @endif
-            </x-slot>
+            @if ($classTeacherMode && $managedClasses->isNotEmpty())
+                <x-slot name="meta">
+                    {{ $managedClasses->pluck('display_name')->join(', ') }}
+                </x-slot>
+            @endif
         </x-page-header>
     </x-slot>
 
@@ -15,7 +13,7 @@
 
         <div>
             @if ($activeTeachingSection === 'publish-lesson')
-                <x-form-card :action="route('teacher.lessons.store')" method="POST" title="Publish Lesson Note" description="Create a new lesson note with optional video or downloadable attachments." enctype="multipart/form-data">
+                <x-form-card :action="route('teacher.lessons.store')" method="POST" title="Publish Lesson Note" enctype="multipart/form-data">
                     <div class="grid gap-4 md:grid-cols-2">
                         <div>
                             <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">Subject</label>
@@ -75,7 +73,7 @@
             @endif
 
             @if ($activeTeachingSection === 'create-assignment')
-                <x-form-card :action="route('teacher.assignments.store')" method="POST" title="Create Student Assignment" description="Assign schoolwork, set due dates, and track scores." enctype="multipart/form-data">
+                <x-form-card :action="route('teacher.assignments.store')" method="POST" title="Create Student Assignment" enctype="multipart/form-data">
                     <div class="grid gap-4 md:grid-cols-2">
                         <div>
                             <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">Subject</label>
@@ -128,7 +126,7 @@
             @endif
 
             @if ($activeTeachingSection === 'assessment')
-                <x-form-card :action="route('teacher.assessments.store')" method="POST" title="Configure New Assessment" description="Set up standard tests, quizzes, or exams.">
+                <x-form-card :action="route('teacher.assessments.store')" method="POST" title="Configure New Assessment">
                     <div class="space-y-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">Academic Term</label>
@@ -194,7 +192,7 @@
             @endif
 
             @if ($activeTeachingSection === 'record-result')
-                <x-form-card :action="route('teacher.results.store')" method="POST" title="Record Student Score" description="Directly save standard marks and custom report comments.">
+                <x-form-card :action="route('teacher.results.store')" method="POST" title="Record Student Score">
                     <div class="space-y-4">
                         <div>
                             <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">Assessment Target</label>
@@ -236,7 +234,7 @@
             @endif
 
             @if ($activeTeachingSection === 'attendance')
-                <x-form-card :action="route('teacher.attendance.store')" method="POST" title="Submit Attendance Log" description="Log daily present/absent states for students.">
+                <x-form-card :action="route('teacher.attendance.store')" method="POST" title="Submit Attendance Log">
                     <div class="space-y-4">
                         <div class="grid gap-4 md:grid-cols-2">
                             <div>
@@ -285,7 +283,7 @@
             @endif
 
             @if ($activeTeachingSection === 'cbt-create')
-                <x-form-card :action="route('teacher.cbt.assessments.store')" method="POST" title="Configure CBT Assessment" description="Create computer-based objective and subjective tests.">
+                <x-form-card :action="route('teacher.cbt.assessments.store')" method="POST" title="Configure CBT Assessment">
                     <div class="grid gap-4 md:grid-cols-2">
                         <div>
                             <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">Academic Term</label>
@@ -361,7 +359,7 @@
             @endif
 
             @if ($activeTeachingSection === 'cbt-list')
-                <x-dashboard-card title="CBT Library" subtitle="Scan computer-based assessments, attempts, and question-builder status." icon="portal" accent="purple">
+                <x-dashboard-card title="CBT Library" icon="portal" accent="purple">
                     <x-data-table :headers="['Assessment', 'Class', 'Schedule', 'Questions', 'Attempts', 'Status', 'Actions']" minWidth="940px">
                     @forelse ($cbtAssessments as $cbtAssessment)
                         @php
@@ -407,7 +405,7 @@
                     @empty
                         <tr>
                             <td colspan="7">
-                                <x-empty-state title="No CBT Assessments Configured" explanation="No computer-based tests have been created in this category. Navigate to the Create CBT tab to register one." />
+                                <x-empty-state title="No CBT Assessments Configured" />
                             </td>
                         </tr>
                     @endforelse
@@ -417,7 +415,7 @@
 
             @if ($activeTeachingSection === 'latest-content')
                 <div class="space-y-8">
-                    <x-dashboard-card title="Latest Published Lesson Notes" subtitle="Recently shared class resources and teacher notes." icon="learning" accent="blue">
+                    <x-dashboard-card title="Latest Published Lesson Notes" icon="learning" accent="blue">
                         <x-data-table :headers="['Lesson', 'Class', 'Teacher', 'Published', 'Media', 'Actions']" minWidth="920px">
                             @forelse ($lessons as $lesson)
                                 @php
@@ -463,14 +461,14 @@
                             @empty
                                 <tr>
                                     <td colspan="6">
-                                        <x-empty-state title="No Lessons Published" explanation="No lesson notes exist on the platform. Jump to the Publish Lesson workspace to create one." />
+                                        <x-empty-state title="No Lessons Published" />
                                     </td>
                                 </tr>
                             @endforelse
                         </x-data-table>
                     </x-dashboard-card>
 
-                    <x-dashboard-card title="Latest Assigned Schoolwork" subtitle="Recent assignment records, deadlines, and class targets." icon="assignments" accent="orange">
+                    <x-dashboard-card title="Latest Assigned Schoolwork" icon="assignments" accent="orange">
                         <x-data-table :headers="['Assignment', 'Class', 'Due Date', 'Score', 'Status', 'Actions']" minWidth="880px">
                             @forelse ($assignments as $assignment)
                                 @php
@@ -509,7 +507,7 @@
                             @empty
                                 <tr>
                                     <td colspan="6">
-                                        <x-empty-state title="No Assignments Assigned" explanation="No assignments have been assigned yet. Jump to the Create Assignment workspace to write one." />
+                                        <x-empty-state title="No Assignments Assigned" />
                                     </td>
                                 </tr>
                             @endforelse
@@ -519,7 +517,7 @@
             @endif
 
             @if ($activeTeachingSection === 'submissions')
-                <x-dashboard-card title="Assignment Submissions" subtitle="Review student answers and save scores without opening large cards." icon="assignments" accent="green">
+                <x-dashboard-card title="Assignment Submissions" icon="assignments" accent="green">
                     <x-data-table :headers="['Student', 'Assignment', 'Submitted Answer', 'Score', 'Status', 'Actions']" minWidth="1120px">
                     @forelse ($submissions as $submission)
                         @php
@@ -569,7 +567,7 @@
                     @empty
                         <tr>
                             <td colspan="6">
-                                <x-empty-state title="No Submissions Awaiting Attention" explanation="You have graded all outstanding student assignments! Take a break, you've earned it." />
+                                <x-empty-state title="No Submissions Awaiting Attention" />
                             </td>
                         </tr>
                     @endforelse
@@ -578,7 +576,7 @@
             @endif
 
             @if ($activeTeachingSection === 'cbt-attempts')
-                <x-dashboard-card title="CBT Reviews" subtitle="Subjective attempts awaiting review or recently graded." icon="reports" accent="purple">
+                <x-dashboard-card title="CBT Reviews" icon="reports" accent="purple">
                     <x-data-table :headers="['Student', 'Assessment', 'Subject / Class', 'Submitted', 'Status', 'Actions']" minWidth="980px">
                     @forelse ($cbtAttemptsNeedingReview as $attempt)
                         @php
@@ -620,7 +618,7 @@
                     @empty
                         <tr>
                             <td colspan="6">
-                                <x-empty-state title="No CBT Reviews Outstanding" explanation="No subjective theory assessments are currently pending manual grading." />
+                                <x-empty-state title="No CBT Reviews Outstanding" />
                             </td>
                         </tr>
                     @endforelse

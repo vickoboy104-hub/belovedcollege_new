@@ -28,7 +28,7 @@
 
     <x-slot name="header">
         <x-page-header title="{{ $selectedStudent->user->fullName() }}" eyebrow="Result Center">
-            <x-slot name="description">
+            <x-slot name="meta">
                 {{ $selectedStudent->admission_no }} • {{ $selectedStudent->schoolClass->display_name ?? 'Class pending' }} • {{ $selectedTerm?->name ?? 'No term selected' }} {{ $selectedTerm?->academicSession ? '- '.$selectedTerm->academicSession->name : '' }}
             </x-slot>
             <x-slot name="actions">
@@ -44,7 +44,7 @@
 
     <!-- Swtich Academic Term Filter -->
     <div class="mb-8">
-        <x-filter-card :action="route('admin.reports.show', ['student' => $selectedStudent, 'section' => $activeReportSection])" method="GET" title="Switch Academic Term" description="Keep your search term when switching categories">
+        <x-filter-card :action="route('admin.reports.show', ['student' => $selectedStudent, 'section' => $activeReportSection])" method="GET" title="Switch Academic Term">
             <select name="term_id" class="theme-input max-w-xs">
                 @foreach ($terms as $term)
                     <option value="{{ $term->id }}" @selected($selectedTerm?->id === $term->id)>{{ $term->name }} - {{ $term->academicSession->name ?? 'No session' }}</option>
@@ -184,7 +184,7 @@
                     @empty
                         <tr>
                             <td colspan="8" class="px-6 py-8">
-                                <x-empty-state title="No Compiled Scores" explanation="No subject score compilation entries have been recorded for this student in the selected term yet." />
+                                <x-empty-state title="No Compiled Scores" />
                             </td>
                         </tr>
                     @endforelse
@@ -362,7 +362,7 @@
                 </div>
             @endif
         @else
-            <x-empty-state title="Academic Term Pending" explanation="Create at least one academic term before opening a report workspace." />
+            <x-empty-state title="Academic Term Pending" />
         @endif
     </div>
 </x-app-layout>

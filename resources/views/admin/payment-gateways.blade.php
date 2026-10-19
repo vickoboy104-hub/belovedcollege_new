@@ -3,7 +3,6 @@
         <x-page-header
             title="Payment Gateways"
             eyebrow="Finance Configuration"
-            description="Choose exactly which online payment methods students and parents can use, then enter the credentials supplied by each provider."
         >
             <x-slot name="actions">
                 <x-action-button variant="secondary" :href="route('admin.finance')" icon="finance">Open Finance</x-action-button>
@@ -20,7 +19,7 @@
             <p class="mt-1 leading-6 text-blue-900">Create a Paystack account, copy the <strong>pk_test_...</strong> and <strong>sk_test_...</strong> keys here, enable Paystack, and test checkout without using real money. Switch to live keys only when you are ready for real school payments.</p>
         </div>
 
-        <x-dashboard-card title="Student checkout methods" subtitle="Tick the gateways you want students and parents to see. A gateway appears only when it is both enabled here and fully configured below." icon="finance" accent="blue">
+        <x-dashboard-card title="Student checkout methods" icon="finance" accent="blue">
             <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
                 @foreach ($gateways as $gateway)
                     <label class="relative flex cursor-pointer flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-blue-400 hover:shadow-md">

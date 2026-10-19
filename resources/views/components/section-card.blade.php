@@ -1,4 +1,4 @@
-@props(['title' => null, 'subtitle' => null, 'icon' => null, 'accent' => 'blue', 'tone' => null])
+@props(['title' => null, 'icon' => null, 'accent' => 'blue', 'tone' => null])
 
 @php
     // tone overrides accent for backwards-compat
@@ -34,11 +34,6 @@
                         <h2 class="section-title" style="color: var(--panel-title-color, inherit);">
                             {{ $title }}
                         </h2>
-                    @endif
-                    @if($subtitle)
-                        <p class="section-description" style="color: var(--panel-desc-color, inherit);">
-                            {{ $subtitle }}
-                        </p>
                     @endif
                 </div>
             </div>

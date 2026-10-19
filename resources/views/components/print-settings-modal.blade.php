@@ -58,7 +58,6 @@
                             <input type="checkbox" x-model="duplicateToFill" class="rounded border-slate-300" />
                             <span class="text-sm text-slate-600">Duplicate selection to fill each A4 page</span>
                         </label>
-                        <p class="text-xs text-slate-400 mt-1">When enabled, the selected receipt(s) will be repeated on the A4 page to reach the chosen items-per-page count.</p>
                     </div>
                 </div>
 

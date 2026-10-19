@@ -23,7 +23,7 @@
 
     <x-slot name="header">
         <x-page-header :title="'Welcome back, ' . $student->user->name . '!'" eyebrow="Student Portal">
-            <x-slot name="description">
+            <x-slot name="meta">
                 {{ $student->admission_no }} &bull; {{ $student->schoolClass->name ?? 'Class pending assignment' }}
             </x-slot>
             <x-slot name="actions">
@@ -81,7 +81,7 @@
             <div class="grid gap-5 xl:grid-cols-[1.1fr,0.9fr]">
                 <!-- Left Column: Lessons Preview -->
                 <div class="space-y-4">
-                    <x-dashboard-card title="Recent Lesson Notes" subtitle="Curriculum notes and reference resources published by your teachers." icon="learning" accent="blue">
+                    <x-dashboard-card title="Recent Lesson Notes" icon="learning" accent="blue">
                         <div class="space-y-3">
                             @forelse ($lessons->take(2) as $lesson)
                                 <article class="rounded-[14px] border border-slate-200 bg-white p-4 shadow-sm hover:border-blue-500 transition-all space-y-3">
@@ -115,7 +115,7 @@
                                     </div>
                                 </article>
                             @empty
-                                <x-empty-state title="No lesson notes available yet" subtitle="When your course teachers publish lesson libraries, notes, and video attachments, they will appear here." icon="learning" />
+                                <x-empty-state title="No lesson notes available yet" icon="learning" />
                             @endforelse
                         </div>
                     </x-dashboard-card>
@@ -134,7 +134,7 @@
                                     <span class="text-sm font-bold text-blue-700 tabular-nums">{{ number_format($average, 1) }}%</span>
                                 </div>
                             @empty
-                                <x-empty-state title="No subject averages logged yet" subtitle="Cumulative performance statistics generate dynamically when test or exam scores load." icon="reports" />
+                                <x-empty-state title="No subject averages logged yet" icon="reports" />
                             @endforelse
                         </div>
                     </x-dashboard-card>
@@ -144,7 +144,7 @@
 
         <!-- 2. OFFICIAL TERM REPORTS SECTION -->
         <div x-show="activeSection === 'reports'" x-cloak x-transition:enter="transition ease-out duration-250">
-            <x-dashboard-card title="Official Term Reports" subtitle="Access officially approved report cards and academic summaries." icon="reports" accent="green">
+            <x-dashboard-card title="Official Term Reports" icon="reports" accent="green">
                 <div class="grid gap-6 md:grid-cols-2">
                     @forelse ($publishedReports as $publishedReport)
                         <div class="rounded-[18px] border border-slate-200 bg-slate-50/50 p-5 shadow-sm hover:border-emerald-500 transition-all flex flex-col justify-between gap-4">
@@ -197,7 +197,7 @@
                         </div>
                     @empty
                         <div class="md:col-span-2">
-                            <x-empty-state title="No Approved Report Cards" subtitle="When administrators approve and release academic report cards for this term, they will be listed here." icon="reports" />
+                            <x-empty-state title="No Approved Report Cards" icon="reports" />
                         </div>
                     @endforelse
                 </div>
@@ -332,7 +332,7 @@
                         </table>
                     </section>
                 @empty
-                    <x-empty-state title="No recorded results" subtitle="Results will appear here when scores are published." icon="reports" />
+                    <x-empty-state title="No recorded results" icon="reports" />
                 @endforelse
             </x-dashboard-card>
         </div>
@@ -384,8 +384,8 @@
                     @endif
                 </x-dashboard-card>
             @else
-                <x-dashboard-card title="CBT Exams and Tests" subtitle="Computer-based examination portal" icon="portal" accent="purple">
-                    <x-empty-state title="CBT Not Available" subtitle="CBT exam dashboard access is reserved strictly for student portal roles." icon="portal" />
+                <x-dashboard-card title="CBT Exams and Tests" icon="portal" accent="purple">
+                    <x-empty-state title="CBT Not Available" icon="portal" />
                 </x-dashboard-card>
             @endif
         </div>
@@ -661,7 +661,7 @@
                     @empty
                         <tr>
                             <td colspan="3" class="px-6 py-8 text-center">
-                                <x-empty-state title="No attendance records logged" subtitle="Chronological attendance records generate dynamically when teachers take registry logs." icon="clock" />
+                                <x-empty-state title="No attendance records logged" icon="clock" />
                             </td>
                         </tr>
                     @endforelse

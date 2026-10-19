@@ -1,6 +1,6 @@
 <x-portal-layout>
     <x-slot name="header">
-        <x-page-header title="Bank transfer verification" description="Review student transfer claims before they affect invoice balances." eyebrow="Finance desk" />
+        <x-page-header title="Bank transfer verification" eyebrow="Finance desk" />
     </x-slot>
 
     <div class="space-y-6">

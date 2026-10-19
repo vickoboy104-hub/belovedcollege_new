@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <x-page-header title="Choose Student Report Card" eyebrow="Academic Result Center" description="Search by student name, student ID, or admission number and open the report workspace immediately.">
+        <x-page-header title="Choose Student Report Card" eyebrow="Academic Result Center">
             <x-slot name="actions">
                 <x-action-button variant="accent" :href="route('reports.checker')" target="_blank" class="!rounded-xl text-xs font-bold py-2.5 shadow-sm">
                     Open Public Result Checker
@@ -39,7 +39,7 @@
     @endphp
 
     <div class="mb-8">
-        <x-filter-card title="Find a student report instantly" subtitle="Search by name, student ID, or admission number. When the text matches one student, an Open Report link appears." :action="$currentIndexRoute">
+        <x-filter-card title="Find a student report instantly" :action="$currentIndexRoute">
             <div class="flex flex-col gap-1.5 md:col-span-2">
                 <label for="report-student-search" class="text-[10px] font-extrabold uppercase tracking-wider text-slate-400">Student quick search</label>
                 <input
@@ -163,7 +163,7 @@
                 @empty
                     <tr>
                         <td colspan="7">
-                            <x-empty-state title="No students found" description="No students match this category or search filters. Try a name, student ID, or admission number above." />
+                            <x-empty-state title="No students found" />
                         </td>
                     </tr>
                 @endforelse

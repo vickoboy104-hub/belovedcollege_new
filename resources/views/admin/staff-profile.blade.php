@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <x-page-header title="Edit Staff Profile" eyebrow="Staff Profile Workspace" description="Manage full records, credentials, deactivations, and settings for {{ $staffProfile->user->fullName() }}.">
+        <x-page-header title="Edit Staff Profile" eyebrow="Staff Profile Workspace">
             <x-slot name="actions">
                 <div class="flex flex-wrap items-center gap-3">
                     <x-action-button variant="secondary" :href="route('admin.staff.index', $filters)" class="!rounded-xl text-xs font-bold py-2.5">
@@ -45,7 +45,7 @@
         <!-- Left Side: Actions and Credentials Overview -->
         <div class="space-y-8">
             <!-- Record Details -->
-            <x-dashboard-card title="Record Status & Details" subtitle="System records and payroll details.">
+            <x-dashboard-card title="Record Status & Details">
                 <div class="space-y-4 mt-4">
                     <div class="p-4 rounded-xl border border-slate-100 bg-slate-50/60 flex flex-col">
                         <span class="text-[10px] font-extrabold uppercase tracking-widest text-slate-400">Account Status</span>
@@ -100,7 +100,7 @@
             </x-dashboard-card>
 
             <!-- Danger Zone & Operations -->
-            <x-dashboard-card title="Operational Controls" subtitle="Security updates and profile lifecycle operations.">
+            <x-dashboard-card title="Operational Controls">
                 <div class="mt-4 space-y-4">
                     <form method="POST" action="{{ route('admin.staff.password.reset', $staffProfile) }}">
                         @csrf
