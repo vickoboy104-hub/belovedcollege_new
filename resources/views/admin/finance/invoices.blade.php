@@ -8,7 +8,7 @@
             <div><h2 class="text-lg font-black text-[#071833]">Invoice register</h2><p class="mt-1 text-xs font-semibold text-slate-500">{{ $invoices->total() }} invoice{{ $invoices->total() === 1 ? '' : 's' }} in the current register.</p></div>
             <div class="flex flex-wrap items-center gap-2">
                 <a href="{{ route('admin.finance.payment-desk') }}" class="theme-button-secondary">Payment desk</a>
-                <a href="{{ route('admin.finance', ['section' => 'generate-invoice']) }}" class="rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-black text-white">Generate Invoice</a>
+                <a href="{{ route('admin.finance', ['section' => 'generate-invoice']) }}" class="theme-button">Generate Invoice</a>
             </div>
         </div>
 

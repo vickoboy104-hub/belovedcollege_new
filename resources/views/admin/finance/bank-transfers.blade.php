@@ -13,7 +13,7 @@
                 <h2 class="text-lg font-black text-[#071833]">Pending bank transfers</h2>
                 <p class="mt-1 text-xs font-semibold text-slate-500">Only verify a claim after confirming the transaction in the official school bank account.</p>
             </div>
-            <a href="{{ route('admin.finance', ['section' => 'record-payment']) }}" class="rounded-xl border border-slate-300 bg-white px-4 py-2 text-xs font-black text-slate-700">Finance desk</a>
+            <a href="{{ route('admin.finance', ['section' => 'record-payment']) }}" class="theme-button-secondary">Finance desk</a>
         </div>
 
         <div class="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">

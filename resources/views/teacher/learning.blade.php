@@ -2,7 +2,7 @@
     <x-slot name="header">
         <x-page-header title="Teaching Workspace" eyebrow="Teacher Portal">
             <x-slot name="description">
-                @if ($classTeacherMode)
+                @if ($classTeacherMode && $managedClasses->isNotEmpty())
                     Assigned classes: {{ $managedClasses->pluck('display_name')->join(', ') }}.
                 @else
                     Lessons, assignments, exams and grades.

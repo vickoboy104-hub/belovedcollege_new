@@ -160,7 +160,7 @@
                     'keywords' => 'staff, students, parents, directory, users, profiles, management',
                 ],
                 [
-                    'label' => 'School Management', 
+                    'label' => 'Academics',
                     'route' => 'admin.academics', 
                     'active' => 'admin.academics*', 
                     'icon' => 'school',
@@ -169,7 +169,7 @@
                     'keywords' => 'sessions, terms, rollover, promotions, classes, subjects, announcements, CBT, academics, topics, headers',
                 ],
                 [
-                    'label' => 'Student Management',
+                    'label' => 'Students',
                     'route' => 'admin.students.index',
                     'active' => 'admin.students.*',
                     'icon' => 'student',
@@ -178,7 +178,7 @@
                     'keywords' => 'students, directory, debtors, bills',
                 ],
                 [
-                    'label' => 'Parents Management',
+                    'label' => 'Parents',
                     'route' => 'admin.parents.index',
                     'active' => 'admin.parents.*|admin.students.index',
                     'icon' => 'parents',
@@ -187,7 +187,7 @@
                     'keywords' => 'parents, families, directory',
                 ],
                 [
-                    'label' => 'Staff Management',
+                    'label' => 'Staff',
                     'route' => 'admin.staff.index',
                     'active' => 'admin.staff.*',
                     'icon' => 'staff',
@@ -248,7 +248,7 @@
             'label' => 'Teaching',
             'items' => [
                 [
-                    'label' => 'Learning Workspace',
+                    'label' => 'Learning',
                     'route' => 'teacher.learning',
                     'active' => 'teacher.learning|teacher.cbt.*',
                     'icon' => 'learning',

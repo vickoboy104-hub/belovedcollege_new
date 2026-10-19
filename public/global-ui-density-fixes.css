@@ -484,3 +484,25 @@ html.theme-dark-corporate .app-shell main :is([class*="text-slate-300"], [class*
 .mobile-bottom-nav-text {
     font-size: 0.75rem !important;
 }
+
+/* Teacher workflow panels are page-level actions, not dense table controls,
+   so they clear the 44px target floor at every width. */
+.app-shell :is(.workflow-primary-button, .workflow-secondary-button, .submission-filter-btn) {
+    min-height: 44px !important;
+}
+
+/* Collapsible sidebar parents wrap icon+label in a flex div and add a chevron,
+   which left "Learning Workspace" 13px short of its natural width. */
+.app-shell .app-sidebar-link.justify-between {
+    gap: 0.5rem !important;
+}
+
+.app-shell .app-sidebar-link > div {
+    gap: 0.5rem !important;
+    min-width: 0;
+}
+
+.app-shell .app-sidebar-link > span[class*="transition-transform"] {
+    flex: 0 0 auto;
+    margin-right: 0 !important;
+}
