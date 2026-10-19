@@ -138,8 +138,8 @@
     .admin-page-header h1,
     .page-header-title,
     .app-header-card h1 {
-        font-size: clamp(1.7rem, 8vw, 2.25rem) !important;
-        line-height: 1.03 !important;
+        font-size: clamp(1.25rem, 3.2vw, 1.6rem) !important;
+        line-height: 1.15 !important;
         overflow-wrap: normal !important;
         word-break: normal !important;
     }
@@ -271,7 +271,7 @@
         font-size: 0.8rem !important;
     }
 
-    .theme-input,
+    .theme-input:not(textarea),
     input[type="text"],
     input[type="email"],
     input[type="password"],
@@ -346,69 +346,6 @@
         min-width: max-content !important;
         scroll-snap-align: start;
         white-space: nowrap !important;
-    }
-
-    .student-directory-shell,
-    .mobile-record-list,
-    .mobile-record-card {
-        width: 100% !important;
-        min-width: 0 !important;
-        max-width: 100% !important;
-    }
-
-    .student-directory-shell {
-        padding: 0.85rem !important;
-    }
-
-    .mobile-record-list {
-        margin-top: 0.75rem !important;
-    }
-
-    .mobile-record-card {
-        padding: 1rem !important;
-    }
-
-    .mobile-record-card > div:first-child {
-        display: grid !important;
-        grid-template-columns: auto minmax(0, 1fr) auto !important;
-        align-items: start !important;
-        gap: 0.65rem !important;
-    }
-
-    .mobile-record-card > div:first-child > .flex {
-        display: contents !important;
-    }
-
-    .mobile-record-title {
-        min-width: 0 !important;
-        font-size: 1.05rem !important;
-        line-height: 1.18 !important;
-        overflow-wrap: normal !important;
-        word-break: normal !important;
-        hyphens: none !important;
-    }
-
-    .mobile-record-grid {
-        grid-template-columns: minmax(0, 1fr) !important;
-        gap: 0.65rem !important;
-    }
-
-    .mobile-record-item {
-        min-width: 0 !important;
-    }
-
-    .mobile-record-value {
-        overflow-wrap: anywhere !important;
-    }
-
-    .mobile-action-row {
-        display: grid !important;
-        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
-        gap: 0.55rem !important;
-    }
-
-    .mobile-action-row > * {
-        min-width: 0 !important;
     }
 
     .route-admin-reports-show .app-content-shell > header,

@@ -21,7 +21,7 @@
                 </h3>
             </div>
             <p class="text-xs font-bold text-slate-500">
-                Student: <strong class="text-slate-800">{{ $studentName }}</strong> &bull; Class: <strong class="text-slate-850">{{ $className }}</strong>
+                Student: <strong class="text-slate-800">{{ $studentName }}</strong> &bull; Class: <strong class="text-slate-900">{{ $className }}</strong>
             </p>
         </div>
         <x-status-badge :status="$status" class="shrink-0 scale-95" />

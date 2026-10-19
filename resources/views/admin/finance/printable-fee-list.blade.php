@@ -50,7 +50,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="text-xs text-slate-600 bg-slate-50 border border-slate-150 rounded-2xl p-4 min-w-[200px] shadow-sm">
+                <div class="text-xs text-slate-600 bg-slate-50 border border-slate-200 rounded-2xl p-4 min-w-[200px] shadow-sm">
                     <div class="font-black text-slate-900 uppercase tracking-wider text-[10px] text-blue-600 mb-2">Printable Class Fee List</div>
                     <div class="space-y-1 font-semibold">
                         <div>Class: <span class="text-slate-900 font-bold">{{ $schoolClass->display_name }}</span></div>
@@ -77,7 +77,7 @@
                                 <th class="px-5 py-4 text-right">Amount</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-150 text-slate-700 text-xs">
+                        <tbody class="divide-y divide-slate-200 text-slate-700 text-xs">
                             @forelse ($feeItems as $item)
                                 <tr class="hover:bg-slate-50/30 transition">
                                     <td class="px-5 py-4 text-slate-900">

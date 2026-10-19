@@ -264,15 +264,11 @@
                                     ];
                                 @endphp
                                 <article class="mobile-record-card">
-                                    <div class="flex items-start justify-between border-b border-slate-100 pb-3 mb-4">
-                                        <div class="flex items-center gap-3">
-                                            <x-person-avatar :user="$student->user" class="!h-9 !w-9 !text-xs" />
-                                            <div>
-                                                <div class="mobile-record-title">{{ $student->user->fullName() }}</div>
-                                                <div class="text-[10px] text-slate-550 font-bold mt-0.5">{{ $student->schoolClass->display_name ?? 'Unassigned' }}</div>
-                                            </div>
-                                        </div>
-                                        <x-status-badge :status="$studentStatus" class="scale-90 origin-right" />
+                                    <div class="mobile-record-head">
+                                        <x-person-avatar :user="$student->user" class="mobile-record-avatar !h-9 !w-9 !text-xs" />
+                                        <div class="mobile-record-title">{{ $student->user->fullName() }}</div>
+                                        <div class="mobile-record-subtitle">{{ $student->schoolClass->display_name ?? 'Unassigned' }}</div>
+                                        <x-status-badge :status="$studentStatus" class="mobile-record-state" />
                                     </div>
                                     
                                     <div class="mobile-record-grid">
@@ -294,17 +290,17 @@
                                         </div>
                                     </div>
                                     
-                                    <div class="mobile-action-row border-t border-slate-100 pt-3 mt-4">
+                                    <div class="mobile-action-row">
                                         <button
                                             type="button"
-                                            class="table-view-btn w-full !text-center !py-2 !rounded-xl !bg-slate-100 hover:!bg-slate-205 text-slate-700 font-bold transition"
+                                            class="table-view-btn !bg-slate-100 hover:!bg-slate-200 text-slate-700 font-bold transition"
                                             data-preview='@json($studentPreview, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_TAG)'
                                         >
                                             Quick View
                                         </button>
                                         <a
                                             href="{{ route('admin.students.show', ['student' => $student] + $studentState) }}"
-                                            class="theme-button w-full !min-h-[2.45rem] !py-2 !px-4 !text-xs font-bold text-center !rounded-xl"
+                                            class="theme-button font-bold"
                                         >
                                             Full Profile
                                         </a>

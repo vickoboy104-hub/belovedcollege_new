@@ -1,0 +1,224 @@
+/* Phone structure pass.
+
+   Five nested containers each added their own padding at 390px, so a record card
+   only got 242px of usable width and three borders drew stray vertical rules.
+   This file is loaded last so it settles phone layout in one place instead of
+   trading !important with the earlier audit stylesheets. */
+
+@media (max-width: 640px) {
+    :root {
+        --phone-edge: 0.65rem;
+        --phone-nav-clearance: 5.6rem;
+    }
+
+    /* Stop the nesting from eating the viewport. */
+    .app-shell .app-main {
+        margin-inline: 0 !important;
+        max-width: 100% !important;
+        padding: 0.6rem var(--phone-edge) calc(var(--phone-nav-clearance) + env(safe-area-inset-bottom)) !important;
+    }
+
+    .app-shell .app-content-shell > header {
+        padding-inline: var(--phone-edge) !important;
+    }
+
+    .app-shell .admin-page-content {
+        padding: 0 !important;
+        gap: 0.6rem !important;
+    }
+
+    .app-shell :is(.admin-workspace-card, .admin-panel.section-card-panel, .admin-toolbar-card, .filter-card) {
+        padding: 0.8rem !important;
+        border-radius: 0.95rem !important;
+    }
+
+    .app-shell .student-directory-shell {
+        padding: 0 !important;
+        border: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    .app-shell .mobile-record-list {
+        margin-top: 0.6rem !important;
+        gap: 0.6rem !important;
+    }
+
+    .app-shell :is(.mobile-record-card, .mobile-record-list > .card) {
+        padding: 0.8rem !important;
+        border-radius: 0.95rem !important;
+    }
+
+    .app-shell .card {
+        padding: 0.85rem !important;
+        border-radius: 0.95rem !important;
+    }
+
+    .app-shell .mobile-record-card + .mobile-record-card {
+        margin-top: 0.6rem !important;
+    }
+
+    /* Identity row: avatar, name, status chip on the first line, and the
+       email/class line on its own full-width row so it never breaks mid-token. */
+    .app-shell .mobile-record-head {
+        display: grid !important;
+        grid-template-columns: auto minmax(0, 1fr) auto !important;
+        grid-template-areas:
+            "avatar title state"
+            "avatar subtitle subtitle" !important;
+        column-gap: 0.55rem !important;
+        row-gap: 0.08rem !important;
+        align-items: center !important;
+        padding-bottom: 0.5rem !important;
+        margin-bottom: 0.55rem !important;
+        border-bottom: 1px solid #e8eef7 !important;
+    }
+
+    .app-shell .mobile-record-avatar {
+        grid-area: avatar;
+    }
+
+    .app-shell .mobile-record-title {
+        grid-area: title;
+        font-size: 0.98rem !important;
+        line-height: 1.18 !important;
+        overflow-wrap: normal !important;
+        word-break: normal !important;
+        hyphens: none !important;
+    }
+
+    .app-shell .mobile-record-subtitle {
+        grid-area: subtitle;
+        margin-top: 0 !important;
+        font-size: 0.72rem !important;
+        font-weight: 600 !important;
+        line-height: 1.3 !important;
+        color: #64748b !important;
+        overflow-wrap: anywhere !important;
+    }
+
+    .app-shell .mobile-record-state {
+        grid-area: state;
+        justify-self: end !important;
+        white-space: nowrap !important;
+    }
+
+    /* One scannable label/value line per field instead of two stacked lines. */
+    .app-shell .mobile-record-grid {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+        gap: 0.35rem !important;
+        margin-top: 0.55rem !important;
+    }
+
+    .app-shell .mobile-record-item {
+        display: grid !important;
+        grid-template-columns: 6rem minmax(0, 1fr) !important;
+        align-items: baseline !important;
+        gap: 0.5rem !important;
+        min-width: 0 !important;
+    }
+
+    .app-shell .mobile-record-label {
+        font-size: 0.68rem !important;
+        letter-spacing: 0.02em !important;
+        line-height: 1.25 !important;
+    }
+
+    .app-shell .mobile-record-value {
+        font-size: 0.82rem !important;
+        line-height: 1.3 !important;
+        overflow-wrap: anywhere !important;
+    }
+
+    /* Actions: an even two-column grid, primary action spanning the full width. */
+    .app-shell .mobile-action-row {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 0.45rem !important;
+        margin-top: 0.65rem !important;
+        padding-top: 0.6rem !important;
+        border-top: 1px solid #e8eef7 !important;
+    }
+
+    .app-shell .mobile-action-row > * {
+        min-width: 0 !important;
+    }
+
+    .app-shell .mobile-action-primary {
+        grid-column: 1 / -1 !important;
+    }
+
+    .app-shell .mobile-action-row :is(a, button) {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 100% !important;
+        min-height: 2.45rem !important;
+        padding: 0.3rem 0.5rem !important;
+        border-radius: 0.7rem !important;
+        font-size: 0.76rem !important;
+        line-height: 1.15 !important;
+        text-align: center !important;
+        overflow-wrap: normal !important;
+    }
+
+    /* Toolbars: the field takes the row, the buttons pair up underneath it. */
+    .app-shell :is(.table-toolbar, .admin-toolbar-controls) {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 0.5rem !important;
+    }
+
+    .app-shell :is(.table-toolbar, .admin-toolbar-controls) > :is(input, select, textarea, .report-quick-search-field, div) {
+        grid-column: 1 / -1 !important;
+        min-width: 0 !important;
+    }
+
+    .app-shell :is(.table-toolbar, .admin-toolbar-controls) > :is(button, a) {
+        min-width: 0 !important;
+    }
+
+    /* Page-header actions: one swipeable row of natural-width buttons instead
+       of a 2+1 ladder when three actions share 326px. */
+    .app-shell :is(.page-actions, .admin-actions) {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        gap: 0.45rem !important;
+        width: 100% !important;
+        overflow-x: auto !important;
+        padding-bottom: 0.15rem !important;
+        scrollbar-width: none !important;
+        -webkit-overflow-scrolling: touch;
+    }
+
+    .app-shell :is(.page-actions, .admin-actions)::-webkit-scrollbar {
+        display: none;
+    }
+
+    .app-shell :is(.page-actions, .admin-actions) > * {
+        flex: 0 0 auto !important;
+        min-width: 0 !important;
+        width: auto !important;
+        white-space: nowrap !important;
+    }
+
+    /* Section headers inside a card no longer need desktop air. */
+    .app-shell .section-card-panel > .section-header {
+        padding-bottom: 0.35rem !important;
+        margin-bottom: 0.5rem !important;
+    }
+
+    .app-shell .admin-page-header h1,
+    .app-shell .page-header-title {
+        font-size: clamp(1.05rem, 5.4vw, 1.3rem) !important;
+        line-height: 1.15 !important;
+    }
+}
+
+/* Landscape phones and portrait tablets have room for two header actions side by side. */
+@media (min-width: 641px) and (max-width: 768px) {
+    .app-shell :is(.page-actions, .admin-actions) {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+}

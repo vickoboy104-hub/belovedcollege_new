@@ -128,7 +128,7 @@
 
                     <div class="mt-6 space-y-3" x-show="selectedClass.items.length">
                         <template x-for="item in selectedClass.items" :key="item.id">
-                            <label class="flex items-start gap-4 rounded-xl border border-slate-150 px-4 py-3.5 hover:bg-slate-50/40 hover:border-slate-300 transition duration-150 cursor-pointer">
+                            <label class="flex items-start gap-4 rounded-xl border border-slate-200 px-4 py-3.5 hover:bg-slate-50/40 hover:border-slate-300 transition duration-150 cursor-pointer">
                                 <input type="checkbox" :value="item.id" x-model="selectedIds" class="mt-1 rounded border-[#c8d6ea] text-blue-600 focus:ring-blue-500" />
                                 <div class="flex-1">
                                     <div class="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
@@ -522,7 +522,7 @@
                 <x-dashboard-card title="Gateway Providers" icon="finance" accent="blue">
                     <div class="space-y-3 mt-1">
                         @foreach ($paymentSummary['providerBreakdown'] as $provider)
-                            <div class="rounded-xl border border-slate-150 bg-slate-50/50 p-4 shadow-sm">
+                            <div class="rounded-xl border border-slate-200 bg-slate-50/50 p-4 shadow-sm">
                                 <div class="flex items-center justify-between gap-3">
                                     <div class="font-bold text-slate-900 text-sm">{{ $provider['label'] }}</div>
                                     <div class="rounded-full bg-blue-50 border border-blue-100 px-2.5 py-0.5 text-[10px] font-extrabold text-blue-700 uppercase">
@@ -539,7 +539,7 @@
                 <x-dashboard-card title="Payment Channels" icon="finance" accent="green">
                     <div class="space-y-3 mt-1">
                         @forelse ($paymentSummary['channelBreakdown']->take(8) as $channel)
-                            <div class="flex items-center justify-between gap-3 rounded-xl border border-slate-150 bg-slate-50/50 p-4 shadow-sm">
+                            <div class="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50/50 p-4 shadow-sm">
                                 <div>
                                     <div class="font-bold text-slate-900 text-sm">{{ $channel['channel'] }}</div>
                                     <div class="text-[10px] text-slate-500 font-semibold mt-1">
@@ -563,7 +563,7 @@
                 <x-dashboard-card title="Daily Collections" icon="finance" accent="purple">
                     <div class="space-y-3 mt-1">
                         @forelse ($paymentSummary['dailyCollection'] as $day)
-                            <div class="flex items-center justify-between gap-3 rounded-xl border border-slate-150 bg-slate-50/50 p-4 shadow-sm">
+                            <div class="flex items-center justify-between gap-3 rounded-xl border border-slate-200 bg-slate-50/50 p-4 shadow-sm">
                                 <div>
                                     <div class="font-bold text-slate-900 text-sm">
                                         {{ $day['day'] !== 'Unknown' ? \Carbon\Carbon::parse($day['day'])->format('M j, Y') : 'Unknown date' }}

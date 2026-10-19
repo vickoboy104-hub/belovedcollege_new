@@ -98,12 +98,12 @@
                                                 <span>Teacher: {{ $lesson->teacher->name }}</span>
                                             </p>
                                         </div>
-                                        <span class="text-xs font-semibold text-slate-400 bg-slate-50 border border-slate-150 px-2.5 py-1 rounded-[8px] shrink-0 self-start">
+                                        <span class="text-xs font-semibold text-slate-400 bg-slate-50 border border-slate-200 px-2.5 py-1 rounded-[8px] shrink-0 self-start">
                                             {{ $lesson->created_at?->format('M j, Y') }}
                                         </span>
                                     </div>
                                     @if ($lesson->summary)
-                                        <p class="truncate text-xs font-semibold text-slate-550 bg-slate-50 border border-slate-100 px-3 py-2 rounded-[10px]">
+                                        <p class="truncate text-xs font-semibold text-slate-600 bg-slate-50 border border-slate-100 px-3 py-2 rounded-[10px]">
                                             {{ $lesson->summary }}
                                         </p>
                                     @endif

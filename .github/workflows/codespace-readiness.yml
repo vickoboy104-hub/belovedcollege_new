@@ -1,0 +1,185 @@
+name: Codespace readiness
+
+# Proves the GitHub Codespaces setup really works: it validates
+# .devcontainer/devcontainer.json, builds the exact image a codespace runs, then
+# executes the same bootstrap and start commands inside that container as the
+# vscode user and checks the site answers over HTTP.
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '.devcontainer/**'
+      - '.github/workflows/codespace-readiness.yml'
+      - 'bootstrap/app.php'
+      - 'composer.json'
+      - 'composer.lock'
+      - 'config/**'
+      - 'database/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'public/index.php'
+  pull_request:
+    paths:
+      - '.devcontainer/**'
+      - '.github/workflows/codespace-readiness.yml'
+      - 'bootstrap/app.php'
+      - 'composer.json'
+      - 'composer.lock'
+      - 'config/**'
+      - 'database/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - 'public/index.php'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: codespace-readiness-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  IMAGE: beloved-codespace
+  APP_DIR: /workspaces/repo
+
+jobs:
+  configuration:
+    name: Validate devcontainer.json
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install the Dev Containers CLI
+        run: npm install -g @devcontainers/cli
+
+      - name: Resolve and assert the configuration
+        run: |
+          set -euo pipefail
+          devcontainer read-configuration --workspace-folder "$PWD" > resolved-devcontainer.json
+          node -e '
+            const fs = require("fs");
+            const resolved = JSON.parse(fs.readFileSync("resolved-devcontainer.json", "utf8"));
+            const config = resolved.configuration || {};
+            const required = ["build", "postCreateCommand", "forwardPorts", "remoteUser"];
+            const missing = required.filter((key) => config[key] === undefined);
+            if (missing.length) throw new Error("Missing devcontainer.json keys: " + missing.join(", "));
+            if (!String(config.build.dockerfile).endsWith("Dockerfile")) {
+              throw new Error("Unexpected dockerfile: " + config.build.dockerfile);
+            }
+            if (config.postCreateCommand !== "bash .devcontainer/bootstrap.sh") {
+              throw new Error("Unexpected postCreateCommand: " + config.postCreateCommand);
+            }
+            if (!config.forwardPorts.includes(8000)) throw new Error("Port 8000 is not forwarded.");
+            if (config.remoteUser !== "vscode") throw new Error("Expected remoteUser vscode, got " + config.remoteUser);
+            console.log("devcontainer.json resolves correctly:", JSON.stringify(config.build));
+          '
+
+  container:
+    name: Boot the image and serve the site
+    needs: configuration
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Build the codespace image
+        run: docker build --pull -f .devcontainer/Dockerfile -t "$IMAGE" .
+
+      - name: Start a container as the vscode user
+        run: docker run -d --name beloved-cs --user vscode "$IMAGE" sleep infinity
+
+      - name: Place the repository where a codespace clone would be
+        run: |
+          set -euo pipefail
+          docker exec --user root beloved-cs mkdir -p "$APP_DIR"
+          tar -C "$GITHUB_WORKSPACE" -cf - . | docker exec -i --user root beloved-cs tar -xf - -C "$APP_DIR"
+          docker exec --user root beloved-cs chown -R vscode:vscode "$APP_DIR"
+
+      - name: Verify the toolchain the image provides
+        run: |
+          set -euo pipefail
+          docker exec --user vscode --workdir "$APP_DIR" beloved-cs bash -lc '
+            set -euo pipefail
+            php -v | head -1
+            composer --version
+            node --version | grep -Eq '^v22\.' || { echo "Expected Node 22, got $(node --version) from $(command -v node)"; exit 1; }
+            npm --version
+            for extension in bcmath curl gd intl mbstring "Zend OPcache" pdo_sqlite sqlite3 xml zip; do
+              php -m | grep -Fixq "$extension" || { echo "Missing PHP extension: $extension"; exit 1; }
+            done
+            echo "All required PHP extensions are present."
+          '
+
+      - name: Run the codespace bootstrap (postCreateCommand)
+        run: docker exec --user vscode --workdir "$APP_DIR" beloved-cs bash -lc 'bash .devcontainer/bootstrap.sh'
+
+      - name: Start the server the same way a user would
+        run: |
+          set -euo pipefail
+          docker exec --user vscode --workdir "$APP_DIR" --detach beloved-cs bash -lc 'bash .devcontainer/serve.sh > /tmp/serve.log 2>&1'
+          for attempt in {1..40}; do
+            if docker exec --user vscode beloved-cs curl --fail --silent http://127.0.0.1:8000/up > /dev/null; then
+              echo "Server answered /up after ${attempt} attempt(s)."
+              break
+            fi
+            sleep 2
+          done
+          docker exec --user vscode beloved-cs curl --fail --silent --output /dev/null http://127.0.0.1:8000/up
+          echo "Health endpoint is live."
+
+      - name: Sign in through the served site
+        run: |
+          set -euo pipefail
+          docker exec --user vscode --workdir "$APP_DIR" beloved-cs bash -lc '
+            set -euo pipefail
+            jar=/tmp/cookies.txt
+            html=$(curl --fail --silent --cookie-jar "$jar" http://127.0.0.1:8000/login)
+            token=$(printf "%s" "$html" | sed -n "s/.*name=\"_token\"[^>]*value=\"\([^\"]*\)\".*/\1/p" | head -1)
+            test -n "$token" || { echo "No CSRF token on the login page."; exit 1; }
+            login=$(grep "^DEFAULT_ADMIN_EMAIL=" .env | cut -d= -f2- | tr -d "\"")
+            password=$(grep "^DEFAULT_ADMIN_PASSWORD=" .env | cut -d= -f2- | tr -d "\"")
+            curl --silent --output /dev/null --dump-header /tmp/headers.txt \
+              --cookie "$jar" --cookie-jar "$jar" \
+              -H "Referer: http://127.0.0.1:8000/login" \
+              --data-urlencode "_token=$token" \
+              --data-urlencode "login=$login" \
+              --data-urlencode "password=$password" \
+              --data-urlencode "audience=generic" \
+              --request POST http://127.0.0.1:8000/login \
+              --write-out "HTTP %{http_code}\n"
+            tr -d "\r" < /tmp/headers.txt | grep -i "^location:"
+            tr -d "\r" < /tmp/headers.txt | grep -Eqi "^location:.*(dashboard|password-change|profile)" \
+              || { echo "Login did not redirect into the application."; exit 1; }
+            echo "Login redirected into the application."
+          '
+
+      - name: Load a signed-in page
+        run: |
+          set -euo pipefail
+          docker exec --user vscode --workdir "$APP_DIR" beloved-cs bash -lc '
+            set -euo pipefail
+            curl --fail --silent --cookie /tmp/cookies.txt --cookie-jar /tmp/cookies.txt \
+              --output /tmp/dashboard.html --write-out "HTTP %{http_code}\n" http://127.0.0.1:8000/dashboard
+            grep -qi "beloved" /tmp/dashboard.html || { echo "Dashboard did not render the school branding."; exit 1; }
+            wc -c < /tmp/dashboard.html
+          '
+
+      - name: Run the automated test suite on the image PHP
+        run: docker exec --user vscode --workdir "$APP_DIR" beloved-cs bash -lc 'composer test'
+
+      - name: Show the server log on failure
+        if: failure()
+        run: docker exec --user vscode beloved-cs cat /tmp/serve.log || true

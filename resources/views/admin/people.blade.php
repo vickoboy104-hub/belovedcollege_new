@@ -35,8 +35,8 @@
                         </div>
                         <h3 class="display-font mt-4 text-xl font-bold text-slate-900">Student Profiles</h3>
                     </div>
-                    <div class="mt-6 pt-4 border-t border-slate-150 flex items-center justify-between">
-                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-450">{{ $studentCount }} Records</span>
+                    <div class="mt-6 pt-4 border-t border-slate-200 flex items-center justify-between">
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">{{ $studentCount }} Records</span>
                         <x-action-button variant="primary" :href="route('admin.students.index')" class="!px-3 !py-1.5 !rounded-lg text-[10px]">Open</x-action-button>
                     </div>
                 </div>
@@ -49,8 +49,8 @@
                         </div>
                         <h3 class="display-font mt-4 text-xl font-bold text-slate-900">Guardians &amp; Sibling</h3>
                     </div>
-                    <div class="mt-6 pt-4 border-t border-slate-150 flex items-center justify-between">
-                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-450">{{ $parentCount }} Linked</span>
+                    <div class="mt-6 pt-4 border-t border-slate-200 flex items-center justify-between">
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">{{ $parentCount }} Linked</span>
                         <x-action-button variant="primary" :href="route('admin.parents.index')" class="!px-3 !py-1.5 !rounded-lg text-[10px]">Open</x-action-button>
                     </div>
                 </div>
@@ -63,8 +63,8 @@
                         </div>
                         <h3 class="display-font mt-4 text-xl font-bold text-slate-900">Staff Directories</h3>
                     </div>
-                    <div class="mt-6 pt-4 border-t border-slate-150 flex items-center justify-between">
-                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-450">{{ $staffCount }} Profiles</span>
+                    <div class="mt-6 pt-4 border-t border-slate-200 flex items-center justify-between">
+                        <span class="text-[10px] font-extrabold uppercase tracking-wider text-slate-500">{{ $staffCount }} Profiles</span>
                         <x-action-button variant="primary" :href="route('admin.staff.index')" class="!px-3 !py-1.5 !rounded-lg text-[10px]">Open</x-action-button>
                     </div>
                 </div>
@@ -75,7 +75,7 @@
         <div class="card bg-white border border-[#c8d6ea] rounded-[18px] p-6 shadow-[0_10px_25px_rgba(15,23,42,0.08)] flex flex-col justify-between">
             <div>
                 <div class="border-b border-slate-100 pb-4 mb-4">
-                    <span class="text-xs font-extrabold uppercase tracking-wider text-slate-450">System Coverage</span>
+                    <span class="text-xs font-extrabold uppercase tracking-wider text-slate-500">System Coverage</span>
                     <h2 class="display-font mt-1 text-xl font-bold text-slate-900 leading-snug">What this hub covers</h2>
                 </div>
 

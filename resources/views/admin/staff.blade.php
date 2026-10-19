@@ -41,9 +41,9 @@
                 Generated {{ $credentials['audience'] }} credentials
             </div>
             <div class="mt-2.5 font-mono bg-white/60 border border-emerald-100 rounded-xl p-3 text-xs leading-relaxed">
-                <span class="font-bold text-slate-700">Name:</span> {{ $credentials['name'] }} <span class="mx-2 text-slate-350">|</span>
-                <span class="font-bold text-slate-700">Login ID:</span> <span class="bg-emerald-100/80 px-1.5 py-0.5 rounded font-extrabold">{{ $credentials['identifier'] }}</span> <span class="mx-2 text-slate-350">|</span>
-                <span class="font-bold text-slate-700">Email:</span> {{ $credentials['email'] }} <span class="mx-2 text-slate-350">|</span>
+                <span class="font-bold text-slate-700">Name:</span> {{ $credentials['name'] }} <span class="mx-2 text-slate-400">|</span>
+                <span class="font-bold text-slate-700">Login ID:</span> <span class="bg-emerald-100/80 px-1.5 py-0.5 rounded font-extrabold">{{ $credentials['identifier'] }}</span> <span class="mx-2 text-slate-400">|</span>
+                <span class="font-bold text-slate-700">Email:</span> {{ $credentials['email'] }} <span class="mx-2 text-slate-400">|</span>
                 <span class="font-bold text-slate-700">Password:</span> <span class="bg-amber-100 px-1.5 py-0.5 rounded font-extrabold">{{ $credentials['password'] }}</span>
             </div>
         </div>
@@ -114,14 +114,9 @@
                     <div class="space-y-6">
                         @forelse ($staffGroups as $deptName => $profiles)
                             <div class="card bg-white border border-[#c8d6ea] rounded-[18px] p-6 shadow-[0_10px_25px_rgba(15,23,42,0.08)] overflow-hidden">
-                                <div class="border-b border-slate-100 pb-4 mb-4 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                                    <div>
-                                        <h3 class="display-font text-base font-extrabold text-slate-900">{{ $deptName }}</h3>
-                                        <p class="text-xs font-semibold text-slate-450 mt-1">{{ $profiles->count() }} registered staff member{{ $profiles->count() === 1 ? '' : 's' }}</p>
-                                    </div>
-                                    <div class="flex justify-end">
-                                        <x-status-badge status="Active" />
-                                    </div>
+                                <div class="border-b border-slate-100 pb-4 mb-4">
+                                    <h3 class="display-font text-base font-extrabold text-slate-900">{{ $deptName }}</h3>
+                                    <p class="text-xs font-semibold text-slate-500 mt-1">{{ $profiles->count() }} registered staff member{{ $profiles->count() === 1 ? '' : 's' }}</p>
                                 </div>
 
                                 <div class="desktop-only-table">
@@ -199,15 +194,11 @@
                                             ];
                                         @endphp
                                         <article class="mobile-record-card">
-                                            <div class="flex items-start justify-between border-b border-slate-100 pb-3 mb-4">
-                                                <div class="flex items-center gap-3">
-                                                    <x-person-avatar :user="$profile->user" class="!h-9 !w-9 !text-xs" />
-                                                    <div>
-                                                        <div class="mobile-record-title">{{ $profile->user->fullName() }}</div>
-                                                        <div class="text-[10px] text-slate-500 font-semibold mt-0.5">{{ $profile->user->roleLabel() }}</div>
-                                                    </div>
-                                                </div>
-                                                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-705">{{ $profile->employee_no ?: 'No ID' }}</span>
+                                            <div class="mobile-record-head">
+                                                <x-person-avatar :user="$profile->user" class="mobile-record-avatar !h-9 !w-9 !text-xs" />
+                                                <div class="mobile-record-title">{{ $profile->user->fullName() }}</div>
+                                                <div class="mobile-record-subtitle">{{ $profile->user->roleLabel() }}</div>
+                                                <span class="mobile-record-state text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">{{ $profile->employee_no ?: 'No ID' }}</span>
                                             </div>
 
                                             <div class="mobile-record-grid">
@@ -221,17 +212,17 @@
                                                 </div>
                                             </div>
 
-                                            <div class="mobile-action-row border-t border-slate-100 pt-3 mt-4">
+                                            <div class="mobile-action-row">
                                                 <button
                                                     type="button"
-                                                    class="table-view-btn w-full !text-center !py-2 !rounded-xl !bg-slate-100 hover:!bg-slate-200 text-slate-700 font-bold transition"
+                                                    class="table-view-btn !bg-slate-100 hover:!bg-slate-200 text-slate-700 font-bold transition"
                                                     data-preview='@json($staffPreview, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_TAG)'
                                                 >
                                                     Quick View
                                                 </button>
                                                 <a
                                                     href="{{ $staffProfileUrl }}"
-                                                    class="theme-button w-full !min-h-[2.45rem] !py-2 !px-4 !text-xs font-bold text-center !rounded-xl"
+                                                    class="theme-button font-bold"
                                                 >
                                                     Full Profile
                                                 </a>
@@ -248,11 +239,8 @@
                 <!-- 2. PAYROLL DESK VIEW -->
                 @elseif ($activeStaffView === 'payroll')
                     <div class="card bg-white border border-[#c8d6ea] rounded-[18px] p-6 shadow-[0_10px_25px_rgba(15,23,42,0.08)] mb-6">
-                        <div class="flex items-center justify-between gap-4 border-b border-slate-100 pb-4">
-                            <div>
-                                <h2 class="display-font text-xl font-bold text-slate-900 leading-snug">Payroll administration desk</h2>
-                            </div>
-                            <x-status-badge status="Active" />
+                        <div class="border-b border-slate-100 pb-4">
+                            <h2 class="display-font text-xl font-bold text-slate-900 leading-snug">Payroll administration desk</h2>
                         </div>
                     </div>
 
@@ -339,15 +327,11 @@
                                             ];
                                         @endphp
                                         <article class="mobile-record-card">
-                                            <div class="flex items-start justify-between border-b border-slate-100 pb-3 mb-4">
-                                                <div class="flex items-center gap-3">
-                                                    <x-person-avatar :user="$profile->user" class="!h-9 !w-9 !text-xs" />
-                                                    <div>
-                                                        <div class="mobile-record-title">{{ $profile->user->fullName() }}</div>
-                                                        <div class="text-[10px] text-slate-500 font-semibold mt-0.5">{{ $profile->user->roleLabel() }}</div>
-                                                    </div>
-                                                </div>
-                                                <span class="text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-705">{{ $profile->employee_no ?: 'No ID' }}</span>
+                                            <div class="mobile-record-head">
+                                                <x-person-avatar :user="$profile->user" class="mobile-record-avatar !h-9 !w-9 !text-xs" />
+                                                <div class="mobile-record-title">{{ $profile->user->fullName() }}</div>
+                                                <div class="mobile-record-subtitle">{{ $profile->user->roleLabel() }}</div>
+                                                <span class="mobile-record-state text-xs font-semibold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700">{{ $profile->employee_no ?: 'No ID' }}</span>
                                             </div>
 
                                             <div class="mobile-record-grid">
@@ -361,17 +345,17 @@
                                                 </div>
                                             </div>
 
-                                            <div class="mobile-action-row border-t border-slate-100 pt-3 mt-4">
+                                            <div class="mobile-action-row">
                                                 <button
                                                     type="button"
-                                                    class="table-view-btn w-full !text-center !py-2 !rounded-xl !bg-slate-100 hover:!bg-slate-200 text-slate-700 font-bold transition"
+                                                    class="table-view-btn !bg-slate-100 hover:!bg-slate-200 text-slate-700 font-bold transition"
                                                     data-preview='@json($payrollPreview, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_TAG)'
                                                 >
                                                     Quick View
                                                 </button>
                                                 <a
                                                     href="{{ $staffProfileUrl }}"
-                                                    class="theme-button w-full !min-h-[2.45rem] !py-2 !px-4 !text-xs font-bold text-center !rounded-xl"
+                                                    class="theme-button font-bold"
                                                 >
                                                     Full Profile
                                                 </a>
@@ -498,7 +482,7 @@
                     <label class="text-xs font-bold text-slate-700">Employee Staff ID Number</label>
                     <div class="grid gap-2 grid-cols-[1fr,auto]">
                         <input name="employee_no" x-model="employeeNo" @focus="generate()" placeholder="Staff employee ID" class="theme-input" />
-                        <button type="button" @click="regenerateId()" class="bg-slate-100 hover:bg-slate-200 border border-[#c8d6ea] text-slate-750 px-4 py-2.5 rounded-[12px] font-bold text-xs uppercase transition active:scale-[0.98]">Regenerate</button>
+                        <button type="button" @click="regenerateId()" class="bg-slate-100 hover:bg-slate-200 border border-[#c8d6ea] text-slate-800 px-4 py-2.5 rounded-[12px] font-bold text-xs uppercase transition active:scale-[0.98]">Regenerate</button>
                     </div>
                     <x-input-error :messages="$errors->get('employee_no')" />
                 </div>
@@ -507,7 +491,7 @@
                     <label class="text-xs font-bold text-slate-700">Temporary Password</label>
                     <div class="grid gap-2 grid-cols-[1fr,auto]">
                         <input name="password" x-model="password" @focus="generate()" placeholder="Temporary password" class="theme-input" />
-                        <button type="button" @click="regeneratePassword()" class="bg-slate-100 hover:bg-slate-200 border border-[#c8d6ea] text-slate-750 px-4 py-2.5 rounded-[12px] font-bold text-xs uppercase transition active:scale-[0.98]">Regenerate</button>
+                        <button type="button" @click="regeneratePassword()" class="bg-slate-100 hover:bg-slate-200 border border-[#c8d6ea] text-slate-800 px-4 py-2.5 rounded-[12px] font-bold text-xs uppercase transition active:scale-[0.98]">Regenerate</button>
                     </div>
                     <x-input-error :messages="$errors->get('password')" />
                 </div>
