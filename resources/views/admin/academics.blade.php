@@ -37,7 +37,7 @@
                                 <input name="end_date" type="date" class="theme-input w-full" required />
                             </div>
                         </div>
-                        <div class="md:col-span-2 flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/50 px-4 py-3 text-xs font-semibold text-slate-650">
+                        <div class="md:col-span-2 flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/50 px-4 py-3 text-xs font-semibold text-slate-700">
                             <input id="session-current" name="is_current" type="checkbox" value="1" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
                             <label for="session-current" class="cursor-pointer">Set as current active academic session</label>
                         </div>
@@ -75,7 +75,7 @@
                             <label class="text-xs font-bold text-slate-700">End Date <span class="text-rose-500">*</span></label>
                             <input name="end_date" type="date" class="theme-input w-full" required />
                         </div>
-                        <div class="md:col-span-2 flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/50 px-4 py-3 text-xs font-semibold text-slate-655">
+                        <div class="md:col-span-2 flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/50 px-4 py-3 text-xs font-semibold text-slate-700">
                             <input id="term-current" name="is_current" type="checkbox" value="1" class="rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
                             <label for="term-current" class="cursor-pointer">Set as current active term</label>
                         </div>
@@ -119,7 +119,7 @@
                                     <div class="text-xs font-semibold text-slate-400">
                                         {{ $session->start_date->format('M j, Y') }} &mdash; {{ $session->end_date->format('M j, Y') }}
                                     </div>
-                                    <div class="text-[10px] font-extrabold uppercase tracking-wider text-slate-450 pt-2 block">
+                                    <div class="text-[10px] font-extrabold uppercase tracking-wider text-slate-500 pt-2 block">
                                         Pass mark {{ number_format((float) $session->promotion_pass_mark, 2) }}%
                                         @if ($session->closed_at)
                                             &bull; Closed {{ $session->closed_at->format('M j, Y g:i A') }}
@@ -185,12 +185,9 @@
 
                     @foreach ($promotionPreviewByClass as $className => $rows)
                         <div class="card bg-white border border-slate-200 rounded-[18px] p-5 shadow-sm space-y-4">
-                            <div class="border-b border-slate-100 pb-3 flex items-center justify-between">
-                                <div>
-                                    <h3 class="display-font text-base font-extrabold text-slate-900">{{ $className }}</h3>
-                                    <p class="text-xs font-semibold text-slate-400 mt-1">{{ $rows->count() }} student record{{ $rows->count() === 1 ? '' : 's' }}</p>
-                                </div>
-                                <x-status-badge status="Active" />
+                            <div class="border-b border-slate-100 pb-3">
+                                <h3 class="display-font text-base font-extrabold text-slate-900">{{ $className }}</h3>
+                                <p class="text-xs font-semibold text-slate-400 mt-1">{{ $rows->count() }} student record{{ $rows->count() === 1 ? '' : 's' }}</p>
                             </div>
 
                             <x-data-table :headers="['Student', 'Subjects', 'Overall Score %', 'System recommendation', 'Admin Decision', 'Target Class Assignment', 'Action Notes']">
@@ -248,7 +245,7 @@
 
                     <div class="pt-4 border-t border-slate-100 flex justify-end">
                         @if ($promotionPreview->isEmpty())
-                            <div class="rounded-xl border border-dashed border-slate-350 p-4 text-xs font-semibold text-slate-500 text-center w-full">No student records require promotion processing in this closed session.</div>
+                            <div class="rounded-xl border border-dashed border-slate-400 p-4 text-xs font-semibold text-slate-500 text-center w-full">No student records require promotion processing in this closed session.</div>
                         @else
                             <x-action-button type="submit" variant="success">Promote Eligible Students Into {{ $currentSession->name }}</x-action-button>
                         @endif
@@ -329,15 +326,15 @@
                             <x-form-card :action="route('admin.classes.update', $schoolClass)" method="PATCH" title="{{ $schoolClass->display_name }}">
                                 <div class="grid gap-4 md:grid-cols-2">
                                     <div class="space-y-1">
-                                        <label class="text-xs font-bold text-slate-750">Class Name <span class="text-rose-500">*</span></label>
+                                        <label class="text-xs font-bold text-slate-800">Class Name <span class="text-rose-500">*</span></label>
                                         <input name="name" value="{{ old('name', $schoolClass->name) }}" class="theme-input w-full" required />
                                     </div>
                                     <div class="space-y-1">
-                                        <label class="text-xs font-bold text-slate-750">Section</label>
+                                        <label class="text-xs font-bold text-slate-800">Section</label>
                                         <input name="section" value="{{ old('section', $schoolClass->section) }}" class="theme-input w-full" placeholder="Section" />
                                     </div>
                                     <div class="space-y-1 md:col-span-2">
-                                        <label class="text-xs font-bold text-slate-750">Class Teacher Allocation</label>
+                                        <label class="text-xs font-bold text-slate-800">Class Teacher Allocation</label>
                                         <select name="class_teacher_id" class="theme-input w-full">
                                             <option value="">Class teacher</option>
                                             @foreach ($teachers as $teacher)
@@ -346,15 +343,15 @@
                                         </select>
                                     </div>
                                     <div class="space-y-1">
-                                        <label class="text-xs font-bold text-slate-750">Capacity</label>
+                                        <label class="text-xs font-bold text-slate-800">Capacity</label>
                                         <input name="capacity" type="number" min="1" value="{{ old('capacity', $schoolClass->capacity) }}" class="theme-input w-full" placeholder="Capacity" />
                                     </div>
                                     <div class="space-y-1">
-                                        <label class="text-xs font-bold text-slate-750">Room</label>
+                                        <label class="text-xs font-bold text-slate-800">Room</label>
                                         <input name="room" value="{{ old('room', $schoolClass->room) }}" class="theme-input w-full" placeholder="Room" />
                                     </div>
                                     <div class="space-y-1 md:col-span-2">
-                                        <label class="text-xs font-bold text-slate-750">Description</label>
+                                        <label class="text-xs font-bold text-slate-800">Description</label>
                                         <textarea name="description" rows="3" class="theme-input w-full" placeholder="Description">{{ old('description', $schoolClass->description) }}</textarea>
                                     </div>
                                 </div>
@@ -418,7 +415,7 @@
                             <label class="text-xs font-bold text-slate-700">Announcement Body Contents <span class="text-rose-500">*</span></label>
                             <textarea name="body" rows="6" placeholder="Write announcement details..." class="theme-input w-full" required></textarea>
                         </div>
-                        <div class="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/50 px-4 py-3 text-xs font-semibold text-slate-655">
+                        <div class="flex items-center gap-3 rounded-xl border border-slate-100 bg-slate-50/50 px-4 py-3 text-xs font-semibold text-slate-700">
                             <input type="checkbox" id="announce-publish" name="is_published" value="1" checked class="rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
                             <label for="announce-publish" class="cursor-pointer">Publish immediately onto active dashboards</label>
                         </div>
@@ -444,7 +441,7 @@
                     <form method="POST" action="{{ route('admin.cbt.toggle') }}" class="p-4 rounded-xl border border-slate-100 bg-slate-50/50 shrink-0 text-center flex flex-col justify-between items-center gap-2">
                         @csrf
                         <div class="text-[9px] font-extrabold uppercase tracking-wider text-slate-400">Global System status</div>
-                        <div class="font-extrabold text-sm text-slate-850 flex items-center gap-1.5 mt-0.5">
+                        <div class="font-extrabold text-sm text-slate-900 flex items-center gap-1.5 mt-0.5">
                             <span class="w-2.5 h-2.5 rounded-full {{ $cbtEnabled ? 'bg-emerald-500 animate-pulse' : 'bg-rose-500' }}"></span>
                             CBT System {{ $cbtEnabled ? 'LIVE' : 'OFFLINE' }}
                         </div>

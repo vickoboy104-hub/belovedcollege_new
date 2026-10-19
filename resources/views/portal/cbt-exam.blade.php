@@ -25,7 +25,7 @@
                     "
                     class="rounded-[18px] bg-gradient-to-r from-[#071833] to-[#0b1f3a] px-5 py-3 text-white border border-[#c8d6ea]/20 shadow-md min-w-[180px] text-center"
                 >
-                    <div class="text-[9px] font-extrabold uppercase tracking-[0.2em] text-slate-350">Time Remaining</div>
+                    <div class="text-[9px] font-extrabold uppercase tracking-[0.2em] text-slate-400">Time Remaining</div>
                     <div class="display-font mt-1 text-xl font-black text-[#fbbf24] tracking-tight" x-text="remaining"></div>
                     <div class="text-[10px] font-bold text-slate-400 mt-0.5">{{ $assessment->cbt_duration_minutes }} Mins Duration</div>
                 </div>
@@ -36,7 +36,7 @@
     <div class="space-y-8">
         <!-- Guidelines Card -->
         <x-dashboard-card title="Exam Guidelines & Instructions" icon="file-text" accent="gray">
-            <p class="whitespace-pre-line text-sm text-slate-650 leading-relaxed font-semibold">
+            <p class="whitespace-pre-line text-sm text-slate-700 leading-relaxed font-semibold">
                 {{ $assessment->cbt_instructions ?: 'Answer all questions carefully and submit before the countdown timer finishes.' }}
             </p>
         </x-dashboard-card>
@@ -54,7 +54,7 @@
                             </span>
                             <x-status-badge :status="$question->question_type === 'objective' ? 'open' : 'marked'" :label="ucfirst($question->question_type)" />
                         </div>
-                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500 bg-slate-100 border border-slate-250 rounded-full px-2.5 py-0.5">
+                        <span class="text-xs font-bold uppercase tracking-wider text-slate-500 bg-slate-100 border border-slate-300 rounded-full px-2.5 py-0.5">
                             {{ number_format((float) $question->points, 2) }} Mark(s)
                         </span>
                     </div>
@@ -106,7 +106,7 @@
                         <div class="mt-4 grid gap-3 sm:grid-cols-2">
                             @foreach ($question->options as $idx => $option)
                                 <label class="flex items-start gap-2.5 rounded-xl border border-slate-200 px-4 py-3 text-xs text-slate-700 bg-slate-50/30 hover:bg-slate-50 hover:border-[#fbbf24] cursor-pointer select-none transition shadow-sm">
-                                    <input type="radio" name="answers[{{ $question->id }}][option]" value="{{ $option->id }}" class="mt-0.5 rounded text-blue-600 border-slate-350 focus:ring-blue-500" />
+                                    <input type="radio" name="answers[{{ $question->id }}][option]" value="{{ $option->id }}" class="mt-0.5 rounded text-blue-600 border-slate-400 focus:ring-blue-500" />
                                     <span class="inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-[10px] font-black bg-slate-100 text-slate-500">
                                         {{ chr(65 + $idx) }}
                                     </span>

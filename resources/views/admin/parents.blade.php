@@ -166,15 +166,11 @@
                     $canResetPassword = filled($parent->email);
                 @endphp
                 <article class="mobile-record-card">
-                    <div class="flex items-start justify-between border-b border-slate-100 pb-3 mb-4">
-                        <div class="flex items-center gap-3">
-                            <x-person-avatar :user="$parent" class="!h-9 !w-9 !text-xs" />
-                            <div>
-                                <div class="mobile-record-title">{{ $parent->fullName() }}</div>
-                                <div class="text-[10px] text-slate-500 font-semibold mt-0.5">{{ $parent->email ?: 'No email address registered' }}</div>
-                            </div>
-                        </div>
-                        <x-status-badge :status="$parentStatus" class="scale-90 origin-right" />
+                    <div class="mobile-record-head">
+                        <x-person-avatar :user="$parent" class="mobile-record-avatar !h-9 !w-9 !text-xs" />
+                        <div class="mobile-record-title">{{ $parent->fullName() }}</div>
+                        <div class="mobile-record-subtitle">{{ $parent->email ?: 'No email address registered' }}</div>
+                        <x-status-badge :status="$parentStatus" class="mobile-record-state" />
                     </div>
 
                     <div class="mobile-record-grid">
@@ -188,24 +184,22 @@
                         </div>
                     </div>
 
-                    <div class="mobile-action-row border-t border-slate-100 pt-3 mt-4 flex flex-col gap-2">
+                    <div class="mobile-action-row">
                         <button
                             type="button"
-                            class="table-view-btn w-full !text-center !py-2 !rounded-xl !bg-slate-100 hover:!bg-slate-200 text-slate-700 font-bold transition"
+                            class="mobile-action-primary table-view-btn !bg-slate-100 hover:!bg-slate-200 text-slate-700 font-bold transition"
                             data-preview='@json($parentPreview, JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP | JSON_HEX_TAG)'
                         >
                             Quick View
                         </button>
-                        <div class="grid grid-cols-2 gap-2 mt-1">
-                            <a href="{{ route('admin.students.index', ['search' => $parent->email ?: $parent->fullName()]) }}" class="theme-button-secondary text-center py-2 px-3 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700">Link Child</a>
-                            <a href="{{ route('admin.finance.records', ['section' => 'student-balances', 'search' => $parent->email ?: $parent->fullName()]) }}" class="theme-button-secondary text-center py-2 px-3 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700">Billing</a>
-                            <form method="POST" action="{{ route('admin.parents.password.reset', $parent) }}">
-                                @csrf
-                                <input type="hidden" name="redirect_search" value="{{ $search }}" />
-                                <button type="submit" class="theme-button-secondary w-full text-center py-2 px-3 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed" @disabled(! $canResetPassword) onclick="return confirm('Generate a new temporary password for this parent? The old password will stop working.')">Reset Password</button>
-                            </form>
-                            <a href="{{ $contactUrl }}" class="theme-button-secondary text-center py-2 px-3 text-xs font-bold rounded-xl border border-slate-200 hover:bg-slate-50 text-slate-700">Contact</a>
-                        </div>
+                        <a href="{{ route('admin.students.index', ['search' => $parent->email ?: $parent->fullName()]) }}" class="theme-button-secondary text-slate-700">Link Child</a>
+                        <a href="{{ route('admin.finance.records', ['section' => 'student-balances', 'search' => $parent->email ?: $parent->fullName()]) }}" class="theme-button-secondary text-slate-700">Billing</a>
+                        <form method="POST" action="{{ route('admin.parents.password.reset', $parent) }}">
+                            @csrf
+                            <input type="hidden" name="redirect_search" value="{{ $search }}" />
+                            <button type="submit" class="theme-button-secondary text-slate-700 disabled:opacity-40 disabled:cursor-not-allowed" @disabled(! $canResetPassword) onclick="return confirm('Generate a new temporary password for this parent? The old password will stop working.')">Reset Password</button>
+                        </form>
+                        <a href="{{ $contactUrl }}" class="theme-button-secondary text-slate-700">Contact</a>
                     </div>
                 </article>
             @empty

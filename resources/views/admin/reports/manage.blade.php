@@ -85,22 +85,22 @@
                 <div class="grid gap-6 xl:grid-cols-[1.1fr,0.9fr]">
                     <x-dashboard-card title="Report Snapshot" icon="reports" accent="blue">
                         <div class="grid gap-4 sm:grid-cols-2">
-                            <div class="rounded-xl border border-slate-150 bg-slate-50/50 p-4">
+                            <div class="rounded-xl border border-slate-200 bg-slate-50/50 p-4">
                                 <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Overall Grade</div>
                                 <div class="text-sm font-extrabold text-slate-800">{{ $report->overall_grade ?: 'Not available yet' }}</div>
                                 <div class="mt-1 text-xs font-medium text-slate-500">Position: {{ $report->class_position ?: 'N/A' }}</div>
                             </div>
-                            <div class="rounded-xl border border-slate-150 bg-slate-50/50 p-4">
+                            <div class="rounded-xl border border-slate-200 bg-slate-50/50 p-4">
                                 <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-1">Attendance</div>
                                 <div class="text-sm font-extrabold text-slate-800">{{ $report->days_present ?? 0 }} / {{ $report->days_school_open ?? 0 }} Days Present</div>
                                 <div class="mt-1 text-xs font-medium text-slate-500">Absent: {{ $report->days_absent ?? 0 }}</div>
                             </div>
-                            <div class="rounded-xl border border-slate-150 bg-slate-50/50 p-4">
+                            <div class="rounded-xl border border-slate-200 bg-slate-50/50 p-4">
                                 <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Approval</div>
                                 <x-status-badge :status="$report->approved_at ? 'approved' : 'pending'" />
-                                <div class="mt-1 text-[10px] font-semibold text-slate-450">{{ $report->approver?->fullName() ?? 'No approver yet' }}</div>
+                                <div class="mt-1 text-[10px] font-semibold text-slate-500">{{ $report->approver?->fullName() ?? 'No approver yet' }}</div>
                             </div>
-                            <div class="rounded-xl border border-slate-150 bg-slate-50/50 p-4">
+                            <div class="rounded-xl border border-slate-200 bg-slate-50/50 p-4">
                                 <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-2">Student Access</div>
                                 <div class="text-xs space-y-1.5 font-bold text-slate-600">
                                     <div class="flex items-center justify-between">
@@ -113,7 +113,7 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="rounded-xl border border-slate-150 bg-slate-50/50 p-4 sm:col-span-2">
+                            <div class="rounded-xl border border-slate-200 bg-slate-50/50 p-4 sm:col-span-2">
                                 <div class="text-xs font-bold uppercase tracking-wider text-slate-400 mb-3 border-b border-slate-200 pb-1.5">Latest Remarks Summary</div>
                                 <div class="space-y-3 text-xs leading-relaxed text-slate-600">
                                     <div><span class="font-extrabold text-slate-900 uppercase tracking-wide text-[10px]">Class Teacher:</span> {{ $report->class_teacher_remark ?: 'No remark yet.' }}</div>
@@ -286,12 +286,12 @@
                 <div class="grid gap-6 xl:grid-cols-[1.1fr,0.9fr]">
                     <x-dashboard-card title="Publication Settings" icon="settings" accent="blue">
                         <div class="space-y-4 mb-6">
-                            <div class="rounded-xl border border-slate-150 bg-slate-50/50 p-4">
+                            <div class="rounded-xl border border-slate-200 bg-slate-50/50 p-4">
                                 <div class="text-xs font-bold uppercase tracking-wider text-slate-400">Approval Status</div>
                                 <div class="mt-2 text-sm font-extrabold text-slate-900">{{ $report->approved_at ? 'Officially Approved' : 'Awaiting Admin Approval Signature' }}</div>
                                 <div class="mt-1 text-xs text-slate-500 font-medium leading-relaxed">{{ $report->approver?->fullName() ? $report->approver->fullName().' | '.$report->approved_at?->format('M j, Y g:i A') : 'Awaiting remarks and saving the report form will automatically sign the approval badge.' }}</div>
                             </div>
-                            <div class="rounded-xl border border-slate-150 bg-slate-50/50 p-4">
+                            <div class="rounded-xl border border-slate-200 bg-slate-50/50 p-4">
                                 <div class="text-xs font-bold uppercase tracking-wider text-slate-400">Student & Parent Visibility</div>
                                 <div class="mt-2 text-xs space-y-2 font-bold text-slate-600">
                                     <div class="flex items-center justify-between border-b border-slate-100 pb-1.5">

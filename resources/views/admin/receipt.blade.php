@@ -74,7 +74,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="text-xs text-slate-600 bg-slate-50 border border-slate-150 rounded-2xl p-4 min-w-[220px] shadow-sm">
+                <div class="text-xs text-slate-600 bg-slate-50 border border-slate-200 rounded-2xl p-4 min-w-[220px] shadow-sm">
                     <div class="font-black text-blue-600 uppercase tracking-wider text-[10px] mb-2 flex items-center gap-1.5">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
                         Official Payment Receipt
@@ -120,7 +120,7 @@
                                 <th class="px-5 py-4 text-right">Remaining Balance</th>
                             </tr>
                         </thead>
-                        <tbody class="divide-y divide-slate-150 text-slate-700 text-xs">
+                        <tbody class="divide-y divide-slate-200 text-slate-700 text-xs">
                             @foreach ($receiptLines as $line)
                                 <tr class="hover:bg-slate-50/30 transition">
                                     <td class="px-5 py-4 text-[#071833] font-bold text-sm">
