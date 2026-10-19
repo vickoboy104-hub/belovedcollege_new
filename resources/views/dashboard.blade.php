@@ -16,7 +16,6 @@
     <x-slot name="header">
         <x-page-header :title="'Welcome back, ' . $user->name . '.'">
             <x-slot name="eyebrow">Digital campus control room</x-slot>
-            <x-slot name="description">{{ $dashboardDescription }}</x-slot>
             <x-slot name="actions">
                 <div class="rounded-3xl brand-gradient px-5 py-4 text-white shadow-xl shadow-slate-900/10 sm:px-6 sm:py-5 flex flex-col justify-center min-w-[200px]">
                     <div class="text-[10px] font-extrabold uppercase tracking-[0.25em] text-white/70">{{ $user->roleLabel() }}</div>
@@ -57,7 +56,6 @@
                 @foreach ($quickAccessCards as $card)
                     <x-quick-action-card 
                         :title="$card['title']" 
-                        :description="$card['description']" 
                         :href="$card['route']" 
                         :icon="$card['icon'] ?? 'circle'" 
                         :tone="$card['tone'] ?? 'blue'" 
@@ -66,7 +64,7 @@
             </div>
         </x-section-card>
 
-        <x-dashboard-card class="dashboard-dark-panel dashboard-announcements-panel" title="Latest announcements" subtitle="Recent publications across the school network" icon="announcement" accent="gold">
+        <x-dashboard-card class="dashboard-dark-panel dashboard-announcements-panel" title="Latest announcements" icon="announcement" accent="gold">
             <div class="mt-4 space-y-4">
                 @forelse ($announcements as $announcement)
                     <article class="announcement-item rounded-[16px] p-4 hover:shadow-md transition duration-200">
@@ -75,7 +73,7 @@
                         <p class="mt-2 text-xs font-semibold leading-relaxed">{{ $announcement->excerpt ?: \Illuminate\Support\Str::limit($announcement->body, 120) }}</p>
                     </article>
                 @empty
-                    <x-empty-state title="No Announcements Yet" description="When administrators publish updates, they will appear here." icon="announcement" />
+                    <x-empty-state title="No Announcements Yet" icon="announcement" />
                 @endforelse
             </div>
         </x-dashboard-card>
@@ -84,7 +82,7 @@
     <!-- Finance Operational Picture: leadership/accounting roles only -->
     @if ($financeSnapshot)
         <div class="mt-8">
-            <x-section-card class="dashboard-dark-panel dashboard-finance-panel" title="Operational payment picture" subtitle="School finance board" icon="finance" tone="gold">
+            <x-section-card class="dashboard-dark-panel dashboard-finance-panel" title="Operational payment picture" icon="finance" tone="gold">
                 <x-slot name="actions">
                     <div class="flex flex-wrap gap-2">
                         <x-action-button variant="secondary" :href="route('admin.finance.records', ['section' => 'class-bills'])" icon="finance-records">

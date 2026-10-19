@@ -3,7 +3,6 @@
         <x-page-header
             title="Payment Gateways"
             eyebrow="Finance Configuration"
-            description="Choose exactly which online payment methods students and parents can use, then enter the credentials supplied by each provider."
         >
             <x-slot name="actions">
                 <x-action-button variant="secondary" :href="route('admin.finance')" icon="finance">Open Finance</x-action-button>
@@ -17,10 +16,9 @@
 
         <div class="rounded-2xl border border-blue-200 bg-blue-50 px-5 py-4 text-sm text-blue-950 shadow-sm">
             <div class="font-extrabold">Recommended for your first payment test: Paystack Test Mode</div>
-            <p class="mt-1 leading-6 text-blue-900">Create a Paystack account, copy the <strong>pk_test_...</strong> and <strong>sk_test_...</strong> keys here, enable Paystack, and test checkout without using real money. Switch to live keys only when you are ready for real school payments.</p>
         </div>
 
-        <x-dashboard-card title="Student checkout methods" subtitle="Tick the gateways you want students and parents to see. A gateway appears only when it is both enabled here and fully configured below." icon="finance" accent="blue">
+        <x-dashboard-card title="Student checkout methods" icon="finance" accent="blue">
             <div class="grid gap-4 md:grid-cols-2 xl:grid-cols-5">
                 @foreach ($gateways as $gateway)
                     <label class="relative flex cursor-pointer flex-col gap-3 rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition hover:border-blue-400 hover:shadow-md">
@@ -50,7 +48,7 @@
 
         <div class="grid gap-6 xl:grid-cols-2">
             <section class="form-section">
-                <div class="form-section-header"><h3 class="section-title">Paystack</h3><p class="section-description">Recommended first test gateway. Hosted checkout with server-side transaction verification.</p></div>
+                <div class="form-section-header"><h3 class="section-title">Paystack</h3></div>
                 <div class="form-stack space-y-4">
                     <div class="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-xs font-semibold leading-5 text-emerald-900">Use <strong>pk_test_...</strong> and <strong>sk_test_...</strong> while testing. Paystack decides test/live mode from the keys you enter.</div>
                     <div><label class="text-xs font-bold text-slate-700" for="paystack-public-key">Public key</label><input id="paystack-public-key" name="paystack_public_key" value="{{ old('paystack_public_key', $settings['paystack_public_key'] ?? '') }}" class="theme-input mt-1 w-full" autocomplete="off" placeholder="pk_test_... or pk_live_..."></div>
@@ -62,7 +60,7 @@
             </section>
 
             <section class="form-section">
-                <div class="form-section-header"><h3 class="section-title">Flutterwave</h3><p class="section-description">Hosted Flutterwave checkout with test credentials, server verification and signed webhooks.</p></div>
+                <div class="form-section-header"><h3 class="section-title">Flutterwave</h3></div>
                 <div class="form-stack">
                     <div class="grid gap-4 sm:grid-cols-2">
                         <div><label class="text-xs font-bold text-slate-700" for="flutterwave-public-key">Public key</label><input id="flutterwave-public-key" name="flutterwave_public_key" value="{{ old('flutterwave_public_key', $settings['flutterwave_public_key'] ?? '') }}" class="theme-input mt-1 w-full" autocomplete="off"></div>
@@ -79,7 +77,7 @@
             </section>
 
             <section class="form-section">
-                <div class="form-section-header"><h3 class="section-title">Monnify</h3><p class="section-description">Hosted checkout for cards, account transfers and USSD with a dedicated sandbox environment.</p></div>
+                <div class="form-section-header"><h3 class="section-title">Monnify</h3></div>
                 <div class="form-stack">
                     <div class="grid gap-4 sm:grid-cols-2">
                         <div><label class="text-xs font-bold text-slate-700" for="monnify-api-key">API key</label><input id="monnify-api-key" name="monnify_api_key" value="{{ old('monnify_api_key', $settings['monnify_api_key'] ?? '') }}" class="theme-input mt-1 w-full" autocomplete="off"></div>
@@ -94,7 +92,7 @@
             </section>
 
             <section class="form-section">
-                <div class="form-section-header"><h3 class="section-title">OPay</h3><p class="section-description">OPay Cashier hosted checkout with sandbox and live environments.</p></div>
+                <div class="form-section-header"><h3 class="section-title">OPay</h3></div>
                 <div class="form-stack">
                     <div class="mb-4 rounded-xl border border-blue-200 bg-blue-50 px-4 py-3 text-xs font-semibold leading-5 text-blue-900">Use OPay sandbox credentials first. Only switch the environment to Live after OPay has approved the school merchant account.</div>
                     <div class="grid gap-4 sm:grid-cols-2">
@@ -112,7 +110,7 @@
             </section>
 
             <section class="form-section xl:col-span-2">
-                <div class="form-section-header"><h3 class="section-title">PalmPay</h3><p class="section-description">Template retained for schools that receive a direct PalmPay merchant integration contract.</p></div>
+                <div class="form-section-header"><h3 class="section-title">PalmPay</h3></div>
                 <div class="form-stack">
                     <div class="mb-4 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 text-xs font-semibold leading-5 text-amber-900">PalmPay merchant APIs are onboarding-contract specific. The template is ready for credentials, but checkout intentionally remains unavailable until the school's official PalmPay verification contract is implemented. Do not use it for live fees yet.</div>
                     <div class="grid gap-4 sm:grid-cols-2">

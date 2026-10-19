@@ -924,7 +924,6 @@
             <div x-show="query !== '' && filteredItems.length === 0" class="px-6 py-14 text-center text-sm sm:px-14">
                 <x-app-icon name="search" class="mx-auto h-6 w-6 text-white/40" />
                 <p class="mt-4 font-semibold text-white">No results found</p>
-                <p class="mt-2 text-white/50">We couldn't find anything matching your search. Please try again.</p>
             </div>
         </div>
     </div>

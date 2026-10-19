@@ -6,7 +6,6 @@
     action="{{ route('profile.update') }}"
     method="PATCH"
     title="Profile Information"
-    description="Update your account's profile details and contact email address."
 >
     <div class="grid gap-6 md:grid-cols-2">
         <div class="space-y-1">

@@ -3,7 +3,6 @@
         <x-page-header
             title="My Profile & Settings"
             eyebrow="Account Settings"
-            description="Manage your account profile information, update your secure password, and configure other personal account details."
         />
     </x-slot>
 

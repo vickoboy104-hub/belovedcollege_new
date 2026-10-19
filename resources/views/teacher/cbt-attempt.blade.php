@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <x-page-header :title="$attempt->student->user->fullName()" eyebrow="CBT Review">
-            <x-slot name="description">
+            <x-slot name="meta">
                 {{ $attempt->assessment->title }} &bull; {{ $attempt->assessment->subject->name }} &bull; {{ $attempt->assessment->schoolClass->name }}
             </x-slot>
             <x-slot name="actions">
@@ -22,7 +22,7 @@
         </div>
 
         <!-- Answers Panel -->
-        <x-dashboard-card title="Exam Responses" subtitle="Grade and review the student's individual answers." icon="book-open" accent="blue">
+        <x-dashboard-card title="Exam Responses" icon="book-open" accent="blue">
             <div class="space-y-6">
                 @foreach ($attempt->answers as $index => $answer)
                     <article class="rounded-[18px] border border-slate-200 bg-slate-50/50 p-5 shadow-sm hover:border-[#fbbf24] transition-all">

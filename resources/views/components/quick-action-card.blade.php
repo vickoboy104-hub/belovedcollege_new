@@ -1,4 +1,4 @@
-@props(['title', 'description', 'route' => null, 'href' => null, 'icon' => 'circle', 'tone' => 'blue'])
+@props(['title', 'route' => null, 'href' => null, 'icon' => 'circle', 'tone' => 'blue'])
 
 @php
     $resolvedUrl = $route ? route($route) : $href;
@@ -25,15 +25,9 @@
         <x-app-icon :name="$icon" class="h-4 w-4" />
     </span>
 
-    <span style="min-width:0; flex:1 1 auto;">
-        <span class="display-font quick-action-card-title"
-              style="display:block; font-size:0.875rem; font-weight:800; line-height:1.25; letter-spacing:-0.01em; color: var(--dashboard-quick-action-text, var(--dashboard-card-text, var(--theme-text-dark-card, #ffffff)));">
-            {{ $title }}
-        </span>
-        <span class="quick-action-card-desc"
-              style="display:block; margin-top:0.1rem; font-size:0.75rem; font-weight:600; line-height:1.45; color: var(--dashboard-quick-action-text-muted, var(--dashboard-card-text-muted, rgba(255,255,255,0.72)));">
-            {{ $description }}
-        </span>
+    <span class="quick-action-card-title display-font"
+          style="min-width:0; flex:1 1 auto; font-size:0.875rem; font-weight:800; line-height:1.25; letter-spacing:-0.01em; overflow-wrap:anywhere; color: var(--dashboard-quick-action-text, var(--dashboard-card-text, var(--theme-text-dark-card, #ffffff)));">
+        {{ $title }}
     </span>
 
     <span class="quick-action-card-link" aria-hidden="true"

@@ -1,4 +1,4 @@
-@props(['action' => '', 'method' => 'GET', 'title' => 'Filter Records', 'description' => null])
+@props(['action' => '', 'method' => 'GET', 'title' => 'Filter Records'])
 
 <div {{ $attributes->merge(['class' => 'admin-toolbar-card']) }}>
     <form method="{{ $method }}" action="{{ $action }}">
@@ -8,11 +8,6 @@
                 <h3 class="section-title">
                     {{ $title }}
                 </h3>
-                @if($description)
-                    <p class="section-description">
-                        {{ $description }}
-                    </p>
-                @endif
                 </div>
             </div>
             

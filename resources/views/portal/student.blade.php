@@ -23,7 +23,7 @@
 
     <x-slot name="header">
         <x-page-header :title="'Welcome back, ' . $student->user->name . '!'" eyebrow="Student Portal">
-            <x-slot name="description">
+            <x-slot name="meta">
                 {{ $student->admission_no }} &bull; {{ $student->schoolClass->name ?? 'Class pending assignment' }}
             </x-slot>
             <x-slot name="actions">
@@ -81,7 +81,7 @@
             <div class="grid gap-5 xl:grid-cols-[1.1fr,0.9fr]">
                 <!-- Left Column: Lessons Preview -->
                 <div class="space-y-4">
-                    <x-dashboard-card title="Recent Lesson Notes" subtitle="Curriculum notes and reference resources published by your teachers." icon="learning" accent="blue">
+                    <x-dashboard-card title="Recent Lesson Notes" icon="learning" accent="blue">
                         <div class="space-y-3">
                             @forelse ($lessons->take(2) as $lesson)
                                 <article class="rounded-[14px] border border-slate-200 bg-white p-4 shadow-sm hover:border-blue-500 transition-all space-y-3">
@@ -115,7 +115,7 @@
                                     </div>
                                 </article>
                             @empty
-                                <x-empty-state title="No lesson notes available yet" subtitle="When your course teachers publish lesson libraries, notes, and video attachments, they will appear here." icon="learning" />
+                                <x-empty-state title="No lesson notes available yet" icon="learning" />
                             @endforelse
                         </div>
                     </x-dashboard-card>
@@ -134,7 +134,7 @@
                                     <span class="text-sm font-bold text-blue-700 tabular-nums">{{ number_format($average, 1) }}%</span>
                                 </div>
                             @empty
-                                <x-empty-state title="No subject averages logged yet" subtitle="Cumulative performance statistics generate dynamically when test or exam scores load." icon="reports" />
+                                <x-empty-state title="No subject averages logged yet" icon="reports" />
                             @endforelse
                         </div>
                     </x-dashboard-card>
@@ -144,7 +144,7 @@
 
         <!-- 2. OFFICIAL TERM REPORTS SECTION -->
         <div x-show="activeSection === 'reports'" x-cloak x-transition:enter="transition ease-out duration-250">
-            <x-dashboard-card title="Official Term Reports" subtitle="Access officially approved report cards and academic summaries." icon="reports" accent="green">
+            <x-dashboard-card title="Official Term Reports" icon="reports" accent="green">
                 <div class="grid gap-6 md:grid-cols-2">
                     @forelse ($publishedReports as $publishedReport)
                         <div class="rounded-[18px] border border-slate-200 bg-slate-50/50 p-5 shadow-sm hover:border-emerald-500 transition-all flex flex-col justify-between gap-4">
@@ -197,7 +197,7 @@
                         </div>
                     @empty
                         <div class="md:col-span-2">
-                            <x-empty-state title="No Approved Report Cards" subtitle="When administrators approve and release academic report cards for this term, they will be listed here." icon="reports" />
+                            <x-empty-state title="No Approved Report Cards" icon="reports" />
                         </div>
                     @endforelse
                 </div>
@@ -332,7 +332,7 @@
                         </table>
                     </section>
                 @empty
-                    <x-empty-state title="No recorded results" subtitle="Results will appear here when scores are published." icon="reports" />
+                    <x-empty-state title="No recorded results" icon="reports" />
                 @endforelse
             </x-dashboard-card>
         </div>
@@ -384,8 +384,8 @@
                     @endif
                 </x-dashboard-card>
             @else
-                <x-dashboard-card title="CBT Exams and Tests" subtitle="Computer-based examination portal" icon="portal" accent="purple">
-                    <x-empty-state title="CBT Not Available" subtitle="CBT exam dashboard access is reserved strictly for student portal roles." icon="portal" />
+                <x-dashboard-card title="CBT Exams and Tests" icon="portal" accent="purple">
+                    <x-empty-state title="CBT Not Available" icon="portal" />
                 </x-dashboard-card>
             @endif
         </div>
@@ -410,7 +410,6 @@
                         <div>
                             <p class="text-[11px] font-extrabold uppercase tracking-[0.18em] text-amber-300">Financial account</p>
                             <h2 class="display-font mt-1 text-lg font-black !text-white">Make a payment</h2>
-                            <p class="mt-1 text-xs font-semibold text-slate-200">Select only the school fees you want to pay now.</p>
                         </div>
                         <div class="rounded-xl border border-white/20 bg-white/10 px-4 py-2.5 sm:text-right">
                             <p class="text-[10px] font-extrabold uppercase tracking-wider text-slate-200">Outstanding balance</p>
@@ -450,7 +449,6 @@
                             <div class="mb-3 flex items-end justify-between gap-3">
                                 <div>
                                     <h3 class="text-sm font-black text-[#071833]">Choose what you want to pay</h3>
-                                    <p class="mt-0.5 text-xs font-semibold text-slate-600">You can select one or several unpaid items.</p>
                                 </div>
                                 <button
                                     type="button"
@@ -488,7 +486,6 @@
                                 @empty
                                     <div class="px-5 py-10 text-center">
                                         <p class="text-sm font-black text-[#071833]">No fee items available</p>
-                                        <p class="mt-1 text-xs font-semibold text-slate-500">New invoices will appear here when the school creates them.</p>
                                     </div>
                                 @endforelse
                             </div>
@@ -516,7 +513,6 @@
                         <div x-show="paymentStep === 2" x-cloak x-transition.opacity>
                             <div class="mb-4">
                                 <h3 class="text-sm font-black text-[#071833]">How would you like to pay?</h3>
-                                <p class="mt-0.5 text-xs font-semibold text-slate-600">The secure gateway will show the payment channels available to you.</p>
                             </div>
 
                             <div class="grid gap-3 sm:grid-cols-2">
@@ -527,7 +523,7 @@
                                         <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-blue-600 text-lg text-white">💳</span>
                                         <span>
                                             <span class="block text-sm font-black text-[#071833]">Card, bank or USSD</span>
-                                            <span class="mt-1 block text-xs font-semibold leading-relaxed text-slate-600">Continue securely with the school's Paystack checkout.</span>
+
                                         </span>
                                     </span>
                                 </label>
@@ -539,7 +535,7 @@
                                         <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-emerald-600 text-lg text-white">📱</span>
                                         <span>
                                             <span class="block text-sm font-black text-[#071833]">Wallet payment</span>
-                                            <span class="mt-1 block text-xs font-semibold leading-relaxed text-slate-600">Pay through the configured PalmPay wallet gateway.</span>
+
                                         </span>
                                     </span>
                                 </label>
@@ -615,7 +611,7 @@
                             <span class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-emerald-100 text-lg">🧾</span>
                             <div>
                                 <h3 class="text-sm font-black text-[#071833]">Recent receipts</h3>
-                                <p class="mt-0.5 text-xs font-semibold text-slate-600">Confirmed payments for this student account.</p>
+
                             </div>
                         </div>
                         <div class="space-y-2.5">
@@ -630,7 +626,7 @@
                             @empty
                                 <div class="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center">
                                     <p class="text-sm font-black text-[#071833]">No confirmed receipts yet</p>
-                                    <p class="mt-1 text-xs font-semibold text-slate-500">Successful payments will appear here automatically.</p>
+
                                 </div>
                             @endforelse
                         </div>
@@ -661,7 +657,7 @@
                     @empty
                         <tr>
                             <td colspan="3" class="px-6 py-8 text-center">
-                                <x-empty-state title="No attendance records logged" subtitle="Chronological attendance records generate dynamically when teachers take registry logs." icon="clock" />
+                                <x-empty-state title="No attendance records logged" icon="clock" />
                             </td>
                         </tr>
                     @endforelse

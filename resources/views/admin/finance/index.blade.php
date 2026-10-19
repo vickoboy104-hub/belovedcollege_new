@@ -40,8 +40,7 @@
             <!-- Create Fee Item Form Card -->
             <div x-show="activeSection === 'create-fee-item'">
                 <x-form-card 
-                    title="Create fee item" 
-                    description="Use class-linked fee items so every newly registered student can inherit the right term fees."
+                    title="Create fee item"
                     action="{{ route('admin.fee-items.store') }}" 
                     method="POST"
                 >
@@ -107,8 +106,7 @@
             <!-- Generate Invoice Form Card -->
             <div x-show="activeSection === 'generate-invoice'">
                 <x-form-card 
-                    title="Generate invoice" 
-                    description="Apply an invoice to one student or an entire class. Existing linked fee invoices are skipped automatically so duplicates do not stack."
+                    title="Generate invoice"
                     action="{{ route('admin.invoices.store') }}" 
                     method="POST"
                 >
@@ -166,8 +164,7 @@
             <!-- Record Payment Section -->
             <div x-show="activeSection === 'record-payment'" class="space-y-8">
                 <x-form-card 
-                    title="Record direct school payment" 
-                    description="Use this when payment happens physically at school. The student balance updates immediately, receipts stay printable, and any excess above the live invoice balance is now tracked as an overpayment."
+                    title="Record direct school payment"
                     action="{{ route('admin.manual-payments.store') }}" 
                     method="POST"
                 >
@@ -289,7 +286,7 @@
                 <!-- Graphs & Summaries Grid -->
                 <div class="grid gap-8 xl:grid-cols-[1.1fr,0.9fr]">
                     <!-- Collection Health Card -->
-                    <x-dashboard-card title="Collection health" subtitle="Total expected fee collections compared with settled billings." icon="activity" accent="blue">
+                    <x-dashboard-card title="Collection health" icon="activity" accent="blue">
                         <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
                             <div>
                                 <div class="text-xs uppercase tracking-wider font-bold text-slate-400">Overall Rate</div>
@@ -320,7 +317,7 @@
                     </x-dashboard-card>
 
                     <!-- Payment Channels Card -->
-                    <x-dashboard-card title="Payment channels" subtitle="Summary of receipts tracked across different gateways." icon="cash" accent="emerald">
+                    <x-dashboard-card title="Payment channels" icon="cash" accent="emerald">
                         <div class="space-y-3">
                             @foreach ($paymentSummary['providerBreakdown'] as $provider)
                                 <div class="flex items-center justify-between gap-3 rounded-xl border border-slate-100 bg-slate-50/50 px-4 py-3 transition hover:bg-slate-50">
@@ -339,7 +336,7 @@
 
                 <div class="grid gap-8 xl:grid-cols-[1.1fr,0.9fr]">
                     <!-- Top Debtors -->
-                    <x-dashboard-card title="Top debtors" subtitle="Students needing billing follow-up." icon="alert-circle" accent="rose">
+                    <x-dashboard-card title="Top debtors" icon="alert-circle" accent="rose">
                         <x-slot name="actions">
                             <a href="{{ route('admin.finance.records', ['section' => 'student-balances']) }}" class="text-xs font-bold text-blue-600 hover:underline">
                                 Full list &rarr;
@@ -361,15 +358,14 @@
                                 </div>
                             @empty
                                 <x-empty-state 
-                                    title="No outstanding debtors" 
-                                    description="All billing records for this term have been cleared."
+                                    title="No outstanding debtors"
                                 />
                             @endforelse
                         </div>
                     </x-dashboard-card>
 
                     <!-- Class Billing Summary -->
-                    <x-dashboard-card title="Class billing" subtitle="Financial health summary broken down by class." icon="layers" accent="blue">
+                    <x-dashboard-card title="Class billing" icon="layers" accent="blue">
                         <x-slot name="actions">
                             <a href="{{ route('admin.finance.records', ['section' => 'class-bills']) }}" class="text-xs font-bold text-blue-600 hover:underline">
                                 Full catalog &rarr;
@@ -393,8 +389,7 @@
                                 </div>
                             @empty
                                 <x-empty-state 
-                                    title="No class billing data" 
-                                    description="No fee items have been linked to class groups yet."
+                                    title="No class billing data"
                                 />
                             @endforelse
                         </div>
@@ -456,8 +451,7 @@
                     <tr>
                         <td colspan="7" class="px-6 py-8 text-center">
                             <x-empty-state 
-                                title="No invoices found" 
-                                description="No billing actions have been recorded yet."
+                                title="No invoices found"
                             />
                         </td>
                     </tr>

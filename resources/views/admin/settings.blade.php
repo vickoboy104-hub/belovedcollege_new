@@ -3,7 +3,6 @@
         <x-page-header
             title="School Settings"
             eyebrow="Administration"
-            description="Manage your school information, website portal, theme customizer, landing builder, media sliders, payment gateways, and view user contact messages."
         />
     </x-slot>
 
@@ -151,7 +150,6 @@
                 method="POST"
                 enctype="multipart/form-data"
                 title="Website Foundation"
-                description="Configure essential school parameters, administrative contacts, outgoing SMTP email servers, and brand logos."
             >
                 <input type="hidden" name="group" value="school">
                 <input type="hidden" name="settings_section" value="website-foundation">
@@ -218,7 +216,6 @@
                 <!-- SMTP Section -->
                 <div class="border-t border-slate-100 pt-6 mt-6">
                     <h4 class="text-sm font-bold text-slate-900 uppercase tracking-wider mb-2">Outgoing SMTP Mail Server</h4>
-                    <p class="text-xs text-slate-500 mb-4">Integrate real SMTP settings to dispatch dynamic web contacts straight to your official email account.</p>
                     <div class="grid gap-6 md:grid-cols-2">
                         <div class="space-y-1">
                             <label class="text-xs font-bold text-slate-700 uppercase tracking-wider">Mailer Driver</label>
@@ -275,7 +272,6 @@
                                 </div>
                                 <div>
                                     <div class="text-xs font-bold text-slate-900">Current Portal Logo</div>
-                                    <p class="text-[10px] text-slate-500 mt-1">Rendered on sidebar menus, receipt headers, and login screens.</p>
                                 </div>
                             </div>
                         </div>
@@ -317,7 +313,6 @@
                 action="{{ route('admin.settings.update') }}"
                 method="POST"
                 title="Website Theme Colors"
-                description="Select a style scheme for the public website, admin portal, staff portal, student portal, buttons, navigation accents, and page surfaces."
             >
                 <input type="hidden" name="group" value="school">
                 <input type="hidden" name="settings_section" value="theme-colors">
@@ -347,7 +342,6 @@
                         <span class="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-blue-600 text-white text-xs font-bold">A</span>
                         <div>
                             <h4 class="text-sm font-bold text-slate-900">Manual Color Controls</h4>
-                            <p class="text-xs text-slate-500 mt-0.5">Fine-tune the selected theme preset with custom colors.</p>
                         </div>
                     </div>
                     <div class="p-6 grid gap-5 sm:grid-cols-2 md:grid-cols-4">
@@ -423,7 +417,6 @@
                 method="POST"
                 enctype="multipart/form-data"
                 title="Public Landing Builder"
-                description="Manage and structure slide outlines, parent testimonials, metrics, and core headings of the frontend admissions page."
             >
                 <input type="hidden" name="group" value="school">
                 <input type="hidden" name="settings_section" value="landing-builder">
@@ -434,7 +427,6 @@
                         <input type="checkbox" name="landing_use_live_stats" value="1" class="mt-1 rounded border-slate-300 text-[#071833] focus:ring-[#071833] h-4 w-4" @checked(old('landing_use_live_stats', $settings['landing_use_live_stats'] ?? '1'))>
                         <div>
                             <span class="block font-bold text-slate-900 text-xs uppercase tracking-wider">Sync Live Statistics</span>
-                            <span class="block text-[10px] text-slate-500 mt-1">Automatically pull real numbers of enrolled students, active teachers, and classes directly from database tables.</span>
                         </div>
                     </label>
 
@@ -442,7 +434,6 @@
                         <input type="checkbox" name="landing_use_latest_announcements" value="1" class="mt-1 rounded border-slate-300 text-[#071833] focus:ring-[#071833] h-4 w-4" @checked(old('landing_use_latest_announcements', $settings['landing_use_latest_announcements'] ?? '1'))>
                         <div>
                             <span class="block font-bold text-slate-900 text-xs uppercase tracking-wider">Auto-Sync Announcements</span>
-                            <span class="block text-[10px] text-slate-500 mt-1">Pull published school board updates and events dynamically into the front page without manual entry.</span>
                         </div>
                     </label>
 
@@ -450,7 +441,6 @@
                         <input type="checkbox" name="landing_show_newsletter" value="1" class="mt-1 rounded border-slate-300 text-[#071833] focus:ring-[#071833] h-4 w-4" @checked(old('landing_show_newsletter', $settings['landing_show_newsletter'] ?? '1'))>
                         <div>
                             <span class="block font-bold text-slate-900 text-xs uppercase tracking-wider">Display Newsletter Strip</span>
-                            <span class="block text-[10px] text-slate-500 mt-1">Toggle the display of the email subscription section situated at the footer of the public homepage.</span>
                         </div>
                     </label>
                 </div>
@@ -460,7 +450,6 @@
                     <div class="section-header border-b border-slate-100 pb-3">
                         <div>
                             <h4 class="section-title">Hero Slideshow Text Templates</h4>
-                            <p class="section-description">Open one slide at a time, edit the copy, choose button destinations, and review the first-screen message.</p>
                         </div>
                         <a href="{{ route('home') }}" target="_blank" class="btn btn-secondary">Preview Homepage</a>
                     </div>
@@ -583,7 +572,6 @@
                 <div class="grid gap-6 lg:grid-cols-2 mt-6">
                     <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50 space-y-4">
                         <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider border-b border-slate-200 pb-2">Manual Stats Fallback</h4>
-                        <p class="text-[10px] text-slate-500">Provide fallback metrics displayed when live statistics are switched off.</p>
                         <div class="grid gap-4 md:grid-cols-2">
                             @foreach ($landingStatDefaults as $index => $stat)
                                 <div class="space-y-2 p-3 bg-white border border-slate-200 rounded-xl">
@@ -756,7 +744,6 @@
                 method="POST"
                 enctype="multipart/form-data"
                 title="Homepage Media Resources"
-                description="Upload banner videos, sliders background layers, and landing gallery items directly to the portal."
             >
                 <input type="hidden" name="group" value="school">
                 <input type="hidden" name="settings_section" value="homepage-media">
@@ -765,7 +752,6 @@
                 <div class="grid gap-6 lg:grid-cols-[1.2fr,0.8fr]">
                     <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50 space-y-4">
                         <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider border-b border-slate-200 pb-2">Hero Video Loop Uploader</h4>
-                        <p class="text-[10px] text-slate-500 leading-normal">Select a concise MP4/WebM highlight reel. The landing page plays the video first, smoothly loops into slideshow items, and resets seamlessly.</p>
                         <div class="grid gap-4 sm:grid-cols-2">
                             <div class="space-y-2">
                                 <label class="text-[10px] font-bold text-slate-700 uppercase tracking-wider block">Video Asset</label>
@@ -805,7 +791,6 @@
                                 <span class="text-xs font-bold text-[#071833] bg-slate-100 border border-slate-200 px-2 py-0.5 rounded shadow-sm" x-text="heroIntroOpacity + '%'"></span>
                             </div>
                             <input type="range" name="hero_intro_background_opacity" min="0" max="100" step="1" x-model="heroIntroOpacity" class="h-2 w-full cursor-pointer accent-[#fbbf24] bg-slate-200 rounded-lg appearance-none">
-                            <p class="text-[9px] text-slate-400 mt-2">Adjust slides transparency overlay ratios to amplify headline text contrast.</p>
                         </div>
                     </div>
 
@@ -884,7 +869,6 @@
                 method="POST"
                 enctype="multipart/form-data"
                 title="Portal Interface Background"
-                description="Upload a bespoke, high-resolution visual backdrop that renders behind administrative dashboards, academic outlines, and settings panels."
             >
                 <input type="hidden" name="group" value="school">
                 <input type="hidden" name="settings_section" value="workspace-backgrounds">
@@ -893,7 +877,6 @@
                     <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50 space-y-4">
                         <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider block border-b border-slate-200 pb-2">Dedicated Workspace Wallpaper</h4>
                         <input type="file" name="admin_background_image" accept="image/*" class="block w-full text-xs text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-[#071833] file:text-white hover:file:bg-[#0b1f3a]">
-                        <p class="text-[10px] text-slate-500 leading-relaxed">Provide a highly muted, high-resolution panorama or structural render. Recommended resolution: 1920x1080px. A soft radial gradient fallback acts as the default wrapper.</p>
                     </div>
                     
                     <div class="p-5 rounded-2xl border border-slate-200 bg-slate-50 flex flex-col justify-between">
@@ -923,7 +906,6 @@
                 method="POST"
                 enctype="multipart/form-data"
                 title="Admissions Site Backgrounds"
-                description="Upload wide-view parallax background layers and scrolling sections designed to decorate the frontend public admissions template."
             >
                 <input type="hidden" name="group" value="school">
                 <input type="hidden" name="settings_section" value="site-backgrounds">
@@ -989,7 +971,6 @@
                 method="POST"
                 enctype="multipart/form-data"
                 title="Website Welcome Pop-up"
-                description="Toggle, edit, and custom-theme the interactive greeting banner presented to new public homepage visitors."
             >
                 <input type="hidden" name="group" value="school">
                 <input type="hidden" name="settings_section" value="welcome-popup">
@@ -999,7 +980,6 @@
                         <input type="checkbox" name="welcome_popup_enabled" value="1" class="mt-1 rounded border-slate-300 text-[#071833] focus:ring-[#071833] h-4 w-4" @checked(old('welcome_popup_enabled', $settings['welcome_popup_enabled'] ?? false))>
                         <div>
                             <span class="block font-bold text-slate-900 text-xs uppercase tracking-wider">Enable Welcome Pop-up Display</span>
-                            <span class="block text-[10px] text-slate-500 mt-1">If enabled, a customized overlay block containing registration links, event announcements, or admissions schedules automatically fades in.</span>
                         </div>
                     </label>
 
@@ -1046,7 +1026,6 @@
                 method="POST"
                 enctype="multipart/form-data"
                 title="Gallery Asset Quick Uploader"
-                description="Upload custom graphics directly to the gallery folders in case the large website settings form timeouts."
             >
                 <input type="hidden" name="group" value="school">
                 <input type="hidden" name="settings_section" value="gallery-uploader">
@@ -1081,7 +1060,6 @@
                 action="{{ route('admin.settings.update') }}"
                 method="POST"
                 title="Homepage Copy & Typography"
-                description="Refine text templates, highlight blurbs, key academic outlines, and founder address templates displayed on public directories."
             >
                 <input type="hidden" name="group" value="school">
                 <input type="hidden" name="settings_section" value="homepage-text">
@@ -1231,7 +1209,6 @@
                 method="POST"
                 enctype="multipart/form-data"
                 title="Hero and Highlight Wallpapers (Group A)"
-                description="Upload custom graphic backdrop layers designed to enhance individual highlights, metrics tiles, and homepage overview widgets."
             >
                 <input type="hidden" name="group" value="school">
                 <input type="hidden" name="settings_section" value="box-backgrounds-a">
@@ -1317,7 +1294,6 @@
                 method="POST"
                 enctype="multipart/form-data"
                 title="Academic, Founders and Sections Wallpapers (Group B)"
-                description="Upload custom graphic backdrop layers designed to enhance individual academic class widgets, founder profiles, and news blocks."
             >
                 <input type="hidden" name="group" value="school">
                 <input type="hidden" name="settings_section" value="box-backgrounds-b">
@@ -1388,7 +1364,6 @@
                 action="{{ route('admin.settings.update') }}"
                 method="POST"
                 title="Payment Gateways Integration"
-                description="Configure integration parameters for secure automated Paystack, PalmPay, and manual bank transfers."
             >
                 <input type="hidden" name="group" value="payments">
                 <input type="hidden" name="settings_section" value="payment-settings">
@@ -1454,7 +1429,6 @@
                 <!-- Bank Accounts Grid -->
                 <div class="mt-6 p-5 rounded-2xl border border-slate-200 bg-slate-50 space-y-4">
                     <h4 class="text-xs font-bold text-slate-900 uppercase tracking-wider border-b border-slate-200 pb-2">Manual Bank Transfers (Portal Display)</h4>
-                    <p class="text-[10px] text-slate-500">Provide official accounts shown to parents and staff under manual checkout settings.</p>
                     <div class="grid gap-4 sm:grid-cols-3">
                         @foreach (range(1, 3) as $index)
                             <div class="p-4 bg-white border border-slate-200 rounded-xl space-y-3">
@@ -1484,7 +1458,6 @@
         <div x-show="activeSection === 'contact-messages'">
             <x-dashboard-card
                 title="Recent Public Contact Messages"
-                subtitle="View the latest queries submitted by visitors and prospective parents."
                 icon="message-square"
                 accent="blue"
             >
@@ -1504,7 +1477,6 @@
                     @empty
                         <x-empty-state
                             title="No Incoming Messages"
-                            description="Public contact form submissions will appear here once prospective visitors submit them."
                             icon="mail"
                         />
                     @endforelse

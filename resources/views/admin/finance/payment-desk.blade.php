@@ -1,6 +1,6 @@
 <x-portal-layout>
     <x-slot name="header">
-        <x-page-header title="Payments and collections" description="Record offline collections, monitor transactions, and keep invoice balances synchronized." eyebrow="Finance desk" />
+        <x-page-header title="Payments and collections" eyebrow="Finance desk" />
     </x-slot>
 
     <div class="space-y-7">
@@ -19,7 +19,7 @@
         </div>
 
         <div class="grid gap-7 xl:grid-cols-[1fr,0.8fr]">
-            <x-form-card title="Record offline payment" description="Cash, bank transfer, and POS payments use the same ledger as online transactions." action="{{ route('admin.manual-payments.store') }}" method="POST">
+            <x-form-card title="Record offline payment" action="{{ route('admin.manual-payments.store') }}" method="POST">
                 <div class="space-y-5">
                     <div>
                         <label class="mb-2 block text-xs font-black uppercase tracking-wider text-slate-700">Student Invoice</label>
@@ -45,7 +45,7 @@
             </x-form-card>
 
             <div class="space-y-5">
-                <x-dashboard-card title="Verification queue" subtitle="Student-submitted bank transfers awaiting bursary confirmation." icon="bank" accent="orange">
+                <x-dashboard-card title="Verification queue" icon="bank" accent="orange">
                     <a href="{{ route('admin.bank-transfers.index') }}" class="inline-flex w-full items-center justify-between rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm font-black text-amber-900"><span>Review bank transfers</span><span>→</span></a>
                 </x-dashboard-card>
                 <x-dashboard-card title="Quick finance actions" icon="finance" accent="blue">

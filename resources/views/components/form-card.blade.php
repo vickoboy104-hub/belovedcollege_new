@@ -1,18 +1,11 @@
-@props(['action' => '', 'method' => 'POST', 'title' => null, 'description' => null])
+@props(['action' => '', 'method' => 'POST', 'title' => null])
 
 <div {{ $attributes->merge(['class' => 'form-section']) }}>
-    @if($title || $description)
+    @if($title)
         <div class="form-section-header">
-            @if($title)
-                <h3 class="section-title">
-                    {{ $title }}
-                </h3>
-            @endif
-            @if($description)
-                <p class="section-description">
-                    {{ $description }}
-                </p>
-            @endif
+            <h3 class="section-title">
+                {{ $title }}
+            </h3>
         </div>
     @endif
 

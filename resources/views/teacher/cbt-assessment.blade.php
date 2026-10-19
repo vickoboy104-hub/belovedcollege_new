@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <x-page-header :title="$assessment->title" eyebrow="Teacher CBT Builder">
-            <x-slot name="description">
+            <x-slot name="meta">
                 {{ $assessment->subject->name }} &bull; {{ $assessment->schoolClass->name }} &bull; {{ $assessment->type->label() }}
             </x-slot>
             <x-slot name="actions">
@@ -59,7 +59,7 @@
                         </div>
                     </x-dashboard-card>
                 @else
-                    <x-form-card :action="route('teacher.cbt.questions.store', $assessment)" method="POST" title="Add CBT Question" description="Create a new question, set the point weight, and specify the correct answer." enctype="multipart/form-data">
+                    <x-form-card :action="route('teacher.cbt.questions.store', $assessment)" method="POST" title="Add CBT Question" enctype="multipart/form-data">
                         <div class="grid gap-4 md:grid-cols-2">
                             <div>
                                 <label class="block text-xs font-bold text-slate-700 uppercase tracking-wide mb-1.5">Question Type</label>
@@ -121,7 +121,7 @@
         </div>
 
         <!-- Question Bank Section -->
-        <x-dashboard-card title="Question Bank Library" subtitle="Review and edit all the questions assigned to this CBT exam." icon="book-open" accent="blue">
+        <x-dashboard-card title="Question Bank Library" icon="book-open" accent="blue">
             <div class="space-y-6">
                 @forelse ($assessment->cbtQuestions as $question)
                     @php
@@ -294,13 +294,13 @@
                         </div>
                     </article>
                 @empty
-                    <x-empty-state title="No CBT questions added yet" subtitle="Use the 'Add CBT Question' panel to begin building your question bank for this assessment." icon="book-open" />
+                    <x-empty-state title="No CBT questions added yet" icon="book-open" />
                 @endforelse
             </div>
         </x-dashboard-card>
 
         <!-- Student Attempts Section -->
-        <x-dashboard-card title="Student Attempts Tracker" subtitle="Monitor dynamic exam logs and grade theory attempts." icon="user-check" accent="green">
+        <x-dashboard-card title="Student Attempts Tracker" icon="user-check" accent="green">
             <div class="space-y-4">
                 @forelse ($assessment->cbtAttempts as $attempt)
                     <article class="rounded-[18px] border border-slate-200 p-4.5 bg-white shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 hover:border-[#fbbf24] transition-all">
@@ -327,7 +327,7 @@
                         </x-action-button>
                     </article>
                 @empty
-                    <x-empty-state title="No student attempts logged yet" subtitle="When student logins begin taking exams, their logs, durations, scores, and submissions will record here." icon="clock" />
+                    <x-empty-state title="No student attempts logged yet" icon="clock" />
                 @endforelse
             </div>
         </x-dashboard-card>

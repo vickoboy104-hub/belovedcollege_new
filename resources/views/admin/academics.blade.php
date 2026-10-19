@@ -1,6 +1,6 @@
 <x-app-layout>
     <x-slot name="header">
-        <x-page-header title="Academic structure and publishing" eyebrow="Administration" description="Manage sessions, terms, student rollovers, promotions, class allocations, subjects, and digital CBT settings." />
+        <x-page-header title="Academic structure and publishing" eyebrow="Administration" />
     </x-slot>
 
     @php
@@ -20,7 +20,7 @@
         <!-- 1. ACADEMIC SESSION SETUP -->
         @if ($activeAcademicSection === 'session-setup')
             <div class="max-w-2xl mx-auto w-full">
-                <x-form-card :action="route('admin.sessions.store')" method="POST" title="Academic session" description="Create a new academic session, set active dates, and define promotion thresholds.">
+                <x-form-card :action="route('admin.sessions.store')" method="POST" title="Academic session">
                     <div class="grid gap-4 md:grid-cols-2">
                         <div class="space-y-1">
                             <label class="text-xs font-bold text-slate-700">Session Name <span class="text-rose-500">*</span></label>
@@ -52,7 +52,7 @@
         <!-- 2. TERM SETUP -->
         @if ($activeAcademicSection === 'term-setup')
             <div class="max-w-2xl mx-auto w-full">
-                <x-form-card :action="route('admin.terms.store')" method="POST" title="Create term" description="Establish a new educational term under an active academic session.">
+                <x-form-card :action="route('admin.terms.store')" method="POST" title="Create term">
                     <div class="grid gap-4 md:grid-cols-2">
                         <div class="space-y-1 md:col-span-2">
                             <label class="text-xs font-bold text-slate-700">Academic Session <span class="text-rose-500">*</span></label>
@@ -257,7 +257,7 @@
             </div>
         @elseif ($activeAcademicSection === 'promotion-review' && $sessions->contains(fn ($session) => $session->closed_at !== null))
             <div class="card bg-white border border-[#c8d6ea] rounded-[18px] p-6 shadow-[0_10px_25px_rgba(15,23,42,0.08)] max-w-2xl mx-auto">
-                <x-empty-state title="Roll over targets unconfigured" description="A session has been closed, but there is no active target current session. Create a new session first." icon="classes" />
+                <x-empty-state title="Roll over targets unconfigured" icon="classes" />
             </div>
         @endif
 
@@ -265,7 +265,7 @@
         @if ($activeAcademicSection === 'class-setup')
             <div class="grid gap-8 xl:grid-cols-[0.8fr,1.2fr]">
                 <!-- Create Class Card -->
-                <x-form-card :action="route('admin.classes.store')" method="POST" title="Class setup workspace" description="Add a new class index, assign teachers, room spaces, and student capacities." class="self-start">
+                <x-form-card :action="route('admin.classes.store')" method="POST" title="Class setup workspace" class="self-start">
                     <div class="grid gap-4 md:grid-cols-2">
                         <div class="space-y-1 md:col-span-2">
                             <label class="text-xs font-bold text-slate-700">Class Name <span class="text-rose-500">*</span></label>
@@ -306,7 +306,6 @@
                 <div x-data="{ selectedClassId: '{{ $classes->first()?->id ?? '' }}' }" class="space-y-6">
                     <div class="card bg-white border border-[#c8d6ea] rounded-[18px] p-6 shadow-[0_10px_25px_rgba(15,23,42,0.08)]">
                         <h3 class="display-font text-lg font-bold text-slate-900 leading-snug">Existing class setups</h3>
-                        <p class="text-xs font-semibold text-slate-400 mt-1 mb-4">Configure class directories, edit room slots, and update assigned educational managers.</p>
                         
                         <!-- Premium Class Selector Tabs -->
                         <div class="flex flex-wrap gap-2 pt-4 border-t border-slate-100">
@@ -327,7 +326,7 @@
 
                     @forelse ($classes as $schoolClass)
                         <div x-show="selectedClassId === '{{ $schoolClass->id }}'" x-cloak x-transition:enter="transition ease-out duration-200" x-transition:enter-start="opacity-0 scale-95" x-transition:enter-end="opacity-100 scale-100">
-                            <x-form-card :action="route('admin.classes.update', $schoolClass)" method="PATCH" title="{{ $schoolClass->display_name }}" description="Current Class Teacher: {{ $schoolClass->classTeacher?->fullName() ?? 'Not allocated' }}">
+                            <x-form-card :action="route('admin.classes.update', $schoolClass)" method="PATCH" title="{{ $schoolClass->display_name }}">
                                 <div class="grid gap-4 md:grid-cols-2">
                                     <div class="space-y-1">
                                         <label class="text-xs font-bold text-slate-750">Class Name <span class="text-rose-500">*</span></label>
@@ -365,7 +364,7 @@
                             </x-form-card>
                         </div>
                     @empty
-                        <x-empty-state title="No active class records" description="No school classroom or grade records have been established." icon="classes" />
+                        <x-empty-state title="No active class records" icon="classes" />
                     @endforelse
                 </div>
             </div>
@@ -374,7 +373,7 @@
         <!-- 6. SUBJECT SETUP -->
         @if ($activeAcademicSection === 'subject-setup')
             <div class="max-w-2xl mx-auto w-full">
-                <x-form-card :action="route('admin.subjects.store')" method="POST" title="Subject setup workspace" description="Establish a new subject directory index in Beloved Schools.">
+                <x-form-card :action="route('admin.subjects.store')" method="POST" title="Subject setup workspace">
                     <div class="space-y-4">
                         <div class="space-y-1">
                             <label class="text-xs font-bold text-slate-700">Subject Name <span class="text-rose-500">*</span></label>
@@ -399,7 +398,7 @@
         <!-- 7. ANNOUNCEMENT MANAGEMENT -->
         @if ($activeAcademicSection === 'announcement')
             <div class="max-w-3xl mx-auto w-full">
-                <x-form-card :action="route('admin.announcements.store')" method="POST" title="Publish website announcement" description="Broadcast notices, news, and school events to parents and student dashboards immediately.">
+                <x-form-card :action="route('admin.announcements.store')" method="POST" title="Publish website announcement">
                     <div class="space-y-4">
                         <div class="grid gap-4 md:grid-cols-2">
                             <div class="space-y-1">
@@ -515,7 +514,7 @@
                     @empty
                         <tr>
                             <td colspan="8">
-                                <x-empty-state title="No active CBT assessments" description="Educational CBT templates or questions have not been set up yet." icon="cbt" />
+                                <x-empty-state title="No active CBT assessments" icon="cbt" />
                             </td>
                         </tr>
                     @endforelse

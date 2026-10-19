@@ -64,8 +64,7 @@
             <x-filter-card 
                 :action="route('admin.staff.index')" 
                 method="GET" 
-                :title="$activeStaffView === 'payroll' ? 'Payroll Search' : 'Staff search directory'"
-                description="Search by name, employee ID or department.">
+                :title="$activeStaffView === 'payroll' ? 'Payroll Search' : 'Staff search directory'">
                 <input type="hidden" name="view" value="{{ $activeStaffView }}" />
                 <input name="search" value="{{ $search }}" placeholder="Search by name or staff details..." class="theme-input flex-1" />
                 <select name="department" class="theme-input lg:w-56">
@@ -80,7 +79,7 @@
                 </div>
             </x-filter-card>
         @else
-            <x-dashboard-card title="Class allocation status" subtitle="Allocations of teachers to class records across primary and secondary divisions." icon="classes" accent="blue" />
+            <x-dashboard-card title="Class allocation status" icon="classes" accent="blue" />
         @endif
 
     <!-- Main Body Panel -->
@@ -93,7 +92,6 @@
                         <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-slate-100 pb-5">
                             <div>
                                 <h2 class="display-font text-xl font-bold text-slate-900 leading-snug">Staff directory by department</h2>
-                                <p class="text-xs font-semibold text-slate-400 mt-1">Manage departmental groups, active assignments, and payroll accounts.</p>
                             </div>
                             <div class="bg-blue-50 text-blue-700 px-4 py-3 rounded-2xl border border-blue-100 shrink-0 text-center">
                                 <div class="text-[9px] font-extrabold uppercase tracking-wider text-blue-700">Active Count</div>
@@ -243,7 +241,7 @@
                                 </div>
                             </div>
                         @empty
-                            <x-empty-state title="No staff records" description="Department directory returned no staff profiles matching the search queries." icon="staff" />
+                            <x-empty-state title="No staff records" icon="staff" />
                         @endforelse
                     </div>
 
@@ -253,7 +251,6 @@
                         <div class="flex items-center justify-between gap-4 border-b border-slate-100 pb-4">
                             <div>
                                 <h2 class="display-font text-xl font-bold text-slate-900 leading-snug">Payroll administration desk</h2>
-                                <p class="text-xs font-semibold text-slate-400 mt-1">Summary billing, salaries setup, and monthly school budget metrics.</p>
                             </div>
                             <x-status-badge status="Active" />
                         </div>
@@ -384,7 +381,7 @@
                                 </div>
                             </div>
                         @empty
-                            <x-empty-state title="No payroll data found" description="Payroll search query returned no active salary configurations." icon="finance" />
+                            <x-empty-state title="No payroll data found" icon="finance" />
                         @endforelse
                     </div>
 
@@ -394,7 +391,6 @@
                         <div class="flex items-center justify-between gap-4 border-b border-slate-100 pb-4">
                             <div>
                                 <h2 class="display-font text-xl font-bold text-slate-900 leading-snug">Class teacher allocation</h2>
-                                <p class="text-xs font-semibold text-slate-400 mt-1">Review assigned class teachers, capacities, and classrooms.</p>
                             </div>
                             <x-action-button variant="secondary" :href="route('admin.academics', ['section' => 'class-setup'])">Class Setup</x-action-button>
                         </div>
@@ -434,7 +430,6 @@
             method="POST" 
             enctype="multipart/form-data" 
             title="Register staff member" 
-            description="Create staff profiles separate from student records. Maintain active departments, roles, qualifications, and payroll salary settings." 
             class="w-full"
             x-data="{
                 firstName: '',

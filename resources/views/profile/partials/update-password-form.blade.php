@@ -2,7 +2,6 @@
     action="{{ route('password.update') }}"
     method="PUT"
     title="Update Password"
-    description="Ensure your account is using a long, random password to stay secure."
 >
     <div class="grid gap-6 md:grid-cols-3">
         <div class="space-y-1">

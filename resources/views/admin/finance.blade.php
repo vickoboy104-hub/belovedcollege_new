@@ -9,7 +9,6 @@
     <div class="grid gap-8 xl:grid-cols-2">
         <section class="section-card">
             <h2 class="display-font text-2xl font-bold" style="color: var(--theme-text, #0f172a);">Create fee item</h2>
-            <p class="mt-2 text-sm" style="color: var(--theme-muted, #64748b);">Use class-linked fee items so every newly registered student can inherit the right term fees.</p>
             <form method="POST" action="{{ route('admin.fee-items.store') }}" class="mt-6 grid gap-4 md:grid-cols-2">
                 @csrf
                 <input name="name" placeholder="Tuition Fee" class="theme-input" required />
@@ -76,7 +75,6 @@
     <div class="mt-8 grid gap-8 xl:grid-cols-[1.1fr,0.9fr]">
         <section class="section-card">
             <h2 class="display-font text-2xl font-bold" style="color: var(--theme-text, #0f172a);">Record direct school payment</h2>
-            <p class="mt-2 text-sm" style="color: var(--theme-muted, #64748b);">Use this when payment happens physically at school. The student balance updates immediately and a receipt becomes printable.</p>
             <form method="POST" action="{{ route('admin.manual-payments.store') }}" class="mt-6 grid gap-4 md:grid-cols-2">
                 @csrf
                 <select name="fee_invoice_id" class="theme-input md:col-span-2" required>
@@ -109,7 +107,6 @@
                     <div class="display-font mt-3 text-4xl font-bold text-slate-950">{{ $paymentCount }}</div>
                 </div>
             </div>
-            <p class="mt-5 text-sm leading-7 text-slate-600">Student portal balances are driven from invoices and payment records. When a payment is posted here or through the online gateway, the remaining balance reflects immediately.</p>
         </section>
     </div>
 
@@ -143,7 +140,6 @@
         <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
             <div>
                 <h2 class="display-font text-2xl font-bold text-slate-950">Printable class fee list</h2>
-                <p class="mt-2 text-sm text-slate-500">Pick a class, tick the fee items you want included, and the total updates automatically for printing or saving as PDF.</p>
             </div>
                 <div class="flex flex-wrap gap-3 print:hidden">
                 <button type="button" @click="toggleAll()" class="theme-button-secondary">Select or clear all</button>
@@ -269,7 +265,6 @@
 
     <section class="section-card mt-8">
         <h2 class="display-font text-2xl font-bold text-slate-950">Students with unpaid or part-paid fees</h2>
-        <p class="mt-2 text-sm text-slate-500">This shows what each student has not paid, what has been paid already, and the remaining balance when a fee is only partly settled.</p>
         <div class="mt-5 overflow-x-auto">
             <table class="min-w-full text-left text-sm">
                 <thead class="text-slate-500">

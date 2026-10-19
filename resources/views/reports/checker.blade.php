@@ -17,7 +17,6 @@
                 <div>
                     <p class="text-sm font-semibold uppercase tracking-[0.28em] text-slate-500">Public result checker</p>
                     <h1 class="display-font mt-2 text-3xl font-bold text-slate-950">{{ $schoolSettings['school_name'] ?? 'BELOVED SCHOOLS' }}</h1>
-                    <p class="mt-2 text-sm text-slate-600">Enter the approved admission number, term, and checker PIN to open a student's published report card.</p>
                 </div>
             </div>
 

@@ -1,6 +1,6 @@
 <x-portal-layout>
     <x-slot name="header">
-        <x-page-header title="Student invoices" description="Print, save as PDF, and move directly into payment recording." eyebrow="Finance desk" />
+        <x-page-header title="Student invoices" eyebrow="Finance desk" />
     </x-slot>
 
     <div class="space-y-6">

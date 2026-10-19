@@ -3,7 +3,6 @@
         <x-page-header
             title="Teacher Subject Access"
             eyebrow="Academic Permissions"
-            description="Grant or remove exact subject-and-class permissions. Teachers only see and manage the combinations listed here."
         >
             <x-slot name="actions">
                 <x-action-button variant="secondary" :href="route('admin.academics', ['section' => 'class-setup'])">
@@ -29,7 +28,6 @@
             :action="route('admin.teacher-access.store')"
             method="POST"
             title="Grant teaching permissions"
-            description="Choose one or many teachers, one or many classes, and multiple subjects. Every selected combination takes effect immediately."
             x-data="{ allTeachers: {{ old('all_teachers') ? 'true' : 'false' }} }"
         >
             <div class="grid gap-5 xl:grid-cols-3">
@@ -37,7 +35,6 @@
                     <div class="mb-3 flex items-start justify-between gap-3">
                         <div>
                             <h4 class="text-sm font-extrabold text-slate-900">Teachers</h4>
-                            <p class="mt-1 text-xs text-slate-500">Select individual teachers or apply the permission to every active teacher.</p>
                         </div>
                         <span class="rounded-full bg-white px-2.5 py-1 text-[10px] font-black text-slate-500 shadow-sm">{{ $teachers->count() }}</span>
                     </div>
@@ -81,7 +78,6 @@
                     <div class="mb-3 flex items-start justify-between gap-3">
                         <div>
                             <h4 class="text-sm font-extrabold text-slate-900">Classes</h4>
-                            <p class="mt-1 text-xs text-slate-500">Choose the class groups where the selected teachers may work.</p>
                         </div>
                         <span class="rounded-full bg-white px-2.5 py-1 text-[10px] font-black text-slate-500 shadow-sm">{{ $classes->count() }}</span>
                     </div>
@@ -110,7 +106,6 @@
                     <div class="mb-3 flex items-start justify-between gap-3">
                         <div>
                             <h4 class="text-sm font-extrabold text-slate-900">Subjects</h4>
-                            <p class="mt-1 text-xs text-slate-500">Select as many subjects as the teacher or teacher group should manage.</p>
                         </div>
                         <span class="rounded-full bg-white px-2.5 py-1 text-[10px] font-black text-slate-500 shadow-sm">{{ $subjects->count() }}</span>
                     </div>
@@ -150,7 +145,6 @@
 
         <x-filter-card
             title="Current teacher permissions"
-            description="Search by teacher, email, class, subject, or subject code. Revoked permissions can be restored without recreating them."
         >
             <form method="GET" action="{{ route('admin.teacher-access.index') }}" class="grid gap-3 md:grid-cols-[minmax(0,1fr)_12rem_auto] md:items-end">
                 <div class="space-y-1.5">
@@ -172,7 +166,7 @@
             </form>
         </x-filter-card>
 
-        <x-dashboard-card title="Permission register" subtitle="Select any visible rows and remove or restore them together. Every row remains an exact teacher, class, and subject authorization." icon="learning" accent="blue">
+        <x-dashboard-card title="Permission register" icon="learning" accent="blue">
             <form
                 id="teacher-access-bulk-form"
                 method="POST"
@@ -247,7 +241,6 @@
                         <td colspan="7">
                             <x-empty-state
                                 title="No teacher permissions found"
-                                description="Grant teachers access to classes and subjects using the form above."
                                 icon="learning"
                             />
                         </td>

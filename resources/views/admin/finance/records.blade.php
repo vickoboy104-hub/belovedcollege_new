@@ -1,8 +1,7 @@
 <x-portal-layout>
     <x-slot name="header">
         <x-page-header 
-            title="Printable fee lists, fee items, receipts, and unpaid balances" 
-            description="Access and manage the school fee catalog, print custom billing breakdowns, and review payment progression."
+            title="Printable fee lists, fee items, receipts, and unpaid balances"
             eyebrow="Finance records"
         />
     </x-slot>
@@ -52,8 +51,7 @@
             class="space-y-6"
         >
             <x-dashboard-card 
-                title="Printable class fee list" 
-                description="Pick a class, tick the fee items to include, then open the dedicated printable page that only shows the selected list and total."
+                title="Printable class fee list"
                 icon="finance" 
                 accent="blue"
             >
@@ -152,7 +150,6 @@
                     <div x-show="!selectedClass.items.length" class="mt-6">
                         <x-empty-state 
                             title="No fee items found" 
-                            description="There are currently no fee items linked to this class in the catalog." 
                             icon="finance" 
                         />
                     </div>
@@ -173,8 +170,7 @@
         <!-- Created fee items -->
         <div x-show="activeSection === 'created-fee-items'" class="space-y-6">
             <x-dashboard-card 
-                title="Created fee items" 
-                description="Browse and manage all registered fee items. Removing a fee item will delete it from future templates but leave existing student invoices unaffected."
+                title="Created fee items"
                 icon="finance" 
                 accent="blue"
             >
@@ -245,7 +241,6 @@
                             <td colspan="7">
                             <x-empty-state 
                                 title="No catalogued fee items" 
-                                description="Create fee items using the Finance Desk to populate the school fee schedule." 
                                 icon="finance" 
                             />
                             </td>
@@ -259,8 +254,7 @@
         <!-- Students with unpaid or part-paid fees -->
         <div x-show="activeSection === 'student-balances'" class="space-y-6">
             <x-dashboard-card 
-                title="Students with unpaid or part-paid fees" 
-                description="Search for a student and review unpaid items, part-payments, and remaining balances."
+                title="Students with unpaid or part-paid fees"
                 icon="student" 
                 accent="blue"
             >
@@ -326,7 +320,6 @@
                                 <td colspan="5" class="px-6 py-10 text-center">
                                     <x-empty-state 
                                         title="No debt records found" 
-                                        description="No students match the selected outstanding balance criteria." 
                                         icon="student" 
                                     />
                                 </td>
@@ -388,7 +381,6 @@
                     @empty
                         <x-empty-state 
                             title="No debt records found" 
-                            description="No students match the selected outstanding balance criteria." 
                             icon="student" 
                         />
                     @endforelse
@@ -399,8 +391,7 @@
         <!-- Class billing summary -->
         <div x-show="activeSection === 'class-bills'" class="space-y-6">
             <x-dashboard-card 
-                title="Class billing summary" 
-                description="Monitor expected fees, collections, and overall debt exposure dynamically structured per school class."
+                title="Class billing summary"
                 icon="finance" 
                 accent="blue"
             >
@@ -461,7 +452,6 @@
                                 <td colspan="7" class="px-6 py-10 text-center">
                                     <x-empty-state 
                                         title="No class billing data" 
-                                        description="No class bills have been created or posted yet." 
                                         icon="finance" 
                                     />
                                 </td>
@@ -509,7 +499,6 @@
                     @empty
                         <x-empty-state 
                             title="No class billing data" 
-                            description="No class bills have been created or posted yet." 
                             icon="finance" 
                         />
                     @endforelse
@@ -522,7 +511,6 @@
             <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                 <div>
                     <h2 class="display-font text-2xl font-bold text-slate-950">Payment Channels & Providers Breakdown</h2>
-                    <p class="text-sm text-slate-500 mt-1">Monitor daily collection patterns, gateway provider volume, and payment channels.</p>
                 </div>
                 <x-action-button href="{{ route('admin.finance', ['section' => 'record-payment']) }}" variant="secondary" icon="finance">
                     Record new payment
@@ -565,7 +553,6 @@
                         @empty
                             <x-empty-state 
                                 title="No channels logged" 
-                                description="No payment channels have been logged in the system yet." 
                                 icon="finance" 
                             />
                         @endforelse
@@ -592,7 +579,6 @@
                         @empty
                             <x-empty-state 
                                 title="No daily receipts" 
-                                description="No collections have been recorded recently." 
                                 icon="finance" 
                             />
                         @endforelse
@@ -604,8 +590,7 @@
         <!-- Overpayment tracker -->
         <div x-show="activeSection === 'overpayment-tracker'" class="space-y-6">
             <x-dashboard-card 
-                title="Overpayment tracker" 
-                description="Surfaces student payments that exceed the corresponding invoice amount due. Monitor excess collections here."
+                title="Overpayment tracker"
                 icon="finance" 
                 accent="green"
             >
@@ -670,7 +655,6 @@
                                 <td colspan="7" class="px-6 py-10 text-center">
                                     <x-empty-state 
                                         title="No overpayments detected" 
-                                        description="All posted student payments fall exactly within or under invoice totals." 
                                         icon="finance" 
                                     />
                                 </td>
@@ -684,8 +668,7 @@
         <!-- Payment progression -->
         <div x-show="activeSection === 'payment-progression'" class="space-y-6">
             <x-dashboard-card 
-                title="Payment progression" 
-                description="Track invoices from partial installments up to final clearance. Monitor overall debt amortization."
+                title="Payment progression"
                 icon="finance" 
                 accent="blue"
             >
@@ -750,7 +733,6 @@
                                 <td colspan="8">
                                     <x-empty-state 
                                         title="No payment progression tracked" 
-                                        description="No partial or installment invoices have been logged in the system yet." 
                                         icon="finance" 
                                     />
                                 </td>
@@ -779,8 +761,7 @@
             }"
         >
             <x-dashboard-card 
-                title="Recent payments and receipts" 
-                description="Monitor all successfully processed fees, record physical payments, and view official school receipts."
+                title="Recent payments and receipts"
                 icon="finance" 
                 accent="blue"
             >
@@ -846,7 +827,6 @@
                                 <td colspan="7" class="px-6 py-10 text-center">
                                     <x-empty-state 
                                         title="No payment records found" 
-                                        description="No student receipts or payments have been created yet." 
                                         icon="finance" 
                                     />
                                 </td>
@@ -886,7 +866,6 @@
                     @empty
                         <x-empty-state 
                             title="No payment records found" 
-                            description="No student receipts or payments have been created yet." 
                             icon="finance" 
                         />
                     @endforelse

@@ -45,10 +45,6 @@
         const openLink = document.querySelector('[data-report-open-link]');
 
         const searchFieldWrapper = input.closest('div');
-        const helperText = searchFieldWrapper?.querySelector('p');
-        if (helperText) {
-            helperText.textContent = 'Type freely and click Search. Student suggestions are optional, and an Open Report link appears once the text points at exactly one student.';
-        }
 
         const normalize = (value) => String(value || '')
             .toLowerCase()
@@ -114,8 +110,8 @@
             picker.className = 'report-suggestion-picker';
 
             const summary = document.createElement('summary');
-            summary.textContent = 'Browse student suggestions (optional)';
-            summary.setAttribute('aria-label', 'Show optional student suggestions');
+            summary.textContent = 'Student suggestions';
+            summary.setAttribute('aria-label', 'Show student suggestions');
 
             const panel = document.createElement('div');
             panel.className = 'report-suggestion-panel';
@@ -127,7 +123,7 @@
                 if (matches.length === 0) {
                     const empty = document.createElement('p');
                     empty.className = 'report-suggestion-empty';
-                    empty.textContent = 'No matching students. Continue typing or submit the normal search.';
+                    empty.textContent = 'No matching students.';
                     panel.appendChild(empty);
                     return;
                 }

@@ -28,7 +28,7 @@
 
     <x-slot name="header">
         <x-page-header title="{{ $selectedStudent->user->fullName() }}" eyebrow="Result Center">
-            <x-slot name="description">
+            <x-slot name="meta">
                 {{ $selectedStudent->admission_no }} • {{ $selectedStudent->schoolClass->display_name ?? 'Class pending' }} • {{ $selectedTerm?->name ?? 'No term selected' }} {{ $selectedTerm?->academicSession ? '- '.$selectedTerm->academicSession->name : '' }}
             </x-slot>
             <x-slot name="actions">
@@ -44,7 +44,7 @@
 
     <!-- Swtich Academic Term Filter -->
     <div class="mb-8">
-        <x-filter-card :action="route('admin.reports.show', ['student' => $selectedStudent, 'section' => $activeReportSection])" method="GET" title="Switch Academic Term" description="Keep your search term when switching categories">
+        <x-filter-card :action="route('admin.reports.show', ['student' => $selectedStudent, 'section' => $activeReportSection])" method="GET" title="Switch Academic Term">
             <select name="term_id" class="theme-input max-w-xs">
                 @foreach ($terms as $term)
                     <option value="{{ $term->id }}" @selected($selectedTerm?->id === $term->id)>{{ $term->name }} - {{ $term->academicSession->name ?? 'No session' }}</option>
@@ -68,7 +68,6 @@
                     <div>
                         <p class="text-xs uppercase tracking-[0.24em] text-slate-500">{{ ucfirst($activeReportSection) }} Dashboard</p>
                         <h2 class="display-font mt-2 text-2xl font-bold text-slate-900">{{ $selectedStudent->user->fullName() }}</h2>
-                        <p class="mt-2 text-sm text-slate-500 max-w-xl">Work on one result section at a time from the sidebar without losing the selected term.</p>
                     </div>
                     <div class="grid grid-cols-2 gap-3 shrink-0">
                         <div class="card p-5 bg-white border border-[#c8d6ea] rounded-[18px] shadow-[0_10px_25px_rgba(15,23,42,0.08)] flex flex-col justify-center min-w-[140px]">
@@ -134,7 +133,6 @@
                                 </div>
                                 <div class="min-w-0 flex-1">
                                     <h4 class="font-bold text-sm text-slate-900 group-hover:text-blue-600 transition">Review Compiled Scores</h4>
-                                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">Check per-subject exam, quiz, test, and overall percentages entered by class teachers.</p>
                                 </div>
                             </a>
 
@@ -144,7 +142,6 @@
                                 </div>
                                 <div class="min-w-0 flex-1">
                                     <h4 class="font-bold text-sm text-slate-900 group-hover:text-emerald-600 transition">Update Remarks & Attendance</h4>
-                                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">Input days present/absent, write official school comments, and rate character traits or practical skills.</p>
                                 </div>
                             </a>
 
@@ -154,7 +151,6 @@
                                 </div>
                                 <div class="min-w-0 flex-1">
                                     <h4 class="font-bold text-sm text-slate-900 group-hover:text-purple-600 transition">Release Publication Settings</h4>
-                                    <p class="text-xs text-slate-500 mt-1 leading-relaxed">Control student visibility on the portal, enable scratch card checker PINs, and secure administrative sign-offs.</p>
                                 </div>
                             </a>
                         </div>
@@ -184,7 +180,7 @@
                     @empty
                         <tr>
                             <td colspan="8" class="px-6 py-8">
-                                <x-empty-state title="No Compiled Scores" explanation="No subject score compilation entries have been recorded for this student in the selected term yet." />
+                                <x-empty-state title="No Compiled Scores" />
                             </td>
                         </tr>
                     @endforelse
@@ -323,14 +319,12 @@
                                     <input type="checkbox" name="portal_enabled" value="1" @checked(old('portal_enabled', $report->portal_enabled)) class="rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
                                     <div>
                                         <p class="text-slate-800 font-extrabold">Allow Portal Viewing</p>
-                                        <p class="text-slate-500 font-medium text-[10px] mt-0.5 leading-relaxed">Let student and their parents view this terminal report directly inside their portal accounts.</p>
                                     </div>
                                 </label>
                                 <label class="flex items-center gap-3 rounded-xl border border-slate-200 p-4 text-xs font-bold text-slate-700 hover:bg-slate-50/50 cursor-pointer transition">
                                     <input type="checkbox" name="checker_enabled" value="1" @checked(old('checker_enabled', $report->checker_enabled)) class="rounded border-slate-300 text-blue-600 focus:ring-blue-500" />
                                     <div>
                                         <p class="text-slate-800 font-extrabold">Enable Scratch Card PIN Checker</p>
-                                        <p class="text-slate-500 font-medium text-[10px] mt-0.5 leading-relaxed">Allow public access using a scratch card pin on the external landing result checker.</p>
                                     </div>
                                 </label>
                             </div>
@@ -362,7 +356,7 @@
                 </div>
             @endif
         @else
-            <x-empty-state title="Academic Term Pending" explanation="Create at least one academic term before opening a report workspace." />
+            <x-empty-state title="Academic Term Pending" />
         @endif
     </div>
 </x-app-layout>
