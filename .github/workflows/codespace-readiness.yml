@@ -80,6 +80,9 @@ jobs:
             if (config.postCreateCommand !== "bash .devcontainer/bootstrap.sh") {
               throw new Error("Unexpected postCreateCommand: " + config.postCreateCommand);
             }
+            if (config.postStartCommand !== "bash .devcontainer/start-server.sh") {
+              throw new Error("Unexpected postStartCommand: " + config.postStartCommand);
+            }
             if (!config.forwardPorts.includes(8000)) throw new Error("Port 8000 is not forwarded.");
             if (config.remoteUser !== "vscode") throw new Error("Expected remoteUser vscode, got " + config.remoteUser);
             console.log("devcontainer.json resolves correctly:", JSON.stringify(config.build));
@@ -126,19 +129,22 @@ jobs:
       - name: Run the codespace bootstrap (postCreateCommand)
         run: docker exec --user vscode --workdir "$APP_DIR" beloved-cs bash -lc 'bash .devcontainer/bootstrap.sh'
 
-      - name: Start the server the same way a user would
+      - name: Start the server (postStartCommand) and let the launching shell exit
+        run: docker exec --user vscode --workdir "$APP_DIR" beloved-cs bash -lc 'bash .devcontainer/start-server.sh'
+
+      - name: Server outlives the shell that started it
         run: |
           set -euo pipefail
-          docker exec --user vscode --workdir "$APP_DIR" --detach beloved-cs bash -lc 'bash .devcontainer/serve.sh > /tmp/serve.log 2>&1'
-          for attempt in {1..40}; do
-            if docker exec --user vscode beloved-cs curl --fail --silent http://127.0.0.1:8000/up > /dev/null; then
-              echo "Server answered /up after ${attempt} attempt(s)."
-              break
-            fi
-            sleep 2
-          done
+          sleep 5
           docker exec --user vscode beloved-cs curl --fail --silent --output /dev/null http://127.0.0.1:8000/up
-          echo "Health endpoint is live."
+          echo "Health endpoint is live after the launcher exited."
+
+      - name: Starting again is a no-op
+        run: |
+          set -euo pipefail
+          output=$(docker exec --user vscode --workdir "$APP_DIR" beloved-cs bash -lc 'bash .devcontainer/start-server.sh')
+          echo "$output"
+          echo "$output" | grep -q "already running" || { echo "A second start should not launch another server."; exit 1; }
 
       - name: Sign in through the served site
         run: |
@@ -183,3 +189,56 @@ jobs:
       - name: Show the server log on failure
         if: failure()
         run: docker exec --user vscode beloved-cs cat /tmp/serve.log || true
+
+  lifecycle:
+    name: Codespace lifecycle starts the site on its own
+    needs: configuration
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install the Dev Containers CLI
+        run: npm install -g @devcontainers/cli
+
+      - name: Create and start the dev container (runs postCreateCommand then postStartCommand)
+        run: devcontainer up --workspace-folder "$PWD"
+
+      - name: Site answers with nobody having started it by hand
+        run: |
+          set -euo pipefail
+          sleep 5
+          devcontainer exec --workspace-folder "$PWD" curl --fail --silent --output /dev/null --write-out "HTTP %{http_code}\n" http://127.0.0.1:8000/up
+
+      - name: Sign in and load the dashboard
+        run: |
+          set -euo pipefail
+          devcontainer exec --workspace-folder "$PWD" bash -lc '
+            set -euo pipefail
+            jar=/tmp/lifecycle-cookies.txt
+            html=$(curl --fail --silent --cookie-jar "$jar" http://127.0.0.1:8000/login)
+            token=$(printf "%s" "$html" | sed -n "s/.*name=\"_token\"[^>]*value=\"\([^\"]*\)\".*/\1/p" | head -1)
+            test -n "$token" || { echo "No CSRF token on the login page."; exit 1; }
+            login=$(grep "^DEFAULT_ADMIN_EMAIL=" .env | cut -d= -f2- | tr -d "\"")
+            password=$(grep "^DEFAULT_ADMIN_PASSWORD=" .env | cut -d= -f2- | tr -d "\"")
+            curl --silent --output /dev/null --cookie "$jar" --cookie-jar "$jar" \
+              -H "Referer: http://127.0.0.1:8000/login" \
+              --data-urlencode "_token=$token" \
+              --data-urlencode "login=$login" \
+              --data-urlencode "password=$password" \
+              --request POST http://127.0.0.1:8000/login
+            code=$(curl --silent --output /dev/null --cookie "$jar" --write-out "%{http_code}" http://127.0.0.1:8000/dashboard)
+            test "$code" = 200 || { echo "Dashboard returned $code after sign-in."; exit 1; }
+            echo "Signed in; dashboard HTTP 200."
+          '
+
+      - name: Show the server log on failure
+        if: failure()
+        run: devcontainer exec --workspace-folder "$PWD" cat /tmp/serve.log || true
