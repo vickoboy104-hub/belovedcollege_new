@@ -13,6 +13,7 @@
     }
   },
   "postCreateCommand": "bash .devcontainer/bootstrap.sh",
+  "postStartCommand": "bash .devcontainer/start-server.sh",
   "hostRequirements": {
     "cpus": 2,
     "memory": "4gb",

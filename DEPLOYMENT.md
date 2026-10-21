@@ -164,10 +164,13 @@ directory installs everything automatically:
    from `.env.example`, application key, SQLite file, migrations, seed data when the
    database has no users, `npm ci`, `npm run build`). Wait until the terminal prints
    `[beloved] Setup complete.`
-3. Start the server:
+3. The server starts on its own (`postStartCommand` runs `.devcontainer/start-server.sh`)
+   every time the codespace starts or resumes. It runs in the background, so closing
+   terminal tabs does not stop it. Its log is `/tmp/serve.log`. If it is ever down,
+   start it again with:
 
 ```bash
-bash .devcontainer/serve.sh
+bash .devcontainer/start-server.sh
 ```
 
 4. VS Code shows a **Beloved Schools** entry on port 8000 in the **Ports** tab. Open
@@ -180,8 +183,11 @@ it keeps the existing `.env` and database.
 
 The **Codespace readiness** workflow (`.github/workflows/codespace-readiness.yml`)
 builds this image and repeats those commands on a clean runner: it asserts the
-toolchain and PHP extensions, runs the bootstrap, starts `serve.sh`, signs in over
-HTTP, loads `/dashboard`, and runs the test suite.
+toolchain and PHP extensions, runs the bootstrap, starts the server through
+`start-server.sh` and checks it outlives the shell that launched it, signs in over
+HTTP, loads `/dashboard`, and runs the test suite. A second job runs the real
+devcontainer lifecycle (`devcontainer up`) and proves the site answers without anyone
+starting it by hand.
 
 ## Before a production release
 
