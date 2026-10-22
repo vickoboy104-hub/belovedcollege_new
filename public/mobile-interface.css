@@ -195,30 +195,57 @@
     }
 
     .metric-card,
-    .stat-gradient-card {
-        min-height: 8rem !important;
-        padding: 1rem !important;
-        border-radius: 1rem !important;
+    .stat-gradient-card,
+    .app-shell .metric-card.stat-gradient-card {
+        min-height: 0 !important;
+        padding: 0.78rem 0.8rem !important;
+        border-radius: 0.85rem !important;
     }
 
     .metric-card .metric-label {
-        max-width: calc(100% - 2.4rem) !important;
-        font-size: 0.68rem !important;
-        line-height: 1.2 !important;
-        letter-spacing: 0.045em !important;
-        overflow-wrap: normal !important;
+        max-width: calc(100% - 1.85rem) !important;
+        font-size: 0.6rem !important;
+        line-height: 1.15 !important;
+        letter-spacing: 0.04em !important;
+        overflow-wrap: break-word !important;
         word-break: normal !important;
     }
 
     .metric-card .metric-value {
-        margin-top: 1rem !important;
-        font-size: clamp(2rem, 10vw, 2.75rem) !important;
-        line-height: 1 !important;
+        margin-top: 0.35rem !important;
+        font-size: 1.7rem !important;
+        line-height: 1.05 !important;
     }
 
     .metric-card .metric-icon {
-        width: 2.2rem !important;
-        height: 2.2rem !important;
+        width: 1.55rem !important;
+        height: 1.55rem !important;
+        border-radius: 0.5rem !important;
+    }
+
+    .metric-card .metric-note {
+        margin-top: 0.2rem !important;
+        font-size: 0.62rem !important;
+    }
+
+    .app-shell main .dashboard-finance-panel .grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 0.5rem !important;
+    }
+
+    .admin-table-footer {
+        align-items: flex-start !important;
+        flex-direction: column !important;
+        gap: 0.6rem !important;
+    }
+
+    .admin-table-count {
+        width: 100% !important;
+        font-size: 0.72rem !important;
+    }
+
+    .admin-pagination {
+        justify-content: flex-start !important;
     }
 
     .dashboard-main-grid {
@@ -407,13 +434,23 @@
     }
 
     .metric-card,
-    .stat-gradient-card {
-        min-height: 7.3rem !important;
-        padding: 0.85rem !important;
+    .stat-gradient-card,
+    .app-shell .metric-card.stat-gradient-card {
+        min-height: 0 !important;
+        padding: 0.7rem 0.72rem !important;
     }
 
     .metric-card .metric-value {
-        font-size: 2.1rem !important;
+        font-size: 1.5rem !important;
+    }
+
+    .dashboard-finance-panel .metric-card .metric-value {
+        font-size: 1.05rem !important;
+    }
+
+    .dashboard-finance-panel .metric-card .metric-label {
+        max-width: 100% !important;
+        font-size: 0.55rem !important;
     }
 
     .page-actions,

@@ -194,7 +194,7 @@ iframe {
 
 .app-shell :is(td, th, .mobile-record-value, .card-description, .section-description),
 .public-shell :is(.beloved-school-card p, .beloved-event-item p, .beloved-testi-card p) {
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
 }
 
 /* Reliable contrast on light portal surfaces. */

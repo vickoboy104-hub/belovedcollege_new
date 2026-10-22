@@ -1640,7 +1640,7 @@
             margin-left: auto !important;
             margin-right: auto !important;
             max-width: 18rem !important;
-            overflow-wrap: anywhere !important;
+            overflow-wrap: break-word !important;
         }
 
         .beloved-slider-labels {
@@ -1805,7 +1805,7 @@
         .app-shell main a,
         .app-shell main span,
         .app-shell main div {
-            overflow-wrap: anywhere !important;
+            overflow-wrap: break-word !important;
         }
 
         .app-shell header h1,
