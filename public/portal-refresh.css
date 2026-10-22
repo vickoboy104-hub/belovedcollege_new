@@ -2273,13 +2273,6 @@ body.entity-preview-open {
     }
 }
 
-@media (max-width: 360px) {
-    .app-shell main > .grid.grid-cols-2,
-    .app-shell .metrics-grid {
-        grid-template-columns: 1fr !important;
-    }
-}
-
 @media (max-width: 767px) {
     .classic-topbar {
         display: none !important;

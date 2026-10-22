@@ -18,8 +18,8 @@
     @include('partials.theme-head')
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @include('partials.theme-overrides')
-    <link rel="stylesheet" href="{{ asset('portal-refresh.css') }}?v=20261022-phone-compact-1">
-    <link rel="stylesheet" href="{{ asset('ui-stability.css') }}?v=20261022-phone-compact-1">
+    <link rel="stylesheet" href="{{ asset('portal-refresh.css') }}?v=20261022-phone-compact-2">
+    <link rel="stylesheet" href="{{ asset('ui-stability.css') }}?v=20261022-phone-compact-2">
     <link rel="stylesheet" href="{{ asset('theme-variants.css') }}?v=20260714-theme-variants-1">
     <link rel="stylesheet" href="{{ asset('ui-contrast-audit.css') }}?v=20261019-phase4-targets-1">
 </head>
