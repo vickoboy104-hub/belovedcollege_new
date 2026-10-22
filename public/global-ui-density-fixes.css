@@ -105,7 +105,7 @@ html:not(.theme-dark-corporate):not(.theme-colourful-professional) .app-main .st
 .result-sheet-table tr:nth-child(even) { background: rgba(226, 234, 245, 0.35); }
 .app-shell .result-sheet-table { min-width: 0 !important; table-layout: fixed !important; }
 .app-shell .result-sheet-table tbody td { padding: 0.55rem 0.75rem !important; }
-.app-shell .result-sheet-table tbody td:first-child { white-space: normal !important; overflow-wrap: anywhere; }
+.app-shell .result-sheet-table tbody td:first-child { white-space: normal !important; overflow-wrap: break-word; }
 .app-shell .result-sheet-table tbody td:last-child { width: 5rem; text-align: right !important; }
 
 /* Preserve the dark palette for compact tables and profile details. */

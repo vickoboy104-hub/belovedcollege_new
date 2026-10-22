@@ -3898,7 +3898,7 @@ body {
 .app-shell .mobile-record-value,
 .app-shell td,
 .app-shell th {
-    overflow-wrap: anywhere;
+    overflow-wrap: break-word;
 }
 
 .app-shell [class*="rounded-[1.75rem]"] .display-font,
